@@ -1,16 +1,23 @@
 package com.stackoverflow.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "questions")
-public class Question {
+public class Question extends BaseEntity{
     @Column(nullable = false)
     private String title;
 
@@ -26,22 +33,25 @@ public class Question {
     @Column(nullable = false)
     private int votes;
 
-    // ManyToOne relationship with User (author)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "author_id", nullable = false)
-//    private User author;
-//
-//    // OneToMany relationship with Answer
-//    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Answer> answers;
-//
-//    // ManyToMany relationship with Tag
-//    @ManyToMany
-//    @JoinTable(
-//            name = "question_tags",
-//            joinColumns = @JoinColumn(name = "question_id"),
-//            inverseJoinColumns = @JoinColumn(name = "tag_id")
-  //  )
-//    private Set<Tag> tags;
+    @ManyToOne(cascade = {
+            CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
+
+    @ManyToMany(cascade = {
+            CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinTable(
+            name = "question_tag",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<Comment>();
 
 }
