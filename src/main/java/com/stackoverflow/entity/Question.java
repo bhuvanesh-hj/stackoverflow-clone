@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -34,17 +35,15 @@ public class Question extends BaseEntity{
     private int votes;
 
     @ManyToOne(cascade = {
-            CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH})
+            CascadeType.ALL})
     @JoinColumn(name = "author_id")
     private User author;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    private Set<Answer> answers = new HashSet<>();
 
     @ManyToMany(cascade = {
-            CascadeType.MERGE, CascadeType.PERSIST,
-            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.ALL})
     @JoinTable(
             name = "question_tag",
             joinColumns = @JoinColumn(name = "question_id"),
@@ -52,6 +51,6 @@ public class Question extends BaseEntity{
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<Comment>();
+    private Set<Comment> comments = new HashSet<>();
 
 }

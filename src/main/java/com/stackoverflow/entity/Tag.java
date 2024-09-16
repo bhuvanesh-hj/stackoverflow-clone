@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tags")
-public class Tag {
+public class Tag extends BaseEntity{
 
     @Column(name = "tag_name")
     private String tagName;

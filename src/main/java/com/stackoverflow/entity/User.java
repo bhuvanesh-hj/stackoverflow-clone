@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,5 +39,13 @@ public class User extends BaseEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "author")
+    private Set<Question> questions;
+
+    @OneToMany(mappedBy = "author")
+    private Set<Answer> answers;
+
+    
 
 }
