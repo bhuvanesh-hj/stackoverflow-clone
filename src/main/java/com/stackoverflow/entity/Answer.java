@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,7 +16,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Answer extends BaseEntity{
+public class Answer extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String body;
@@ -38,7 +36,7 @@ public class Answer extends BaseEntity{
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
 
