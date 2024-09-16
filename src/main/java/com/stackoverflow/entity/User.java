@@ -1,7 +1,9 @@
 package com.stackoverflow.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -11,6 +13,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity {
 
     @Column(name = "first_name", nullable = false)
