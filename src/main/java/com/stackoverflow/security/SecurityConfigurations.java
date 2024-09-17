@@ -18,7 +18,14 @@ public class SecurityConfigurations {
                     config
                             .requestMatchers("/**").permitAll()
                             .anyRequest().authenticated();
-                })
+
+                }).formLogin(form ->
+                        form
+                                .loginPage("/users/login")
+                                .loginProcessingUrl("/authenticateTheUser")
+                                .defaultSuccessUrl("/questions")
+                                .permitAll()
+                )
                 .build();
     }
 

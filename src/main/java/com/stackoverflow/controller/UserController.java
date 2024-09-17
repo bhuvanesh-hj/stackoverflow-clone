@@ -49,7 +49,7 @@ public class UserController {
             return "users/register";
         }
         userService.createUser(userRegistrationDTO);
-        return "redirect:/users/login";
+        return "redirect:/login";
     }
 
     @GetMapping("/{id}")

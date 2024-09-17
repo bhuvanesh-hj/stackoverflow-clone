@@ -2,6 +2,7 @@ package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,8 @@ public class QuestionController {
     public String getAllQuestions(Model model) {
         List<QuestionDetailsDTO> questions = questionService.getAllQuestions();
         model.addAttribute("questions", questions);
+        model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
+        model.addAttribute("registerUser", new UserRegistrationDTO());
         return "dashboard";
     }
 

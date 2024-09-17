@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Question form Modal -->
+<div th:fragment="questionForm(question)" id="questionModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModalButton">&times;</span>
+    <h1>Ask a Question</h1>
+    <form action="/submit-question" method="post" th:object="${question}">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" placeholder="Enter your question title" required>
+      </div>
+      <div class="form-group">
+        <label for="body">Body</label>
+        <textarea id="body" name="body" placeholder="Enter your question details" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="tags">Tags</label>
+        <div class="tags">
+          <input type="text" id="tags" name="tags" placeholder="Add some tags (comma-separated)">
+        </div>
+        <div id="tag-list"></div>
+      </div>
+      <button type="submit" class="header-btn">Submit Question</button>
+    </form>
+  </div>
+</div>

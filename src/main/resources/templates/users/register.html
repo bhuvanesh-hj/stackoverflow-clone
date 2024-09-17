@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/signup.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"/>
+
+<div class="signup-container">
+    <div class="signup-form">
+        <h1>Create Your Account</h1>
+        <p class="subheading">Join us and start your journey</p>
+        <form th:action="@{/users/register}" method="post" th:object="${userRegistrationDTO}">
+            <div class="form-group">
+                <label for="signupFirstName">First Name</label>
+                <input type="text" id="signupFirstName" name="firstName" th:field="*{firstName}"
+                       placeholder="Enter your first name" required>
+            </div>
+            <div class="form-group">
+                <label for="signupLastName">Last Name</label>
+                <input type="text" id="signupLastName" name="lastName" th:field="*{lastName}"
+                       placeholder="Enter your last name" required>
+            </div>
+            <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" th:field="*{email}" placeholder="Enter your email"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="signupUsername">Username</label>
+                <input type="text" id="signupUsername" name="username" th:field="*{username}"
+                       placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="password" th:field="*{password}"
+                       placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="signup-btn">Sign Up</button>
+            <div class="form-footer">
+                <p>Already have an account? <a href="/users/login">Log In</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>
