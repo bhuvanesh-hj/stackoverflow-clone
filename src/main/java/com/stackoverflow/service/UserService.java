@@ -1,22 +1,27 @@
 package com.stackoverflow.service;
 
+import com.stackoverflow.dto.UserDetailsDTO;
+import com.stackoverflow.dto.UserRegistrationDTO;
+import com.stackoverflow.dto.UserUpdateDTO;
 import com.stackoverflow.entity.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    public List<User> getAllUsers();
+    public List<UserDetailsDTO> getAllUsers();
 
-    public User getUserById(Long userId);
+    public UserDetailsDTO getUserById(Long userId);
 
-    public User getUserByEmail(String email);
+    public UserDetailsDTO getUserByEmail(String email);
 
-    public User getUserByUsername(String username);
+    public UserDetailsDTO getUserByUsername(String username);
 
-    public User createUser(User user);
+    public UserDetailsDTO createUser(UserRegistrationDTO user);
 
-    public User updateUser(Long userId, User userDetails);
+    public UserDetailsDTO updateUser(Long userId, UserUpdateDTO updatedUserDetails);
 
-    void deleteUser(Long userId);
+    public Boolean updatePassword(Long userId, String oldPassword, String newPassword);
+
+    public Boolean deleteUser(Long userId);
 }
