@@ -1,8 +1,8 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.UserDetailsDTO;
-import com.stackoverflow.dto.UserRegistrationDTO;
-import com.stackoverflow.dto.UserUpdateDTO;
+import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.dto.user.UserRegistrationDTO;
+import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
@@ -21,14 +21,16 @@ import java.util.stream.Collectors;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, ModelMapper modelMapper) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
         User savedUser = userRepository.save(user);
 
-        return modelMapper.map(user, UserDetailsDTO.class);
+        return modelMapper.map(savedUser, UserDetailsDTO.class);
     }
 
     @Override
@@ -86,9 +88,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
 
-            user.setEmail(userUpdateDTO.getEmail());
-            user.setFirstName(userUpdateDTO.getFirstName());
-            user.setLastName(userUpdateDTO.getLastName());
+        user.setEmail(userUpdateDTO.getEmail());
+        user.setFirstName(userUpdateDTO.getFirstName());
+        user.setLastName(userUpdateDTO.getLastName());
 
         User updatedUser = userRepository.save(user);
 

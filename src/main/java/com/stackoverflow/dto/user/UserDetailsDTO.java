@@ -1,6 +1,4 @@
-package com.stackoverflow.dto;
-
-import jakarta.persistence.Column;
+package com.stackoverflow.dto.user;
 
 public class UserDetailsDTO {
     private String firstName;

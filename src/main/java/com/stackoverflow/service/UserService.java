@@ -1,9 +1,8 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.UserDetailsDTO;
-import com.stackoverflow.dto.UserRegistrationDTO;
-import com.stackoverflow.dto.UserUpdateDTO;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.dto.user.UserRegistrationDTO;
+import com.stackoverflow.dto.user.UserUpdateDTO;
 
 import java.util.List;
 
