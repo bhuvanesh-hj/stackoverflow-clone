@@ -3,9 +3,11 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.repository.RoleRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -23,12 +25,14 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -77,6 +81,24 @@ public class UserServiceImpl implements UserService {
 
         User user = modelMapper.map(userRegistrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+
+        String defaultRole = "ROLE_USER";
+        Optional<Role> role = roleRepository.findByName(defaultRole);
+
+        if (role.isEmpty()) {
+            throw new ResourceNotFoundException("No such role exists");
+        } else {
+            user.addRole(role.get());
+        }
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Email is already in use.");
+        }
+
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Username is already in use.");
+        }
+
         User savedUser = userRepository.save(user);
 
         return modelMapper.map(savedUser, UserDetailsDTO.class);

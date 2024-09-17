@@ -3,6 +3,7 @@ package com.stackoverflow.controller;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ public class UserController {
     @PostMapping("/register")
     public String register(@Valid UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult, Model model) {
         List<String> errorsList = new ArrayList<>();
+
         if (bindingResult.hasErrors()) {
             errorsList = bindingResult.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
@@ -48,7 +50,15 @@ public class UserController {
             model.addAttribute("errors_register", errorsList);
             return "users/register";
         }
-        userService.createUser(userRegistrationDTO);
+
+        try{
+            userService.createUser(userRegistrationDTO);
+        }catch (ResourceAlreadyExistsException e){
+            errorsList.add(e.getMessage());
+            model.addAttribute("errors_register", errorsList);
+            return "users/register";
+        }
+
         return "redirect:/login";
     }
 
