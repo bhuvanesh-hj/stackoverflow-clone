@@ -50,8 +50,8 @@ public class AnswerController {
             Model model) {
 
         if (result.hasErrors()) {
-            Question question = answerService.getQuestionById(questionId);
-            model.addAttribute("question", question);
+            QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+            model.addAttribute("question", questionDetailsDTO);
             return "answer/create";
         }
 
