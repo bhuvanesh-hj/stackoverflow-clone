@@ -92,7 +92,7 @@ public class AnswerController {
     }
 
 
-    @GetMapping("/delete{answerId}")
+    @PostMapping("/delete{answerId}")
     public String deleteAnswer(@PathVariable Long answerId,@RequestParam Long questionId){
         answerService.delete(answerId);
         return "redirect:/question/view" + questionId;   //here need to change the controller path
