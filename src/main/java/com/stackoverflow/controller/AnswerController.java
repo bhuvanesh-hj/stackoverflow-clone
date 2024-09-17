@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 @Controller
-@RequestMapping("/answers")
+@RequestMapping("/{questionId}/answers")
 public class AnswerController {
 
     private final AnswerService answerService;
@@ -93,7 +93,7 @@ public class AnswerController {
 
 
     @PostMapping("/delete{answerId}")
-    public String deleteAnswer(@PathVariable Long answerId,@RequestParam Long questionId){
+    public String deleteAnswer(@PathVariable Long answerId,@PathVariable Long questionId){
         answerService.delete(answerId);
         return "redirect:/question/view" + questionId;   //here need to change the controller path
     }
