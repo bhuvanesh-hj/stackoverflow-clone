@@ -40,6 +40,9 @@
                 <input type="password" id="signupPassword" name="password" th:field="*{password}"
                        placeholder="Enter your password" required>
             </div>
+            <div th:if="${errors_register != null}">
+                <span style="color: red;" th:each="error : ${errors_register}" th:text="${error}"></span>
+            </div>
             <button type="submit" class="signup-btn">Sign Up</button>
             <div class="form-footer">
                 <p>Already have an account? <a href="/users/login">Log In</a></p>

@@ -27,6 +27,11 @@
             <span th:if="${error != null}">
                 "Something went wrong."
             </span>
+            <div th:if="${error}">
+                <span style="color: red;">
+                    Invalid username or password!.
+                </span>
+            </div>
             <button type="submit" class="login-btnn">Log In</button>
             <div class="form-footer">
                 <p>Don't have an account? <a href="/users/register">Sign Up</a></p>
