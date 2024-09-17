@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Setter
 @Getter
@@ -24,6 +26,17 @@ public class Comment extends BaseEntity{
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "answer_id")
         private Answer answer;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "author_id", nullable = false)
+        private User author;
+
+        @Column(name = "created_at", updatable = false, nullable = false)
+        private LocalDateTime createdAt;
+
+        @Column(name = "updated_at")
+        private LocalDateTime updatedAt;
+
 }
 
 

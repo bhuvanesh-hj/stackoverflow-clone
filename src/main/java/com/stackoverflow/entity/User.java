@@ -42,10 +42,13 @@ public class User extends BaseEntity implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "author")
-    private Set<Question> questions;
+    private Set<Question> questions = new HashSet<>();
 
     @OneToMany(mappedBy = "author")
-    private Set<Answer> answers;
+    private Set<Answer> answers = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionVote> questionVote = new ArrayList<>();
