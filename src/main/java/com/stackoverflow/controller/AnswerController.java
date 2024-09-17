@@ -32,7 +32,7 @@ public class AnswerController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/add-answer{questionId}")
+    @GetMapping("/add-answer")
     public String showAnswerForm(Model model,@PathVariable Long questionId){
 
         QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
@@ -42,7 +42,7 @@ public class AnswerController {
         return "answer/create";   // here need to change the path after adding templates
     }
 
-    @PostMapping("/saveAnswer{questionId}")
+    @PostMapping("/saveAnswer")
     public String saveAnswer(
             @PathVariable Long questionId,
             @Valid @ModelAttribute("answerRequestDTO") AnswerRequestDTO answerRequestDTO,
