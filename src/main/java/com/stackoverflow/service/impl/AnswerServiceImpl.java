@@ -47,7 +47,8 @@ public class AnswerServiceImpl implements AnswerService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Question question = getQuestionById(questionId);
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found"));
         User author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
@@ -104,11 +105,6 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void delete(Long answerId) {
         answerRepository.deleteById(answerId);
-    }
-
-    @Override
-    public Question getQuestionById(Long questionId) {
-        return questionRepository.findById(questionId).get();
     }
 
 }
