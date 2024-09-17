@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,12 +29,6 @@ public class Question extends BaseEntity{
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
-    private Integer upvotes;
-
-    @Column(nullable = false)
-    private Integer downvotes;
 
     @ManyToOne(cascade = {
             CascadeType.DETACH, CascadeType.MERGE,
@@ -59,7 +52,9 @@ public class Question extends BaseEntity{
     private List<Comment> comments = new ArrayList<Comment>();
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionLikes> questionLikes = new ArrayList<>();
+    private List<QuestionVote> questionVote = new ArrayList<>();
 
-
+    public Question(Long questionId) {
+        super();
+    }
 }

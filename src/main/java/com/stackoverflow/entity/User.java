@@ -48,8 +48,8 @@ public class User extends BaseEntity {
     private Set<Answer> answers;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionLikes> questionLikes = new ArrayList<>();
+    private List<QuestionVote> questionVote = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AnswerLikes> answerLikes = new ArrayList<>();
+    private List<AnswerVote> answerVote = new ArrayList<>();
 }
