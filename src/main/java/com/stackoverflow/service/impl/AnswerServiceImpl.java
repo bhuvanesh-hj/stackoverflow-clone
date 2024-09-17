@@ -90,17 +90,23 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
 
-    public void update(Long answerId, AnswerRequestDTO answerRequestDTO) {
+    public void update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
         Answer existingAnswer = getAnswerById(answerId);
-
-        Answer answer = modelMapper.map(answerRequestDTO, Answer.class);
 
         existingAnswer.setBody(answerRequestDTO.getBody());
         existingAnswer.setUpdatedAt(LocalDateTime.now());
 
-        Answer updatedUser = answerRepository.save(existingAnswer);
-        modelMapper.map(updatedUser,AnswerDetailsDTO.class);
+        if (questionId != null) {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            existingAnswer.setQuestion(question);
+        }
+
+        Answer updatedAnswer = answerRepository.save(existingAnswer);
+
+        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
     }
+
 
     @Override
     public void delete(Long answerId) {

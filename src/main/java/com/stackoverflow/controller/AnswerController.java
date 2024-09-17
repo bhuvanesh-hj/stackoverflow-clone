@@ -61,7 +61,6 @@ public class AnswerController {
 
         model.addAttribute("formattedTime", formattedTime);
 
-
         return "redirect:/question/view" + questionId;
     }
 
@@ -86,7 +85,7 @@ public class AnswerController {
             return "answer/edit";
         }
 
-        answerService.update(answerId, answerRequestDTO);
+        answerService.update(answerId, questionId, answerRequestDTO);
 
         return "redirect:/question/view" + questionId;
     }
