@@ -35,15 +35,17 @@ public class Question extends BaseEntity{
     private int votes;
 
     @ManyToOne(cascade = {
-            CascadeType.ALL})
+            CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "author_id")
     private User author;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private Set<Answer> answers = new HashSet<>();
+    private List<Answer> answers = new ArrayList<>();
 
     @ManyToMany(cascade = {
-            CascadeType.ALL})
+            CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "question_tag",
             joinColumns = @JoinColumn(name = "question_id"),
@@ -51,6 +53,10 @@ public class Question extends BaseEntity{
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
+    private List<Comment> comments = new ArrayList<Comment>();
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionLikes> questionLikes = new ArrayList<>();
+
 
 }

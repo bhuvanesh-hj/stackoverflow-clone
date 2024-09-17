@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "answers")
 @Setter
@@ -40,4 +43,6 @@ public class Answer extends BaseEntity {
     private Set<Comment> comments = new HashSet<>();
 
 
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerLikes> answerLikes = new ArrayList<>();
 }
