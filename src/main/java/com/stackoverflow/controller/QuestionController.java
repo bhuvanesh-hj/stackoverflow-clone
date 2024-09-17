@@ -26,7 +26,7 @@ public class QuestionController {
     public String getAllQuestions(Model model) {
         List<QuestionDetailsDTO> questions = questionService.getAllQuestions();
         model.addAttribute("questions", questions);
-        return "questions/list";
+        return "dashboard";
     }
 
     @GetMapping("/{id}")

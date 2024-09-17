@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Stackoverflow </title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/questionForm.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+</head>
+<body>
+<header class="header-main">
+    <img src="/images/logo-stackoverflow.png" width="150" height="29" alt="logo-stackoverflow"/>
+    <section class="header-actions">
+        <form class="header-form" action="/search" method="get">
+                <span class="header-search-body">
+                    <svg aria-hidden="true" class="s-input-icon s-input-icon__search svg-icon iconSearch" width="18" height="18" viewBox="0 0 18 18"><path d="m18 16.5-5.14-5.18h-.35a7 7 0 1 0-1.19 1.19v.35L16.5 18zM12 7A5 5 0 1 1 2 7a5 5 0 0 1 10 0"></path></svg>
+                    <input type="search" class="header-search-input" name="q" placeholder="Search Stack Overflow"/>
+                </span>
+            <button type="submit" class="header-btn">Search</button>
+        </form>
+        <section class="header-login-signup">
+            <button class="header-btn login-btn" id="openLoginModalButton">
+                Log in
+            </button>
+            <button class="header-btn" id="openSignupModalButton">
+                Sign up
+            </button>
+        </section>
+    </section>
+</header>
+
+<main>
+    <section  class="side-bar">
+        <ul class="side-list">
+            <li class="side-li selec">
+                <svg aria-hidden="true" class="svg-icon iconQuestion" width="18" height="18" viewBox="0 0 18 18"><path d="m4 15-3 3V4c0-1.1.9-2 2-2h12c1.09 0 2 .91 2 2v9c0 1.09-.91 2-2 2zm7.75-3.97c.72-.83.98-1.86.98-2.94 0-1.65-.7-3.22-2.3-3.83a4.4 4.4 0 0 0-3.02 0 3.8 3.8 0 0 0-2.32 3.83q0 1.93 1.03 3a3.8 3.8 0 0 0 2.85 1.07q.94 0 1.71-.34.97.66 1.06.7.34.2.7.3l.59-1.13a5 5 0 0 1-1.28-.66m-1.27-.9a5 5 0 0 0-1.5-.8l-.45.9q.5.18.98.5-.3.1-.65.11-.92 0-1.52-.68c-.86-1-.86-3.12 0-4.11.8-.9 2.35-.9 3.15 0 .9 1.01.86 3.03-.01 4.08"></path></svg>
+                Questions</li>
+            <li class="side-li">
+                <svg aria-hidden="true" class="svg-icon iconTags" width="18" height="18" viewBox="0 0 18 18"><path d="M9.24 1a3 3 0 0 0-2.12.88l-5.7 5.7a2 2 0 0 0-.38 2.31 3 3 0 0 1 .67-1.01l6-6A3 3 0 0 1 9.83 2H14a3 3 0 0 1 .79.1A2 2 0 0 0 13 1z" opacity=".4"></path><path d="M9.83 3a2 2 0 0 0-1.42.59l-6 6a2 2 0 0 0 0 2.82L6.6 16.6a2 2 0 0 0 2.82 0l6-6A2 2 0 0 0 16 9.17V5a2 2 0 0 0-2-2zM12 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4"></path></svg>
+                Tags</li>
+            <li class="side-li">
+                <svg aria-hidden="true" class="svg-icon iconPeople" width="18" height="18" viewBox="0 0 18 18"><path d="M17 14c0 .44-.45 1-1 1H9a1 1 0 0 1-1-1H2c-.54 0-1-.56-1-1 0-2.63 3-4 3-4s.23-.4 0-1c-.84-.62-1.06-.59-1-3s1.37-3 2.5-3 2.44.58 2.5 3-.16 2.38-1 3c-.23.59 0 1 0 1s1.55.71 2.42 2.09c.78-.72 1.58-1.1 1.58-1.1s.23-.4 0-1c-.84-.61-1.06-.58-1-3s1.37-3 2.5-3 2.44.59 2.5 3c.05 2.42-.16 2.39-1 3-.23.6 0 1 0 1s3 1.38 3 4"></path></svg>
+                Users</li>
+        </ul>
+    </section>
+    <section class="main-content">
+        <section class="main-content-header">
+            <div class="main-content-header-heading">
+                <h2>All Questions</h2>
+                <button class="header-btn" id="openModalButton">Ask Questions</button>
+            </div>
+            <div class="main-content-header-actions">
+                <p>24,227,364 questions</p>
+                <div class="main-content-header-actions-sort">
+                    <li class="sort-tab selec">Newest</li>
+                    <li class="sort-tab">Oldest</li>
+                    <li class="sort-tab">MostLiked</li>
+                </div>
+                <button class="header-btn login-btn filter-btn">
+                    <svg aria-hidden="true" class="svg-icon iconFilter" width="18" height="18" viewBox="0 0 18 18"><path d="M2 4h14v2H2zm2 4h10v2H4zm8 4H6v2h6z"></path></svg>
+                    Filters</button>
+            </div>
+        </section>
+        <section class="main-content-question-section">
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+            <section class="question-card">
+                <div class="qs-side">
+                    <p>0 votes</p>
+                    <p>0 answers</p>
+                </div>
+                <div class="qs-content">
+                    <h4>Generate Mock but realistic data using NLP</h4>
+                        <p>I want to generate realistic test data. It should support customizable Fields, structure of data by specifying field names and types. It should support a wide range of data types, including names, ...</p>
+                        <div>
+                            <span class="qs-date">12 hours ago</span>
+                            <span class="qs-user">user123</span>
+                        </div>
+                </div>
+            </section>
+        </section>
+        <section class="pagination">
+            <button class="header-btn">Prev</button>
+            <span>1/10</span>
+            <button class="header-btn">Next</button>
+        </section>
+    </section>
+</main>
+<footer class="footer-section">
+    <img class="footer-logo" src="/images/logo-stackoverflow.png" alt="logo-stackoverflow"/>
+    <p class="footer-text">&copy; &copysr; 2024 Stack Overflow, Inc. All rights reserved.</p>
+</footer>
+
+<!-- Question form Modal -->
+<div id="questionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModalButton">&times;</span>
+        <h1>Ask a Question</h1>
+        <form action="/submit-question" method="post">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" placeholder="Enter your question title" required>
+            </div>
+            <div class="form-group">
+                <label for="body">Body</label>
+                <textarea id="body" name="body" placeholder="Enter your question details" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tags">Tags</label>
+                <div class="tags">
+                    <input type="text" id="tags" name="tags" placeholder="Add some tags (comma-separated)">
+                </div>
+                <div id="tag-list"></div>
+            </div>
+            <button type="submit"  class="header-btn">Submit Question</button>
+        </form>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeLoginModalButton">&times;</span>
+        <h1>Login</h1>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit"  class="header-btn">Login</button>
+        </form>
+    </div>
+</div>
+
+<!-- Sign Up Modal -->
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeSignupModalButton">&times;</span>
+        <h1>Sign Up</h1>
+        <form action="/signup" method="post">
+            <div class="form-group">
+                <label for="signupFirstName">FirstName</label>
+                <input type="text" id="signupFirstName" name="firstName" placeholder="Enter your firstname" required>
+            </div>
+            <div class="form-group">
+                <label for="signupLastName">Lastname</label>
+                <input type="text" id="signupLastName" name="lastname" placeholder="Enter your lastname" required>
+            </div>
+            <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="signupEmail">Username</label>
+                <input type="text" id="signupUsername" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="signupPassword" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="header-btn">Sign Up</button>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    // Open question form modal
+    document.getElementById('openModalButton').onclick = function() {
+            document.getElementById('questionModal').style.display = 'flex';
+        };
+
+    // Open Login Modal
+    document.getElementById('openLoginModalButton').onclick = function() {
+            document.getElementById('loginModal').style.display = 'flex';
+        };
+
+    // Open Sign Up Modal
+    document.getElementById('openSignupModalButton').onclick = function() {
+            document.getElementById('signupModal').style.display = 'flex';
+        };
+
+    // Close Login Modal
+    document.getElementById('closeLoginModalButton').onclick = function() {
+            document.getElementById('loginModal').style.display = 'none';
+        };
+
+    // Close question form modal
+    document.getElementById('closeModalButton').onclick = function() {
+            document.getElementById('questionModal').style.display = 'none';
+        };
+
+     // Close Sign Up Modal
+     document.getElementById('closeSignupModalButton').onclick = function() {
+            document.getElementById('signupModal').style.display = 'none';
+        };
+
+    // Close modal when clicking outside of modal-content
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('questionModal')) {
+            document.getElementById('questionModal').style.display = 'none';
+        }
+        if (event.target == document.getElementById('loginModal')) {
+                document.getElementById('loginModal').style.display = 'none';
+        }
+        if (event.target == document.getElementById('signupModal')) {
+                document.getElementById('signupModal').style.display = 'none';
+        }
+    };
+</script>
+</html>

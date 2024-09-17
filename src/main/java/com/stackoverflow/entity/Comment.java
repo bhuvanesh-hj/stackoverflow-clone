@@ -14,11 +14,6 @@ import lombok.Setter;
 @Table(name = "comments")
 public class Comment extends BaseEntity{
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "comment_id")
-        private Long id;
-
         @Column(name = "comment_text", nullable = false, columnDefinition = "TEXT")
         private String commentText;
 
