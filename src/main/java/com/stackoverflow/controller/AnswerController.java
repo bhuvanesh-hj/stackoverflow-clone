@@ -4,7 +4,6 @@ import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Answer;
-import com.stackoverflow.entity.Question;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
 import jakarta.validation.Valid;
@@ -14,9 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 
 @Controller
 @RequestMapping("/{questionId}/answers")

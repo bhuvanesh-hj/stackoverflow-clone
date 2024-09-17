@@ -9,7 +9,6 @@ import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.AnswerService;
-import com.stackoverflow.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+
 import java.util.NoSuchElementException;
 
 @Service
