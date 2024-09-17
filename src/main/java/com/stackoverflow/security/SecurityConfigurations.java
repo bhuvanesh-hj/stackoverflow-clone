@@ -25,7 +25,12 @@ public class SecurityConfigurations {
                                 .loginProcessingUrl("/authenticateTheUser")
                                 .defaultSuccessUrl("/questions")
                                 .permitAll()
-                )
+                ).logout(logout ->
+                        logout.logoutUrl("/users/logout")
+                                .logoutSuccessUrl("/questions")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
+                                .permitAll())
                 .build();
     }
 

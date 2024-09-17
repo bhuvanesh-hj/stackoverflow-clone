@@ -32,10 +32,11 @@
     color: #1b75d0;
 }
 .header-actions{
-    width: 70%;
+    width: 75%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 5px;
 }
 .header-form{
     width: 80%;
@@ -63,6 +64,21 @@
     align-items: center;
     justify-content: flex-end;
     margin: 0 10px;
+}
+.header-user-logout{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.header-user{
+    display: flex;
+    align-items: center;
+}
+.header-user p{
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
 }
 @media (max-width: 935px) {
     .header-main{

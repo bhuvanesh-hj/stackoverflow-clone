@@ -2,9 +2,8 @@ package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
-import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.stackoverflow.service.impl.UserServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +14,20 @@ import java.util.List;
 @RequestMapping("/questions")
 public class QuestionController {
 
-    @Autowired
     private final QuestionService questionService;
+    private final UserServiceImpl userService;
 
-    @Autowired
-    public QuestionController(QuestionService questionService) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService) {
         this.questionService = questionService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String getAllQuestions(Model model) {
         List<QuestionDetailsDTO> questions = questionService.getAllQuestions();
         model.addAttribute("questions", questions);
-        model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
-        model.addAttribute("registerUser", new UserRegistrationDTO());
+        model.addAttribute("loggedIn", userService.getLoggedInUserDetails());
+
         return "dashboard";
     }
 

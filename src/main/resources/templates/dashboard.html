@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/footer.css"/>
 </head>
 <body>
-<header th:replace="~{fragments/header :: header}"/>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
 
 <main>
     <div th:replace="~{fragments/sidebar :: sidebar}"/>

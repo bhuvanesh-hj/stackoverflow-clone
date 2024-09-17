@@ -23,4 +23,6 @@ public interface UserService {
     public Boolean updatePassword(Long userId, String oldPassword, String newPassword);
 
     public Boolean deleteUser(Long userId);
+
+    public UserDetailsDTO getLoggedInUserDetails();
 }

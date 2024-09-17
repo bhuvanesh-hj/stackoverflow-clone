@@ -12,6 +12,8 @@ import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,5 +142,16 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.deleteById(userId);
         return true;
+    }
+
+    @Override
+    public UserDetailsDTO getLoggedInUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (userRepository.findByUsername(authentication.getName()).isPresent()) {
+            User user = userRepository.findByUsername(authentication.getName()).get();
+            return modelMapper.map(user, UserDetailsDTO.class);
+        }
+        return null;
     }
 }

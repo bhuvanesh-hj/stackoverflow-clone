@@ -1,5 +1,6 @@
-<html xmlns:th="http://www.thymeleaf.org">
-<header th:fragment="header" class="header-main">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<header th:fragment="header(user)" class="header-main">
     <a th:href="@{/questions}"><img src="/images/logo-stackoverflow.png" width="150" height="29"
                                     alt="logo-stackoverflow"/></a>
     <section class="header-actions">
@@ -12,18 +13,31 @@
                 </span>
             <button type="submit" class="header-btn">Search</button>
         </form>
-        <section class="header-login-signup">
+        <section class="header-login-signup" sec:authorize="isAnonymous()">
             <a th:href="@{/users/login}">
-                <button class="header-btn login-btn" id="openLoginModalButton">
+                <button class="header-btn login-btn">
                     Log in
                 </button>
             </a>
 
             <a th:href="@{/users/register}">
-                <button class="header-btn" id="openSignupModalButton">
+                <button class="header-btn">
                     Sign up
                 </button>
             </a>
+        </section>
+        <section class="header-user-logout" sec:authorize="isAuthenticated()">
+            <div class="header-user">
+                <img width="48" height="48" src="https://img.icons8.com/fluency/48/name--v1.png" alt="name--v1"/>
+                <p class="" th:text="${user}">
+                </p>
+            </div>
+
+            <form th:action="@{/users/logout}" method="post">
+                <button class="header-btn">
+                    Logout
+                </button>
+            </form>
         </section>
     </section>
 </header>
