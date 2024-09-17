@@ -32,7 +32,10 @@ public class Question extends BaseEntity{
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private int votes;
+    private Integer upvotes;
+
+    @Column(nullable = false)
+    private Integer downvotes;
 
     @ManyToOne(cascade = {
             CascadeType.DETACH, CascadeType.MERGE,
