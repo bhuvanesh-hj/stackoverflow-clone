@@ -1,5 +1,6 @@
 package com.stackoverflow.dto;
 
+import com.stackoverflow.dto.user.UserDTO;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
 import lombok.Getter;
