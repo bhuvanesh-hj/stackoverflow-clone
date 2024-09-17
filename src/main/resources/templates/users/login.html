@@ -27,9 +27,9 @@
             <span th:if="${error != null}">
                 "Something went wrong."
             </span>
-            <div th:if="${error}">
+            <div th:if="${param.error}" style="margin: 10px 0;">
                 <span style="color: red;">
-                    Invalid username or password!.
+                    Invalid username or password. Please try again.
                 </span>
             </div>
             <button type="submit" class="login-btnn">Log In</button>
