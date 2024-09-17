@@ -26,9 +26,9 @@ public class VoteServiceImpl implements VoteService {
         if (existingVote.isPresent()) {
             QuestionVote vote = existingVote.get();
             if (vote.getIsUpvote()) {
-                questionVoteRepository.delete(vote);  // Undo upvote
+                questionVoteRepository.delete(vote);
             } else {
-                vote.setIsUpvote(true);  // Change from downvote to upvote
+                vote.setIsUpvote(true);
                 questionVoteRepository.save(vote);
             }
         } else {
@@ -48,14 +48,14 @@ public class VoteServiceImpl implements VoteService {
         if (existingVote.isPresent()) {
             QuestionVote vote = existingVote.get();
             if (!vote.getIsUpvote()) {
-                questionVoteRepository.delete(vote);  // Undo downvote
+                questionVoteRepository.delete(vote);
             } else {
-                vote.setIsUpvote(false);  // Change from upvote to downvote
+                vote.setIsUpvote(false);
                 questionVoteRepository.save(vote);
             }
         } else {
             QuestionVote vote = new QuestionVote();
-            vote.setQuestion(new Question(questionId));  // Assuming you have a constructor that sets the ID
+            vote.setQuestion(new Question(questionId));
             vote.setUser(user);
             vote.setIsUpvote(false);
             questionVoteRepository.save(vote);
@@ -70,9 +70,9 @@ public class VoteServiceImpl implements VoteService {
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
             if (vote.getIsUpvote()) {
-                answerVoteRepository.delete(vote);  // Undo upvote
+                answerVoteRepository.delete(vote);
             } else {
-                vote.setIsUpvote(true);  // Change from downvote to upvote
+                vote.setIsUpvote(true);
                 answerVoteRepository.save(vote);
             }
         } else {
@@ -92,14 +92,14 @@ public class VoteServiceImpl implements VoteService {
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
             if (!vote.getIsUpvote()) {
-                answerVoteRepository.delete(vote);  // Undo downvote
+                answerVoteRepository.delete(vote);
             } else {
-                vote.setIsUpvote(false);  // Change from upvote to downvote
+                vote.setIsUpvote(false);
                 answerVoteRepository.save(vote);
             }
         } else {
             AnswerVote vote = new AnswerVote();
-            vote.setAnswer(new Answer(answerId));  // Assuming you have a constructor that sets the ID
+            vote.setAnswer(new Answer(answerId));
             vote.setUser(user);
             vote.setIsUpvote(false);
             answerVoteRepository.save(vote);
