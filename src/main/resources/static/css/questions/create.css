@@ -131,4 +131,9 @@ form {
     padding: 15px;
 }
 
+.input-tags input{
+    padding: 7px; !important;
+    font-size: normal !important;
+}
+
 

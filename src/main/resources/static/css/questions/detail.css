@@ -18,8 +18,8 @@
     padding : 0 8px;
 }
 .qs-tags-section{
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-start;
     margin-top: 10px;
     gap: 5px;
@@ -39,18 +39,18 @@
 }
 
 .qs-tag {
-            background-color: gray; /* Gray background */
-            color: white; /* Text color */
-            padding: 10px 20px; /* Vertical and horizontal padding */
-            border: none; /* No border */
-            border-radius: 25px; /* Rounded edges for pill shape */
-            cursor: pointer; /* Pointer cursor on hover */
-            font-size: 16px; /* Font size */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
+            background-color: gray;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
         }
 
         .qs-tag:hover {
-            background-color: darkgray; /* Darker gray on hover */
+            background-color: darkgray;
         }
 
 .qs-detail-content{

@@ -5,14 +5,13 @@
     <title>Dashboard | Stackoverflow </title>
     <link rel="stylesheet" href="/css/header.css"/>
     <link rel="stylesheet" href="/css/sidebar.css"/>
-    <link rel="stylesheet" href="/css/questionForm.css"/>
     <link rel="stylesheet" href="/css/footer.css"/>
 </head>
 <body>
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
 
 <main>
-    <div th:replace="~{fragments/sidebar :: sidebar}"/>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
 
     <section class="main-content">
         <section class="main-content-header">
@@ -52,17 +51,17 @@
                     </div>
                     <div>
                         <span class="qs-date" th:text="${question.updatedAt}"/>
-                        <!--                        <span class="qs-user" th:text="${question.authorDTO.username}"/>-->
                     </div>
                 </div>
             </section>
-        </section>
-        <section class="pagination">
-            <button class="header-btn">Prev</button>
-            <span>1/10</span>
-            <button class="header-btn">Next</button>
+            <section class="pagination">
+                <button class="header-btn">Prev</button>
+                <span>1/10</span>
+                <button class="header-btn">Next</button>
+            </section>
         </section>
     </section>
+
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
 

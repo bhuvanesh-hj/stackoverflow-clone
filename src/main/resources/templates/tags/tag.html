@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tags - Stack Overflow </title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+    <link rel="stylesheet" href="/css/tag.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
+
+<main>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
+
+    <section class="main-content">
+        <section class="main-content-header">
+            <div class="tags-content">
+                <div class="content-wrapper">
+                    <h2>Tags</h2>
+                    <p>A tag is a keyword or label that categorizes your question with other, similar questions.
+                        Using the right tags makes it easier for others to find and answer your question.</p>
+                </div>
+            </div>
+            <div class="main-content-header-actions">
+                <form action="/tagsSearch" method="get">
+                    <input class="search-bar" name="searchQuery" placeholder="Filter by tag name" type="text"/>
+                    <button class="header-btn login-btn" type="submit">Search</button>
+                </form>
+                <ul class="main-content-header-actions-sort">
+                    <li class="sort-tab selec">Popular</li>
+                    <li class="sort-tab">Name</li>
+                    <li class="sort-tab">New</li>
+                </ul>
+            </div>
+        </section>
+        <section class="main-content-tags-section">
+            <div class="tag-card" th:each="tag : ${tags}">
+                <div class="tag-name" th:text="${tag.name}">Tag Name</div>
+                <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}">Questions: 0</div>
+            </div>
+        </section>
+    </section>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

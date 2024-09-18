@@ -1,4 +1,4 @@
-package com.stackoverflow.controller;
+package com.stackoverflow.service.impl;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,16 +1,19 @@
+body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 .main-content {
-    width: 100%;
-    display: grid;
-    grid-template-rows: auto auto auto auto;
+    width: 87%;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
-    padding: 0;
-    padding-top: 40px;
+    padding: 40px 5px 0 5px;
     box-sizing: border-box;
+    position: relative;
 }
 
 .main-content-header {
-    margin-left: 20px;
-    margin-right: 20px;
+    width: 100%;
+    padding: 10px;
     border-bottom: 1px solid #e3e6e8;
     padding-bottom: 10px;
 }
@@ -23,16 +26,16 @@
 }
 
 .main-content-tags-section {
-    grid-column: 1 / -1;
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 5px;
-    margin-left: 20px;
-    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 20px;
+    padding: 0 10px;
 }
 
 .tag-card {
+    width: 150px;
     border: 1px solid #e1e1e1;
     border-radius: 5px;
     padding: 20px;
