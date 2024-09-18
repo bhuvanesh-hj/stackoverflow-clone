@@ -1,5 +1,6 @@
 package com.stackoverflow.service.impl;
 
+import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.entity.Answer;
@@ -59,27 +60,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setAuthor(author);
 
         answerRepository.save(answer);
-        return formatTime(answer.getCreatedAt());
-    }
-
-    public String formatTime(LocalDateTime dateTime) {
-        LocalDateTime now = LocalDateTime.now();
-
-        if (dateTime.toLocalDate().equals(now.toLocalDate())) {
-            long minutes = ChronoUnit.MINUTES.between(dateTime, now);
-            long hours = ChronoUnit.HOURS.between(dateTime, now);
-
-            if (minutes < 1) {
-                return "Just now";
-            } else if (minutes < 60) {
-                return minutes + " mins ago";
-            } else {
-                return hours + " hours ago";
-            }
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' HH:mm");
-            return "Answered " + dateTime.format(formatter);
-        }
+        return StackoverflowCloneApplication.formatTime(answer.getCreatedAt());
     }
 
     @Override

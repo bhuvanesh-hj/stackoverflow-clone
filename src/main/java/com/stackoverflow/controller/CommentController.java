@@ -60,11 +60,15 @@ public class CommentController {
             return "comment/create";
         }
 
+        String formattedTime = "";
+
         if (questionId != null) {
-            commentService.createComment(commentRequestDTO, questionId, null);
+             formattedTime = commentService.createComment(commentRequestDTO, questionId, null);
         } else if (answerId != null) {
-            commentService.createComment(commentRequestDTO, null, answerId);
+             formattedTime = commentService.createComment(commentRequestDTO, null, answerId);
         }
+
+        model.addAttribute("formattedTime", formattedTime);
 
         return "redirect:/questions/view/" + (questionId != null ? questionId : "answer/" + answerId);
     }

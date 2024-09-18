@@ -5,7 +5,7 @@ import com.stackoverflow.entity.Comment;
 
 public interface CommentService {
 
-    public void createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId);
+    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId);
 
     public Comment getCommentById(Long commentId);
 

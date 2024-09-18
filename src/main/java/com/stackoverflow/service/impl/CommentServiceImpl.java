@@ -1,5 +1,6 @@
 package com.stackoverflow.service.impl;
 
+import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.CommentDetailsDTO;
 import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.entity.Answer;
@@ -35,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
         this.userRepository = userRepository;
     }
 
-    public void createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
+    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -62,6 +63,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         commentRepository.save(comment);
+
+        return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
     }
 
     public Comment getCommentById(Long commentId) {

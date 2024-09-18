@@ -1,5 +1,6 @@
 package com.stackoverflow.controller;
 
+import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
@@ -51,9 +52,9 @@ public class AnswerController {
             return "answer/create";
         }
 
-        answerService.createAnswer(answerRequestDTO, questionId);
-
         String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
+
+//        String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
 
         model.addAttribute("formattedTime", formattedTime);
 
