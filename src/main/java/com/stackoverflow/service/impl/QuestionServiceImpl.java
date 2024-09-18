@@ -12,10 +12,8 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service("questionService")
 public class QuestionServiceImpl implements QuestionService {
@@ -88,13 +86,33 @@ public class QuestionServiceImpl implements QuestionService {
         return modelMapper.map(savedQuestion, QuestionDetailsDTO.class);
     }
 
-    @Override
-    public QuestionDetailsDTO updateQuestion(Long userId, QuestionRequestDTO updatedUserDetails) {
-        return null;
+    public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails) {
+        Optional<Question> existingQuestionOpt = questionRepository.findById(questionId);
+
+        if (!existingQuestionOpt.isPresent()) {
+            throw new RuntimeException("Question not found");
+        }
+
+        Question existingQuestion = existingQuestionOpt.get();
+
+        existingQuestion.setTitle(updatedUserDetails.getTitle());
+        existingQuestion.setBody(updatedUserDetails.getBody());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+
+        Question updatedQuestion = questionRepository.save(existingQuestion);
+
+        return modelMapper.map(updatedQuestion, QuestionDetailsDTO.class);
     }
 
     @Override
-    public Boolean deleteQuestion(Long userId) {
-        return null;
+    public Boolean deleteQuestion(Long questionId) {
+        Optional<Question> existingQuestion = questionRepository.findById(questionId);
+
+        if (!existingQuestion.isPresent()) {
+            return false;
+        }
+
+        questionRepository.deleteById(questionId);
+        return true;
     }
 }

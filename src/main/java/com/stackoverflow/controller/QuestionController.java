@@ -1,5 +1,6 @@
 package com.stackoverflow.controller;
 
+import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -82,7 +84,11 @@ public class QuestionController {
 
     @PostMapping("/update/{id}")
     public String updateQuestion(@PathVariable("id") Long questionId,
-                                 @ModelAttribute("questionRequestDTO") QuestionRequestDTO updatedQuestionDetails) {
+                                 @ModelAttribute("questionRequestDTO") QuestionRequestDTO updatedQuestionDetails,
+                                 Model model) {
+        QuestionDetailsDTO existingQuestion = questionService.getQuestionById(questionId);
+        String formattedTime = StackoverflowCloneApplication.formatTime(existingQuestion.getUpdatedAt());
+        model.addAttribute("formattedTime",formattedTime);
         questionService.updateQuestion(questionId, updatedQuestionDetails);
         return "redirect:/questions/" + questionId;
     }

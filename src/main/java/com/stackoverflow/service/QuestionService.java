@@ -13,7 +13,7 @@ public interface QuestionService {
 
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO question, String tagsList);
 
-    public QuestionDetailsDTO updateQuestion(Long userId, QuestionRequestDTO updatedUserDetails);
+    public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails);
 
-    public Boolean deleteQuestion(Long userId);
+    public Boolean deleteQuestion(Long questionId);
 }

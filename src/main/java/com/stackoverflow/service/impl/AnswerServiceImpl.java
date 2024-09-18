@@ -84,7 +84,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         Answer updatedAnswer = answerRepository.save(existingAnswer);
 
-        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
+        modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
     }
 
 
