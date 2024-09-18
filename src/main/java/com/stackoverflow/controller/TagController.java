@@ -20,6 +20,8 @@ public class TagController {
     public String getAllTags(Model model) {
         List<TagDTO> tagsWithCount = tagService.getAllTagsWithQuestionCount();
         model.addAttribute("tags", tagsWithCount);
-        return "tag";
+        model.addAttribute("questions", null);
+        model.addAttribute("users", null);
+        return "tags/tag";
     }
 }

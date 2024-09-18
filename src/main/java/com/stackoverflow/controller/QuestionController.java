@@ -4,8 +4,8 @@ import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.User;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -36,7 +36,9 @@ public class QuestionController {
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", userService.isUserLoggedIn() ? modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class) : null);
+        model.addAttribute("users", null);
+        model.addAttribute("tags", null);
 
         return "dashboard";
     }
@@ -53,7 +55,7 @@ public class QuestionController {
 
     @GetMapping("/ask")
     public String showCreateQuestionForm(Model model) {
-        if (userService.isUserLoggedIn()) {
+        if (!userService.isUserLoggedIn()) {
             return "redirect:/users/login";
         }
 
@@ -112,7 +114,7 @@ public class QuestionController {
 
     @PostMapping("/downvote/{questionId}/{userId}")
     public String downVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question =questionService.vote(false, questionId, userId);
+        QuestionDetailsDTO question = questionService.vote(false, questionId, userId);
         return "redirect:/questions/" + question.getId();
     }
 }

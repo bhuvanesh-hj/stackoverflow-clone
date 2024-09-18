@@ -149,17 +149,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !authentication.isAuthenticated() ){
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotAuthenticatedException("User not logged in ");
         }
 
-        User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new UserNotAuthenticatedException("User does not exist"));
-
-        return user;
+        return userRepository.findByUsername(authentication.getName())
+                .orElse(null);
     }
 
-    public Boolean isUserLoggedIn(){
+    public Boolean isUserLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (userRepository.findByUsername(authentication.getName()).isPresent()) {
