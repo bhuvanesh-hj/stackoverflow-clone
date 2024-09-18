@@ -49,8 +49,8 @@
             <div class="tags-content">
                 <div class="content-wrapper">
                     <h2>Tags</h2>
-                    <p>A tag is a keyword or label that categorizes your question with other, similar questions.
-                        Using the right tags makes it easier for others to find and answer your question.</p>
+                    <p>A tag is a keyword or label that categorizes your question with other, similar questions.</p>
+                    <p>Using the right tags makes it easier for others to find and answer your question.</p>
                 </div>
             </div>
             <div class="main-content-header-actions">
@@ -65,106 +65,14 @@
                 </div>
             </div>
         </section>
+
         <section class="main-content-tags-section">
-            <div class="tag-card">
-                <div class="tag-name">JavaScript</div>
-                <div class="tag-description">For questions about programming in ECMAScript, JavaScript...</div>
-                <div class="tag-questions">1234 questions</div>
-            </div>
-            <div class="tag-card">
-                <div class="tag-name">Python</div>
-                <div class="tag-description">Python is a high-level programming language for general-purpose programming.</div>
-                <div class="tag-questions">987 questions</div>
-            </div>
-            <div class="tag-card">
-                <div class="tag-name">HTML</div>
-                <div class="tag-description">The standard markup language used to create and design documents on the web.</div>
-                <div class="tag-questions">890 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">CSS</div>
-                <div class="tag-description">A stylesheet language used to describe the presentation of a document written in HTML or XML.</div>
-                <div class="tag-questions">345 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">React</div>
-                <div class="tag-description">A JavaScript library for building user interfaces, particularly single-page applications with a component-based architecture.</div>
-                <div class="tag-questions">678 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Node.js</div>
-                <div class="tag-description">A runtime environment that allows you to run JavaScript on the server side, enabling server-side scripting.</div>
-                <div class="tag-questions">234 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">SQL</div>
-                <div class="tag-description">A domain-specific language used in programming and managing relational databases and performing various operations on the data.</div>
-                <div class="tag-questions">456 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Docker</div>
-                <div class="tag-description">An open-source platform that automates the deployment of applications inside lightweight, portable containers.</div>
-                <div class="tag-questions">789 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Git</div>
-                <div class="tag-description">A distributed version control system used to track changes in source code during software development.</div>
-                <div class="tag-questions">321 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">API</div>
-                <div class="tag-description">An application programming interface that allows different software applications to communicate with each other.</div>
-                <div class="tag-questions">654 questions</div>
-            </div>
-            <div class="tag-card">
-                <div class="tag-name">CSS</div>
-                <div class="tag-description">A stylesheet language used to describe the presentation of a document written in HTML or XML.</div>
-                <div class="tag-questions">345 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">React</div>
-                <div class="tag-description">A JavaScript library for building user interfaces, particularly single-page applications with a component-based architecture.</div>
-                <div class="tag-questions">678 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Node.js</div>
-                <div class="tag-description">A runtime environment that allows you to run JavaScript on the server side, enabling server-side scripting.</div>
-                <div class="tag-questions">234 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">SQL</div>
-                <div class="tag-description">A domain-specific language used in programming and managing relational databases and performing various operations on the data.</div>
-                <div class="tag-questions">456 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Docker</div>
-                <div class="tag-description">An open-source platform that automates the deployment of applications inside lightweight, portable containers.</div>
-                <div class="tag-questions">789 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">Git</div>
-                <div class="tag-description">A distributed version control system used to track changes in source code during software development.</div>
-                <div class="tag-questions">321 questions</div>
-            </div>
-
-            <div class="tag-card">
-                <div class="tag-name">API</div>
-                <div class="tag-description">An application programming interface that allows different software applications to communicate with each other.</div>
-                <div class="tag-questions">654 questions</div>
+            <div class="tag-card" th:each="tag : ${tags}">
+                <div class="tag-name" th:text="${tag.name}">Tag Name</div>
+                <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}">Questions: 0</div>
             </div>
         </section>
+
         <section class="pagination">
             <button class="header-btn">Prev</button>
             <span>1/10</span>
