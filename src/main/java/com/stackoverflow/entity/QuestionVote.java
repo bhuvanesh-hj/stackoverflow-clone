@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "question_likes")
+@Table(name = "question_votes")
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionVote extends BaseEntity {
@@ -39,11 +39,6 @@ public class QuestionVote extends BaseEntity {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.isUpvote = false;
     }
 
 }
