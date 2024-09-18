@@ -20,9 +20,9 @@ public class QuestionDetailsDTO {
     private String body;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer upvotes;
-    private Integer downvotes;
-    private Integer answersCount;
+    private Integer upvotes = 0;
+    private Integer downvotes = 0;
+    private Integer answersCount = 0;
     private Integer views;
 
     private UserDTO authorDTO;

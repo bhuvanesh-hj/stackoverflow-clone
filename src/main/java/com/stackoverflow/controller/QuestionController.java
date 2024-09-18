@@ -66,9 +66,10 @@ public class QuestionController {
     @PostMapping("/create")
     public String createQuestion(@ModelAttribute("questionRequestDTO") QuestionRequestDTO questionRequestDTO,
                                  @RequestParam("tagsList") String tags) {
-        QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO, tags);
-//        return "redirect:/questions/" + createdQuestion.getId();
-        return "redirect:/questions";
+        System.out.println(questionRequestDTO);
+        QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
+        return "redirect:/questions/" + createdQuestion.getId();
+//        return "redirect:/questions";
     }
 
     @GetMapping("/update/{id}")

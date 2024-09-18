@@ -11,7 +11,7 @@ public interface QuestionService {
 
     public QuestionDetailsDTO getQuestionById(Long questionId);
 
-    public QuestionDetailsDTO createQuestion(QuestionRequestDTO question, String tagsList);
+    public QuestionDetailsDTO createQuestion(QuestionRequestDTO question);
 
     public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails);
 

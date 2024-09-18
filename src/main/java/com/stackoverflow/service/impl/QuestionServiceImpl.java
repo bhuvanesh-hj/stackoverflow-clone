@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("questionService")
 public class QuestionServiceImpl implements QuestionService {
@@ -38,12 +39,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDetailsDTO getQuestionById(Long questionId) {
-        return modelMapper.map(questionRepository.findById(questionId), QuestionDetailsDTO.class);
+        QuestionDetailsDTO q = modelMapper.map(questionRepository.findById(questionId), QuestionDetailsDTO.class);
+        System.out.println(q);
+        return q;
+        //return modelMapper.map(questionRepository.findById(questionId), QuestionDetailsDTO.class);
     }
 
     @Override
     @Transactional
-    public QuestionDetailsDTO createQuestion(QuestionRequestDTO question, String tagsList) {
+    public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
         // Validate the user
         User user = userService.getLoggedInUser();
         if (user == null) {
@@ -51,39 +55,17 @@ public class QuestionServiceImpl implements QuestionService {
             throw new RuntimeException("User not logged in");
         }
 
-        // Create and save the Question entity
-        Question newQuestion = new Question();
-        newQuestion.setTitle(question.getTitle());
-        newQuestion.setBody(question.getBody());
-        newQuestion.setAuthor(user);
+        Question question = modelMapper.map(questionRequestDTO, Question.class);
+        question.setAuthor(user);
 
-        // Save the Question entity
-        Question savedQuestion = questionRepository.save(newQuestion);
+        Set<Tag> tags = questionRequestDTO.getTagsList().stream()
+                .map(tagName ->tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName))
+        ).collect(Collectors.toSet());
 
-        // Process tags
-        List<String> tagNames = Arrays.stream(tagsList.split(","))
-                .map(String::trim)
-                .toList();
+        question.setTags(tags);
 
-        Set<Tag> tags = new HashSet<>();
-        for (String tagName : tagNames) {
-            Tag tag = tagRepository.findByTagName(tagName);
-            if (tag == null) {
-                tag = new Tag();
-                tag.setTagName(tagName);
-                tagRepository.save(tag);
-            }
-            tag.getQuestions().add(savedQuestion);
-            tags.add(tag);
-        }
-
-        // Associate tags with the question
-        newQuestion.setTags(tags);
-        questionRepository.save(newQuestion);
-
-
-        // Map savedQuestion to QuestionDetailsDTO and return
-        return modelMapper.map(savedQuestion, QuestionDetailsDTO.class);
+        Question updatedQuestion = questionRepository.save(question);
+        return modelMapper.map(updatedQuestion, QuestionDetailsDTO.class);
     }
 
     public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails) {
