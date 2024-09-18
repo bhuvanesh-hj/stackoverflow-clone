@@ -3,6 +3,7 @@ package com.stackoverflow.service;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.entity.User;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface UserService {
     public Boolean deleteUser(Long userId);
 
     public UserDetailsDTO getLoggedInUserDetails();
+
+    public User getLoggedInUser();
 }

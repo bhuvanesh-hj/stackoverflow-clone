@@ -15,6 +15,7 @@
     position: fixed;
     background-color: #fff;
     top: 0;
+    z-index: 999;
 }
 .header-btn{
     padding: 8px 10.4px;

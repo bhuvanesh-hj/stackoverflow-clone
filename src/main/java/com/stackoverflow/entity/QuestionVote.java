@@ -41,4 +41,9 @@ public class QuestionVote extends BaseEntity {
         this.user = user;
     }
 
+    @PrePersist
+    public void onCreate() {
+        this.isUpvote = false;
+    }
+
 }

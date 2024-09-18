@@ -1,0 +1,134 @@
+/* styles.css */
+
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: #f8f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.question-main {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 75px 170px 30px 170px; /* 170px padding left and right */
+    box-sizing: border-box;
+}
+
+.question-header {
+    border-bottom: 2px solid #e1e4e8;
+    margin-bottom: 20px;
+    padding: 20px 0 30px 0;
+}
+
+.question-heading {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.question-form-section {
+    padding: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:focus {
+    outline: none;
+}
+
+@media (max-width: 1024px) {
+    .question-main {
+        padding: 0 50px; /* Adjust for smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .question-main {
+        padding: 0 20px; /* Adjust for mobile screens */
+    }
+
+    .form-group label,
+    .form-group input,
+    .form-group textarea {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+.input-title,
+.input-tags{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.input-title label,
+.input-body label,
+.input-tags label{
+    font-size: 18px;
+    font-weight: bold;
+}
+.input-title input,
+.input-tags input{
+   padding: 15px;
+   border-radius: 7px;
+   width: 100%;
+   outline: none;
+   border: 1px solid #ccc;
+   font-size: larger;
+}
+.input-body{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+form {
+    padding: 15px;
+}
+
+

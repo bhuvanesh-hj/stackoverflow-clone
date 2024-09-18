@@ -95,6 +95,10 @@ main{
 }
 
 /* Question card */
+.main-content-question-section{
+    min-height: 100vh;
+}
+
 .question-card{
     border-top: 1px solid #D6D9DC;
     padding: 15px;
@@ -145,6 +149,16 @@ main{
     align-items: center;
     margin-bottom: 10px;
     justify-content: space-between;
+}
+
+.question-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5; /* Adjust based on your font-size */
+    max-height: 3em; /* Adjust based on your line-height */
 }
 
 /* pagination */

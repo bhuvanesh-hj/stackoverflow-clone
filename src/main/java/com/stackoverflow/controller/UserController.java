@@ -51,15 +51,15 @@ public class UserController {
             return "users/register";
         }
 
-        try{
+        try {
             userService.createUser(userRegistrationDTO);
-        }catch (ResourceAlreadyExistsException e){
+        } catch (ResourceAlreadyExistsException e) {
             errorsList.add(e.getMessage());
             model.addAttribute("errors_register", errorsList);
             return "users/register";
         }
 
-        return "redirect:/login";
+        return "redirect:/users/login";
     }
 
     @GetMapping("/{id}")

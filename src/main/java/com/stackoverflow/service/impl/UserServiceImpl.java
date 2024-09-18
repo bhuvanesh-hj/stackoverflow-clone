@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
 
         String defaultRole = "ROLE_USER";
         Optional<Role> role = roleRepository.findByName(defaultRole);
+        System.out.println("role = " + role);
 
         if (role.isEmpty()) {
             throw new ResourceNotFoundException("No such role exists");
@@ -151,6 +152,16 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(authentication.getName()).isPresent()) {
             User user = userRepository.findByUsername(authentication.getName()).get();
             return modelMapper.map(user, UserDetailsDTO.class);
+        }
+        return null;
+    }
+
+    @Override
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (userRepository.findByUsername(authentication.getName()).isPresent()) {
+            return userRepository.findByUsername(authentication.getName()).get();
         }
         return null;
     }

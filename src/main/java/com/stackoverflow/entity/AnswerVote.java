@@ -25,14 +25,6 @@ public class AnswerVote extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Boolean getIsUpvote() {
-        return isUpvote;
-    }
-
-    public void setIsUpvote(Boolean isUpvote) {
-        this.isUpvote = isUpvote;
-    }
-
     public void setAnswer(Answer answer) {
         this.answer = answer;
     }

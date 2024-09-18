@@ -5,6 +5,7 @@ import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 public class QuestionDetailsDTO {
     private Long id;
     private String title;

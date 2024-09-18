@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${question.title}"></title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/questions/detail.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
+
+<main>
+    <div th:replace="~{fragments/sidebar :: sidebar}"/>
+
+    <section class="main-content">
+        <section class="main-content-header">
+            <div class="main-content-header-heading heading-section">
+                <h2 th:text="${question.title}" class="header"></h2>
+                <a th:href="@{/questions/ask}">
+                    <button class="header-btn">Ask Questions</button>
+                </a>
+            </div>
+            <div class="main-content-header-actions">
+                <p th:text="'Asked ' + ${question.createdAt}"/>
+                <p th:text="'Modified ' + ${question.updatedAt}"/>
+            </div>
+        </section>
+        <section class="main-content-question-detail-section">
+            <section class="qs-detail-actions"></section>
+            <section class="qs-detail-content">
+                <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
+                <section class="qs-tags-section">
+                    <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
+                </section>
+                <section>
+                    <section class="qs-actions">
+                        <a>Edit</a>
+                        <a>Delete</a>
+                    </section>
+                    <section>
+
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"/>
+
+</body>
+<script>
+
+</script>
+</html>

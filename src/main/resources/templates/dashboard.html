@@ -18,7 +18,9 @@
         <section class="main-content-header">
             <div class="main-content-header-heading">
                 <h2>All Questions</h2>
-                <button class="header-btn" id="openModalButton">Ask Questions</button>
+                <a th:href="@{/questions/ask}">
+                    <button class="header-btn">Ask Questions</button>
+                </a>
             </div>
             <div class="main-content-header-actions">
                 <p th:text="${questions.size() + ' questions' }"/>
@@ -39,16 +41,18 @@
             <section th:each="question : ${questions}"
                      class="question-card">
                 <div class="qs-side">
-                    <p th:text="${question.upvotes}"/>
-                    <p th:text="${question.downvotes}"/>
-                    <p th:text="${question.answers.size()}"/>
+                    <p th:text="${question.questionVote.size()} + ' votes'"/>
+                    <!--                    <p th:text="${question.downvotes}"/>-->
+                    <p th:text="${question.answers.size()} + ' answers'"/>
                 </div>
                 <div class="qs-content">
-                    <h4 th:text="${question.title}"/>
-                    <p th:text="${question.body}"/>
+                    <a th:href="@{/questions/{id}(id=${question.id})}"><h4 th:text="${question.title}"/></a>
+                    <div class="question-body" th:utext="${@htmlUtils.truncateHtml(question.body, 200)}">
+
+                    </div>
                     <div>
                         <span class="qs-date" th:text="${question.updatedAt}"/>
-                        <span class="qs-user" th:text="${question.authorDTO.username}"/>
+                        <!--                        <span class="qs-user" th:text="${question.authorDTO.username}"/>-->
                     </div>
                 </div>
             </section>
@@ -62,51 +66,8 @@
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
 
-<div th:replace="~{fragments/questionForm :: questionForm(question=${questionRequestDTO})}"/>
-
 </body>
 <script>
-    // Open question form modal
-    document.getElementById('openModalButton').onclick = function() {
-            document.getElementById('questionModal').style.display = 'flex';
-        };
 
-    // Open Login Modal
-    document.getElementById('openLoginModalButton').onclick = function() {
-            document.getElementById('loginModal').style.display = 'flex';
-        };
-
-    // Open Sign Up Modal
-    document.getElementById('openSignupModalButton').onclick = function() {
-            document.getElementById('signupModal').style.display = 'flex';
-        };
-
-    // Close Login Modal
-    document.getElementById('closeLoginModalButton').onclick = function() {
-            document.getElementById('loginModal').style.display = 'none';
-        };
-
-    // Close question form modal
-    document.getElementById('closeModalButton').onclick = function() {
-            document.getElementById('questionModal').style.display = 'none';
-        };
-
-     // Close Sign Up Modal
-     document.getElementById('closeSignupModalButton').onclick = function() {
-            document.getElementById('signupModal').style.display = 'none';
-        };
-
-    // Close modal when clicking outside of modal-content
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('questionModal')) {
-            document.getElementById('questionModal').style.display = 'none';
-        }
-        if (event.target == document.getElementById('loginModal')) {
-                document.getElementById('loginModal').style.display = 'none';
-        }
-        if (event.target == document.getElementById('signupModal')) {
-                document.getElementById('signupModal').style.display = 'none';
-        }
-    };
 </script>
 </html>
