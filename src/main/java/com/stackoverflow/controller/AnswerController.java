@@ -5,14 +5,20 @@ import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Answer;
+import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -36,7 +42,7 @@ public class AnswerController {
 
         model.addAttribute("answerDTO", new AnswerDetailsDTO());
         model.addAttribute("question",questionDetailsDTO);
-        return "answer/create";   // here need to change the path after adding templates
+        return "answer/create";
     }
 
     @PostMapping("/saveAnswer")
@@ -46,19 +52,34 @@ public class AnswerController {
             BindingResult result,
             Model model) {
 
+        List<String> errorsList = new ArrayList<>();
+
         if (result.hasErrors()) {
+            errorsList = result.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            model.addAttribute("errors_register", errorsList);
+
+            QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+            model.addAttribute("question", questionDetailsDTO);
+
+            return "answer/create";
+        }
+
+        try {
+
+            String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
+            model.addAttribute("formattedTime", formattedTime);
+
+        } catch (Exception e) {
+            errorsList.add(e.getMessage());
+            model.addAttribute("errors_register", errorsList);
+
             QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
             model.addAttribute("question", questionDetailsDTO);
             return "answer/create";
         }
-
-        String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
-
-//        String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
-
-        model.addAttribute("formattedTime", formattedTime);
-
-        return "redirect:/question/view" + questionId;
+        return "redirect:/question/view/" + questionId;
     }
 
     @GetMapping("/editAnswer{answerId}")
@@ -66,10 +87,10 @@ public class AnswerController {
         Answer answer = answerService.getAnswerById(answerId);
         model.addAttribute("answer",answer);
         model.addAttribute("question",answer.getQuestion());
-        return "answer/edit";  // here need to change the path
+        return "answer/edit";
     }
 
-    @PostMapping("/updateAnswer{answerId}")
+    @PostMapping("/updateAnswer/{answerId}")
     public String updateAnswer(
             @PathVariable Long answerId,
             @RequestParam Long questionId,
@@ -77,21 +98,44 @@ public class AnswerController {
             BindingResult result,
             Model model) {
 
+        List<String> errorsList = new ArrayList<>();
+
         if (result.hasErrors()) {
-            model.addAttribute("question", questionService.getQuestionById(questionId));
+            errorsList = result.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            model.addAttribute("error_update", errorsList);
+
+            Answer existingAnswer = answerService.getAnswerById(answerId);
+            model.addAttribute("answer", existingAnswer);
+
             return "answer/edit";
         }
 
-        answerService.update(answerId, questionId, answerRequestDTO);
+        try {
+            answerService.update(answerId, questionId, answerRequestDTO);
 
-        return "redirect:/question/view" + questionId;
+            Answer updatedAnswer = answerService.getAnswerById(answerId);
+            String formattedTime = StackoverflowCloneApplication.formatTime(updatedAnswer.getUpdatedAt());
+            model.addAttribute("formattedTime", formattedTime);
+
+        } catch (ResourceNotFoundException e) {
+            errorsList.add(e.getMessage());
+            model.addAttribute("error_update", errorsList);
+
+            Answer existingAnswer = answerService.getAnswerById(answerId);
+            model.addAttribute("answer", existingAnswer);
+
+            return "answer/edit";
+        }
+
+        return "redirect:/question/view/" + questionId;
     }
-
 
     @PostMapping("/delete{answerId}")
     public String deleteAnswer(@PathVariable Long answerId,@PathVariable Long questionId){
         answerService.delete(answerId);
-        return "redirect:/question/view" + questionId;   //here need to change the controller path
+        return "redirect:/question/view" + questionId;
     }
 
 }

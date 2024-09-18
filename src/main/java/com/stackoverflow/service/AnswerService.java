@@ -14,8 +14,8 @@ public interface AnswerService {
 
     public Answer getAnswerById(Long answerId);
 
-    public void update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO);
+    public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO);
 
-    public void delete(Long answerId);
+    public Boolean delete(Long answerId);
 
 }

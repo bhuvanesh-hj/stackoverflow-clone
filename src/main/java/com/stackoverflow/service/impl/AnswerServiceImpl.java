@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,20 +33,26 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
 
     @Autowired
-    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserRepository userRepository) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserRepository userRepository, UserServiceImpl userService) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public String createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
+        if(username == null){
+            throw new UsernameNotFoundException("User name not found");
+        }
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
@@ -70,27 +77,32 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
 
-    public void update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
+    public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
         Answer existingAnswer = getAnswerById(answerId);
 
         existingAnswer.setBody(answerRequestDTO.getBody());
         existingAnswer.setUpdatedAt(LocalDateTime.now());
 
-        if (questionId != null) {
-            Question question = questionRepository.findById(questionId)
+        Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new RuntimeException("Question not found"));
-            existingAnswer.setQuestion(question);
-        }
+        existingAnswer.setQuestion(question);
 
         Answer updatedAnswer = answerRepository.save(existingAnswer);
 
-        modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
+        return modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
     }
 
 
     @Override
-    public void delete(Long answerId) {
+    public Boolean delete(Long answerId) {
+        Optional<Answer> existingAnswer = answerRepository.findById(answerId);
+
+        if(!existingAnswer.isPresent()){
+            return false;
+        }
         answerRepository.deleteById(answerId);
+        return true;
+
     }
 
 }
