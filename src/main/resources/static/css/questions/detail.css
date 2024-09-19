@@ -1,6 +1,12 @@
+body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 .main-content-question-detail-section{
-    display: flex;
-    align-items: flex-start;
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+       align-items: flex-start;
+       justify-content: flex-start;
 }
 .header{
     width: 85%;
@@ -30,8 +36,10 @@
     margin-top: 20px;
     align-items: center;
     justify-content: flex-start;
-    font-size: 18px;
+    font-size: 14px;
     cursor: pointer;
+    color: #636B74;
+
 }
 .qs-actions a:hover{
     color: #1b75d0;
@@ -41,7 +49,7 @@
 .qs-tag {
             background-color: gray;
             color: white;
-            padding: 10px 20px;
+            padding: 6px 12px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -65,6 +73,96 @@
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-.qs-detail-actions{
-    width: 10%;
+.qs-side{
+    width: 8%;
+    padding-right: 15px;
+}
+
+.qs-content{
+    width: 92%;
+    padding: 15px;
+}
+.qs-like{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 0;;
+}
+.qs-like-btn{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #E6E6E6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.qs-like-count{
+    padding: 10px 0;
+}
+.qs-like-btn:hover{
+    background-color: #FBDBC0;
+}
+.qs-save{
+    display: flex;
+    flex-direction: column;
+    margin: 0 11px;
+}
+.qs-content{
+    display: flex;
+    flex-direction: column;
+}
+
+.qs-comment{
+    border-top: 1px solid #E6E6E6;
+    padding: 7px 10px 7px 30px;
+    font-size: 13px !important;
+    line-height: 17px;
+    color: #0C0D0E !important;
+}
+.qs-comment-section{
+    margin: 7px;
+}
+.qs-comment-add{
+    margin-top: 15px;
+    padding: 5px;
+    border-top: 1px solid #E6E6E6;
+}
+.qs-comment-add a{
+    font-size: 13px;
+    color: #636B74;
+    cursor: pointer;
+}
+
+.qs-comment-add a:hover{
+    color: rgb(29, 28, 28);
+}
+
+.question-section{
+    display: flex;
+    min-height: 50%;
+}
+
+.answer-section {
+    display: flex;
+    min-height: 50%;
+}
+
+.answer-heading{
+    font-size: 1.3rem;
+    padding: 20px;
+    color: #333;
+
+}
+.answer-add-section{
+    margin-top: 15px;
+    border-top: 1px solid #E6E6E6;
+    padding: 15px 40px;
+}
+
+.answer-add-section p{
+    padding: 12px;
+    font-size: 1.3rem;
+    font-weight: 300 !important;
 }

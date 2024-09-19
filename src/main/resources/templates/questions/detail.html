@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="/css/sidebar.css"/>
     <link rel="stylesheet" href="/css/questions/detail.css"/>
     <link rel="stylesheet" href="/css/footer.css"/>
+    <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#body',  // The textarea id
+            menubar: false,
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 400
+        });
+    </script>
 </head>
 <body>
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
@@ -23,27 +33,153 @@
                 </a>
             </div>
             <div class="main-content-header-actions">
-                <p th:text="'Asked ' + ${question.createdAt}"/>
-                <p th:text="'Modified ' + ${question.updatedAt}"/>
+                <p th:text="'Asked ' + ${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm')}"/>
+                <p th:if="${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm') != #temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"
+                   th:text="'Modified ' + ${#temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"/>
             </div>
         </section>
         <section class="main-content-question-detail-section">
-            <section class="qs-detail-actions"></section>
-            <section class="qs-detail-content">
-                <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
-                <section class="qs-tags-section">
-                    <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
+            <section class="question-section">
+                <section class="qs-side">
+                    <section class="qs-like">
+                        <span class="qs-like-btn">
+                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
+                        </span>
+                        <span class="qs-like-count">2,345</span>
+                        <span class="qs-like-btn">
+                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
+                        </span>
+                    </section>
+                    <section class="qs-save">
+                        <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
+                             height="18" viewBox="0 0 18 18">
+                            <path d="m9 10.6 4 2.66V3H5v10.26zM3 17V3c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v14l-6-4z"></path>
+                        </svg>
+                        <svg aria-hidden="true" class="fc-theme-primary-400 js-saves-btn-selected svg-icon iconBookmark"
+                             width="18" height="18" viewBox="0 0 18 18">
+                            <path d="M3 17V3c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v14l-6-4z"></path>
+                        </svg>
+                    </section>
                 </section>
-                <section>
-                    <section class="qs-actions">
-                        <a>Edit</a>
-                        <a>Delete</a>
+                <section class="qs-detail-content">
+
+                    <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
+                    <section class="qs-tags-section">
+                        <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
                     </section>
                     <section>
+                        <section class="qs-actions">
+                            <a>Edit</a>
+                            <a>Delete</a>
+                        </section>
+                        <section>
 
+                        </section>
+                    </section>
+                    <section class="qs-comment-section">
+                        <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
+                            bridge
+                            or
+                            temporary table to maintain the relation.. The you can many to one and one to many
+                            relations
+                            to
+                            this temp table. Eg: if you want many to many relation between table A and B, have a
+                            temp
+                            table
+                            AB which will have primary keys from both tables. Then you can have many to one relation
+                            between
+                            table A and AB, B and AB. –
+                            Arv
+                            CommentedMar 12, 2022 at 0:14
+                        </p>
+
+                        <p class="qs-comment-add">
+                            <a>
+                                Add a comment
+                            </a>
+                        </p>
                     </section>
                 </section>
             </section>
+            <section>
+                <p class="answer-heading">1 Answer</p>
+                <section class="answer-section">
+                    <section class="qs-side">
+                        <section class="qs-like">
+                        <span class="qs-like-btn">
+                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
+                        </span>
+                            <span class="qs-like-count">2,345</span>
+                            <span class="qs-like-btn">
+                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
+                        </span>
+                        </section>
+                        <section class="qs-save">
+                            <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
+                                 height="18" viewBox="0 0 18 18">
+                                <path d="m9 10.6 4 2.66V3H5v10.26zM3 17V3c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v14l-6-4z"></path>
+                            </svg>
+                            <svg aria-hidden="true"
+                                 class="fc-theme-primary-400 js-saves-btn-selected svg-icon iconBookmark"
+                                 width="18" height="18" viewBox="0 0 18 18">
+                                <path d="M3 17V3c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v14l-6-4z"></path>
+                            </svg>
+                        </section>
+                    </section>
+                    <section class="qs-detail-content">
+                        <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
+                        <section class="qs-tags-section">
+                            <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
+                        </section>
+                        <section>
+                            <section class="qs-actions">
+                                <a>Edit</a>
+                                <a>Delete</a>
+                            </section>
+                            <section>
+
+                            </section>
+                        </section>
+                        <section class="qs-comment-section">
+                            <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
+                                bridge
+                                or
+                                temporary table to maintain the relation.. The you can many to one and one to many
+                                relations
+                                to
+                                this temp table. Eg: if you want many to many relation between table A and B, have a
+                                temp
+                                table
+                                AB which will have primary keys from both tables. Then you can have many to one relation
+                                between
+                                table A and AB, B and AB. –
+                                Arv
+                                CommentedMar 12, 2022 at 0:14
+                            </p>
+
+                            <p class="qs-comment-add">
+                                <a>
+                                    Add a comment
+                                </a>
+                            </p>
+                        </section>
+                    </section>
+                </section>
+                <section class="answer-add-section">
+                    <p>Your Answer</p>
+                    <form th:action="@{/questions/create}" method="post">
+                        <div class="input-body">
+                            <textarea id="body" name="body"></textarea>
+                        </div>
+                        <button class="header-btn" type="submit">Post Your Answer</button>
+                    </form>
+                </section>
+            </section>
+
         </section>
     </section>
 </main>
