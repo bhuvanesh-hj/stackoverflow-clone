@@ -7,7 +7,6 @@ import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
-import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.repository.RoleRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
@@ -147,24 +146,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !authentication.isAuthenticated() ){
-            throw new UserNotAuthenticatedException("User not logged in ");
-        }
-
-        User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new UserNotAuthenticatedException("User does not exist"));
-
-        return user;
-    }
-
-    public Boolean isUserLoggedIn(){
+    public UserDetailsDTO getLoggedInUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (userRepository.findByUsername(authentication.getName()).isPresent()) {
-            return true;
+            User user = userRepository.findByUsername(authentication.getName()).get();
+            return modelMapper.map(user, UserDetailsDTO.class);
         }
-        return false;
+        return null;
+    }
+
+    @Override
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (userRepository.findByUsername(authentication.getName()).isPresent()) {
+            return userRepository.findByUsername(authentication.getName()).get();
+        }
+        return null;
     }
 }

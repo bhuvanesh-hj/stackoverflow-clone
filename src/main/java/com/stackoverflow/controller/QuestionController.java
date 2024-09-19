@@ -4,14 +4,14 @@ import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.entity.Question;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.impl.UserServiceImpl;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -21,22 +21,20 @@ public class QuestionController {
     private final QuestionService questionService;
     private final UserServiceImpl userService;
     private final HtmlUtils htmlUtils;
-    private final ModelMapper modelMapper;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping
     public String getAllQuestions(Model model) {
-        List<QuestionDetailsDTO> questions = questionService.getAllQuestions();
+        List<Question> questions = questionService.getAllQuestions();
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", userService.getLoggedInUserDetails());
 
         return "dashboard";
     }
@@ -53,12 +51,14 @@ public class QuestionController {
 
     @GetMapping("/ask")
     public String showCreateQuestionForm(Model model) {
-        if (userService.isUserLoggedIn()) {
+        UserDetailsDTO dto = userService.getLoggedInUserDetails();
+
+        if (dto == null) {
             return "redirect:/users/login";
         }
 
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", dto);
 
         return "questions/create";
     }
@@ -90,7 +90,7 @@ public class QuestionController {
         QuestionDetailsDTO existingQuestion = questionService.getQuestionById(questionId);
         questionService.updateQuestion(questionId, updatedQuestionDetails);
         String formattedTime = StackoverflowCloneApplication.formatTime(existingQuestion.getUpdatedAt());
-        model.addAttribute("formattedTime", formattedTime);
+        model.addAttribute("formattedTime",formattedTime);
         return "redirect:/questions/" + questionId;
     }
 
@@ -102,18 +102,6 @@ public class QuestionController {
         } else {
             return "redirect:/questions?error=NotDeleted";
         }
-    }
-
-    @PostMapping("/upvote/{questionId}/{userId}")
-    public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question = questionService.vote(true, questionId, userId);
-        return "redirect:/questions/" + question.getId();
-    }
-
-    @PostMapping("/downvote/{questionId}/{userId}")
-    public String downVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question =questionService.vote(false, questionId, userId);
-        return "redirect:/questions/" + question.getId();
     }
 }
 

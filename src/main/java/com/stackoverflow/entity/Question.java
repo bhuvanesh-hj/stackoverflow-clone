@@ -45,7 +45,7 @@ public class Question extends BaseEntity {
     private List<Comment> comments = new ArrayList<Comment>();
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<QuestionVote> questionVotes = new HashSet<>();
+    private List<QuestionVote> questionVote = new ArrayList<>();
 
     @PrePersist
     public void onCreate() {

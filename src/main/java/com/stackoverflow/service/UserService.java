@@ -25,7 +25,7 @@ public interface UserService {
 
     public Boolean deleteUser(Long userId);
 
-    public User getLoggedInUser();
+    public UserDetailsDTO getLoggedInUserDetails();
 
-    public Boolean isUserLoggedIn();
+    public User getLoggedInUser();
 }
