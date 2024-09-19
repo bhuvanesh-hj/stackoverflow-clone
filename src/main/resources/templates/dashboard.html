@@ -41,9 +41,9 @@
             <section th:each="question : ${questions}"
                      class="question-card">
                 <div class="qs-side">
-                    <p th:text="${question.questionVote.size()} + ' votes'"/>
-                    <!--                    <p th:text="${question.downvotes}"/>-->
-                    <p th:text="${question.answers.size()} + ' answers'"/>
+                    <p th:text="${question.upvotes} + ' votes'"/>
+                    <p th:text="${question.downvotes} + ' downvotes'"/>
+                    <p th:text="${question.answersCount} + ' answers'"/>
                 </div>
                 <div class="qs-content">
                     <a th:href="@{/questions/{id}(id=${question.id})}"><h4 th:text="${question.title}"/></a>
@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <span class="qs-date" th:text="${question.updatedAt}"/>
-                        <!--                        <span class="qs-user" th:text="${question.authorDTO.username}"/>-->
+                        <span class="qs-user" th:text="${question.authorDTO.username}"/>
                     </div>
                 </div>
             </section>
