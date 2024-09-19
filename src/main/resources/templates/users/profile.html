@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile | Stackoverflow</title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+    <link rel="stylesheet" href="/css/users/profile.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
+
+<main>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
+
+    <section class="profile">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img width="148" height="148" src="https://img.icons8.com/fluency/48/name--v1.png" alt="Profile Picture">
+                </div>
+                <div class="profile-info">
+                    <h1 th:text="${loggedIn.username}"></h1>
+                </div>
+                <div class="profile-actions">
+                    <button>Edit Profile</button>
+                </div>
+            </div>
+
+            <!-- Profile Content: Questions & Answers -->
+            <div class="profile-content">
+                <!-- Questions Section -->
+                <div class="questions-section">
+                    <h2 class="section-heading">Questions</h2>
+                    <ul class="questions-list">
+                        <li>
+                            <strong>Question 1:</strong>
+                            <p>How does the Java final keyword work?</p>
+                        </li>
+                        <li>
+                            <strong>Question 2:</strong>
+                            <p>What is the difference between CSS Grid and Flexbox?</p>
+                        </li>
+                        <li>
+                            <strong>Question 3:</strong>
+                            <p>How do I set up Thymeleaf with Spring Boot?</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Answers Section -->
+                <div class="answers-section">
+                    <h2 class="section-heading">Answers</h2>
+                    <ul class="answers-list">
+                        <li>
+                            <strong>Answer 1:</strong>
+                            <p>This is a dummy answer about Java programming.</p>
+                        </li>
+                        <li>
+                            <strong>Answer 2:</strong>
+                            <p>This is a dummy answer about CSS Flexbox.</p>
+                        </li>
+                        <li>
+                            <strong>Answer 3:</strong>
+                            <p>This is another dummy answer about Spring Boot setup.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Full-width Saved Questions Section -->
+            <div class="saved-questions">
+                <h2>Saved Questions</h2>
+                <ul>
+                    <li>
+                        <strong>Saved Question 1:</strong>
+                        <p>What are Java annotations and how are they used?</p>
+                    </li>
+                    <li>
+                        <strong>Saved Question 2:</strong>
+                        <p>Explain the difference between REST and SOAP web services?</p>
+                    </li>
+                    <li>
+                        <strong>Saved Question 3:</strong>
+                        <p>How does asynchronous JavaScript (AJAX) work in web applications?</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+</main>
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

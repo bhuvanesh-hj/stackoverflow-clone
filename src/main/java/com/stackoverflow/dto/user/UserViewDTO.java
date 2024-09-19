@@ -1,19 +1,18 @@
 package com.stackoverflow.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class UserDetailsDTO {
-    private Long id;
-
+@Setter
+@AllArgsConstructor
+public class UserViewDTO {
     private String firstName;
 
     private String lastName;
 
-    private String email;
+    private Long questionCount;
 
-    private String username;
-
+    private Long answerCount;
 }

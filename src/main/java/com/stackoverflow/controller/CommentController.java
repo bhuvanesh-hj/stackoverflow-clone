@@ -1,5 +1,6 @@
 package com.stackoverflow.controller;
 
+import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Answer;
@@ -35,7 +36,7 @@ public class CommentController {
             QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
             model.addAttribute("question", questionDetailsDTO);
         } else if (answerId != null) {
-            Answer answerDetailsDTO = answerService.getAnswerById(answerId);
+            AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
             model.addAttribute("answer", answerDetailsDTO);
         }
 
@@ -54,7 +55,7 @@ public class CommentController {
                 QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
                 model.addAttribute("question", questionDetailsDTO);
             } else if (answerId != null) {
-                Answer answerDetailsDTO = answerService.getAnswerById(answerId);
+                AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
                 model.addAttribute("answer", answerDetailsDTO);
             }
             return "comment/create";

@@ -1,8 +1,6 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.dto.user.UserRegistrationDTO;
-import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.dto.user.*;
 import com.stackoverflow.entity.User;
 
 import java.util.List;
@@ -26,6 +24,8 @@ public interface UserService {
     public Boolean deleteUser(Long userId);
 
     public User getLoggedInUser();
+
+    public List<UserViewDTO> getAllUsersWithCounts();
 
     public Boolean isUserLoggedIn();
 }

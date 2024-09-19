@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/footer.css"/>
 </head>
 <body>
-<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
 
 <main>
     <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
@@ -36,6 +36,7 @@
                 </button>
             </div>
         </section>
+
         <section class="main-content-question-section">
             <section th:each="question : ${questions}"
                      class="question-card">

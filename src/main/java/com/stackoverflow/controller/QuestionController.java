@@ -5,6 +5,7 @@ import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
@@ -22,12 +23,14 @@ public class QuestionController {
     private final UserServiceImpl userService;
     private final HtmlUtils htmlUtils;
     private final ModelMapper modelMapper;
+    private final VoteService voteService;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
         this.modelMapper = modelMapper;
+        this.voteService = voteService;
     }
 
     @GetMapping
@@ -118,10 +121,10 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/upvote/{questionId}/{userId}")
+   @PostMapping("/upvote/{questionId}/{userId}")
     public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question = questionService.vote(true, questionId, userId);
-        return "redirect:/questions/" + question.getId();
+        voteService.upvoteQuestion(questionId, userId);
+        return "redirect:/questions/" + questionId;
     }
 
     @PostMapping("/downvote/{questionId}/{userId}")

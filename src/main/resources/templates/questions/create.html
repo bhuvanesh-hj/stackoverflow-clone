@@ -18,7 +18,7 @@
     </script>
 </head>
 <body>
-<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
 
 <main class="question-main">
     <section class="question-header">

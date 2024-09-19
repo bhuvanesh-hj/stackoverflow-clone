@@ -8,6 +8,7 @@ import com.stackoverflow.entity.Answer;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.VoteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,12 +28,14 @@ public class AnswerController {
 
     private final AnswerService answerService;
     private final QuestionService questionService;
+    private final VoteService voteService;
 
 
     @Autowired
-    public AnswerController(AnswerService answerService, QuestionService questionService) {
+    public AnswerController(AnswerService answerService, QuestionService questionService, VoteService voteService) {
         this.answerService = answerService;
         this.questionService = questionService;
+        this.voteService = voteService;
     }
 
     @GetMapping("/add-answer")
@@ -67,8 +70,8 @@ public class AnswerController {
         }
 
         try {
-
-            String formattedTime = answerService.createAnswer(answerRequestDTO, questionId);
+            AnswerDetailsDTO answerDetailsDTO = answerService.createAnswer(answerRequestDTO, questionId);
+            String formattedTime = StackoverflowCloneApplication.formatTime(answerDetailsDTO.getCreatedAt());
             model.addAttribute("formattedTime", formattedTime);
 
         } catch (Exception e) {
@@ -84,9 +87,8 @@ public class AnswerController {
 
     @GetMapping("/editAnswer{answerId}")
     public String editAnswer(@PathVariable Long answerId,Model model){
-        Answer answer = answerService.getAnswerById(answerId);
-        model.addAttribute("answer",answer);
-        model.addAttribute("question",answer.getQuestion());
+        AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
+        model.addAttribute("answer",answerDetailsDTO);
         return "answer/edit";
     }
 
@@ -106,7 +108,7 @@ public class AnswerController {
                     .collect(Collectors.toList());
             model.addAttribute("error_update", errorsList);
 
-            Answer existingAnswer = answerService.getAnswerById(answerId);
+            AnswerDetailsDTO existingAnswer = answerService.getAnswerById(answerId);
             model.addAttribute("answer", existingAnswer);
 
             return "answer/edit";
@@ -115,7 +117,7 @@ public class AnswerController {
         try {
             answerService.update(answerId, questionId, answerRequestDTO);
 
-            Answer updatedAnswer = answerService.getAnswerById(answerId);
+            AnswerDetailsDTO updatedAnswer = answerService.getAnswerById(answerId);
             String formattedTime = StackoverflowCloneApplication.formatTime(updatedAnswer.getUpdatedAt());
             model.addAttribute("formattedTime", formattedTime);
 
@@ -123,7 +125,7 @@ public class AnswerController {
             errorsList.add(e.getMessage());
             model.addAttribute("error_update", errorsList);
 
-            Answer existingAnswer = answerService.getAnswerById(answerId);
+            AnswerDetailsDTO existingAnswer = answerService.getAnswerById(answerId);
             model.addAttribute("answer", existingAnswer);
 
             return "answer/edit";
@@ -136,6 +138,18 @@ public class AnswerController {
     public String deleteAnswer(@PathVariable Long answerId,@PathVariable Long questionId){
         answerService.delete(answerId);
         return "redirect:/question/view" + questionId;
+    }
+
+    @PostMapping("/upvote/{answerId}/{userId}")
+    public String upvoteAnswer(@PathVariable("answerId") Long answerId, @PathVariable("userId") Long userId) {
+        voteService.upvoteAnswer(answerId, userId);
+        return "redirect:/questions/" + answerId;
+    }
+
+    @PostMapping("/downvote/{answerId}/{userId}")
+    public String downvoteAnswer(@PathVariable("answerId") Long answerId, @PathVariable("userId") Long userId) {
+        voteService.downvoteAnswer(answerId, userId);
+        return "redirect:/questions/" + answerId;
     }
 
 }

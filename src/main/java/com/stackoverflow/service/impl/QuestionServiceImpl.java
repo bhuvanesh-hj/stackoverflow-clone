@@ -1,5 +1,6 @@
 package com.stackoverflow.service.impl;
 
+import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.entity.*;
@@ -7,6 +8,7 @@ import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,13 +24,15 @@ public class QuestionServiceImpl implements QuestionService {
     private final TagRepository tagRepository;
     private final ModelMapper modelMapper;
     private final UserServiceImpl userService;
+    private final VoteService voteService;
 
     public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository,
-                               ModelMapper modelMapper, UserServiceImpl userService) {
+                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService) {
         this.questionRepository = questionRepository;
         this.tagRepository = tagRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
+        this.voteService = voteService;
     }
 
     @Override
@@ -43,6 +47,12 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
+        QuestionDetailsDTO questionDetailsDTO = modelMapper.map(question, QuestionDetailsDTO.class);
+        List<AnswerDetailsDTO> answerDetailsList = new ArrayList<AnswerDetailsDTO>();
+
+        for (AnswerDetailsDTO answerDetailsDTO : questionDetailsDTO.getAnswers()) {
+            System.out.println(answerDetailsDTO);
+        }
         return getQuestionDetailsDTO(question);
     }
 
@@ -50,6 +60,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
         User user = userService.getLoggedInUser();
+        if (user == null) {
+            // Return error message or redirect to login page
+            throw new RuntimeException("User not logged in");
+        }
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);
@@ -101,18 +115,18 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question){
-        int upvotes = 0;
-        int downvotes = 0;
-
-        for(QuestionVote questionVote : question.getQuestionVotes()){
-            if(questionVote.getIsUpvote()){
-                ++upvotes;
-            }else{
-                ++downvotes;
-            }
-        }
+        int upvotes = voteService.getQuestionUpvotes(question.getId());
+        int downvotes = voteService.getQuestionDownvotes(question.getId());
 
         QuestionDetailsDTO questionDetailsDTO = modelMapper.map(question, QuestionDetailsDTO.class);
+
+        Iterator<AnswerDetailsDTO> iterate = questionDetailsDTO.getAnswers().iterator();
+
+        while (iterate.hasNext()) {
+            AnswerDetailsDTO answerDetailsDTO = iterate.next();
+            answerDetailsDTO.setUpvotes(voteService.getAnswerUpvotes(answerDetailsDTO.getId()));
+            answerDetailsDTO.setDownvotes(voteService.getAnswerDownvotes(answerDetailsDTO.getId()));
+        }
 
         questionDetailsDTO.setAnswersCount(question.getAnswers().size());
         questionDetailsDTO.setUpvotes(upvotes);

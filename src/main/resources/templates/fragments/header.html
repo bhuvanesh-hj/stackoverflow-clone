@@ -28,9 +28,13 @@
         </section>
         <section class="header-user-logout" sec:authorize="isAuthenticated()">
             <div class="header-user">
-                <img width="48" height="48" src="https://img.icons8.com/fluency/48/name--v1.png" alt="name--v1"/>
-                <p class="" th:text="${user}">
+                <a th:href="@{/users/{userId}(userId=${user.id})}">
+
+                </a><img width="48" height="48" src="https://img.icons8.com/fluency/48/name--v1.png" alt="name--v1"/>
+                <p>
+                    <a th:href="@{/users/{userId}(userId=${user.id})}" th:text="${user.username}"></a>
                 </p>
+
             </div>
 
             <form th:action="@{/users/logout}" method="post">

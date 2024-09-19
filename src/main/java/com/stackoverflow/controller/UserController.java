@@ -3,6 +3,8 @@ package com.stackoverflow.controller;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
@@ -66,7 +68,8 @@ public class UserController {
     public String getUserById(@PathVariable("id") Long userId, Model model) {
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
-        return "users/details";
+        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        return "users/profile";
     }
 
     @GetMapping("/update/{id}")
@@ -118,4 +121,14 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @GetMapping
+    public String getUsers(Model model) {
+        List<UserViewDTO> users = userService.getAllUsersWithCounts();
+        model.addAttribute("users", users);
+        model.addAttribute("questions", null);
+        model.addAttribute("tags", null);
+        model.addAttribute("loggedIn",userService.getLoggedInUser());
+
+        return "user";
+    }
 }
