@@ -1,8 +1,11 @@
 package com.stackoverflow.dto.user;
 
+import com.stackoverflow.dto.QuestionDetailsDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Set;
 
 @Setter
 @Getter

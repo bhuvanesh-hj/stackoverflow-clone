@@ -18,4 +18,8 @@ public interface AnswerService {
 
     public Boolean delete(Long answerId);
 
+    public List<AnswerDetailsDTO> getAnswersByUser(Long id);
+
+    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer);
+
 }

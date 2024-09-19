@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+    List<Question> findByAuthorId(Long userId);
 
 //    @Query("SELECT q FROM Question q " +
 //            "JOIN q.tags t " +

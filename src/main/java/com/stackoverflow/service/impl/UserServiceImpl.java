@@ -170,4 +170,6 @@ public class UserServiceImpl implements UserService {
     public List<UserViewDTO> getAllUsersWithCounts() {
         return userRepository.findAllUsersWithQuestionAndAnswerCount();
     }
+
+
 }
