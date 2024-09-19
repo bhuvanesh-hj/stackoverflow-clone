@@ -1,8 +1,6 @@
 package com.stackoverflow.dto;
 
 import com.stackoverflow.dto.user.UserDTO;
-import com.stackoverflow.entity.Answer;
-import com.stackoverflow.entity.Comment;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,7 +26,7 @@ public class QuestionDetailsDTO {
     private UserDTO authorDTO;
 
     private List<TagDTO> tags;
-    private Set<Answer> answers;
-    private Set<Comment> comments;
+    private Set<AnswerDetailsDTO> answers;
+    private Set<CommentDetailsDTO> comments;
 }
 

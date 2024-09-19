@@ -1,5 +1,6 @@
 package com.stackoverflow.dto;
 
+import com.stackoverflow.dto.user.UserDTO;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -28,8 +29,8 @@ public class AnswerDetailsDTO {
 
     private Question question;
 
-    private Set<Comment> comments = new HashSet<>();
+    private Set<CommentDetailsDTO> comments = new HashSet<>();
 
-    private User author;
+    private UserDTO author;
 
 }
