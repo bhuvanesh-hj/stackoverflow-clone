@@ -50,6 +50,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
         User user = userService.getLoggedInUser();
+        if (user == null) {
+            // Return error message or redirect to login page
+            throw new RuntimeException("User not logged in");
+        }
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);

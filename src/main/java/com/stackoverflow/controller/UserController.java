@@ -4,6 +4,7 @@ import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
