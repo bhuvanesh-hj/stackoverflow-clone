@@ -1,8 +1,8 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.dto.*;
 import com.stackoverflow.entity.*;
+
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
@@ -103,6 +103,13 @@ public class QuestionServiceImpl implements QuestionService {
 
         return getQuestionDetailsDTO(question);
     }
+
+
+
+//    @Override
+//    public List<Question> getSearchedQuestions(String keyword) {
+//        return questionRepository.searchQuestions(keyword);
+//    }
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question){
         int upvotes = 0;

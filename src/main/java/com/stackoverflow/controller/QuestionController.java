@@ -4,6 +4,7 @@ import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
@@ -129,5 +130,13 @@ public class QuestionController {
         QuestionDetailsDTO question = questionService.vote(false, questionId, userId);
         return "redirect:/questions/" + question.getId();
     }
+
+//    @GetMapping("/search")
+//    public String searchQuestions(@RequestParam String keyword){
+//
+//        List<Question> questionList = questionService.getSearchedQuestions(keyword);
+//
+//        return "questions/list";
+//    }
 }
 

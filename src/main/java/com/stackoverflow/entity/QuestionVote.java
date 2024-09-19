@@ -17,11 +17,11 @@ public class QuestionVote extends BaseEntity {
     @Column(name = "isUpvote")
     private Boolean isUpvote;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
