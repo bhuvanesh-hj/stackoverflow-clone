@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,21 +17,23 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-@Setter
+@Setter@ToString
 public class AnswerDetailsDTO {
 
     private Long Id;
 
-    private String content;
+    private String body;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private Question question;
-
     private Set<CommentDetailsDTO> comments = new HashSet<>();
 
     private UserDTO author;
+
+    private Integer upvotes = 0;
+
+    private Integer downvotes = 0;
 
 }

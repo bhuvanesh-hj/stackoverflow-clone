@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "question_votes")
+@Table(name = "question_likes")
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionVote extends BaseEntity {
@@ -17,7 +17,7 @@ public class QuestionVote extends BaseEntity {
     @Column(name = "isUpvote")
     private Boolean isUpvote;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
@@ -39,6 +39,11 @@ public class QuestionVote extends BaseEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @PrePersist
+    public void onCreate() {
+        this.isUpvote = false;
     }
 
 }

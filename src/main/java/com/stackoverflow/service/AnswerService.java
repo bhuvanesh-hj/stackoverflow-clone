@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface AnswerService {
 
-    public String createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId);
+    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId);
 
-    public Answer getAnswerById(Long answerId);
+    public AnswerDetailsDTO getAnswerById(Long answerId);
 
     public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO);
 
