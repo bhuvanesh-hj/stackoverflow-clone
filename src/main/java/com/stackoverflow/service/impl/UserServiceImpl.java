@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userUpdateDTO.getEmail());
         user.setFirstName(userUpdateDTO.getFirstName());
         user.setLastName(userUpdateDTO.getLastName());
+        user.setUsername(userUpdateDTO.getUsername());
 
         User updatedUser = userRepository.save(user);
 
@@ -150,6 +151,7 @@ public class UserServiceImpl implements UserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotAuthenticatedException("User not logged in ");
         }
+        System.out.println();
 
         return userRepository.findByUsername(authentication.getName())
                 .orElse(null);

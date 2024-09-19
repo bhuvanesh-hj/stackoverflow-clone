@@ -1,17 +1,24 @@
 /* editProfileForm.css */
 .signup-form {
-    max-width: 500px;
+    max-width: 100%; /* Form width */
     margin: 20px auto;
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .signup-form h1 {
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
+}
+
+.signup-form .form-group-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.signup-form .form-group-row .form-group {
+    width: 48%; /* Each input takes 48% of the row */
 }
 
 .signup-form .form-group {
@@ -35,7 +42,7 @@
 
 .signup-form .signup-btn {
     display: block;
-    width: 100%;
+    width: 20%; /* Button width */
     padding: 10px;
     font-size: 16px;
     background-color: #28a745;
@@ -43,6 +50,8 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 20px auto 0 auto; /* Centers the button */
+    text-align: center; /* Center the button text */
 }
 
 .signup-form .signup-btn:hover {
@@ -52,4 +61,15 @@
 .signup-form .form-footer {
     margin-top: 20px;
     text-align: center;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .signup-form .form-group-row {
+        flex-direction: column;
+    }
+
+    .signup-form .form-group-row .form-group {
+        width: 100%; /* Full width for small screens */
+    }
 }
