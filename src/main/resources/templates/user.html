@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users | Stackoverflow </title>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+    <link rel="stylesheet" href="/css/user.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
+
+<main>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
+
+    <section class="main-content">
+        <section class="main-content-header">
+            <div class="user">
+                <h2>Users</h2>
+            </div>
+            <div class="main-content-header-actions">
+                <form action="/Search" method="get">
+                    <input class="search-bar" name="searchQuery" placeholder="Filter by user" type="text"/>
+                    <button class="button" type="submit">Search</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="main-content-user-section">
+            <div class="user-card" th:each="user : ${users}">
+                <div class="user-card-content">
+                    <img src="https://img.icons8.com/fluency/48/name--v1.png" alt="User Icon" class="user-icon">
+                    <div class="user-info">
+                        <div class="user-name" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name</div>
+                        <div class="counts">
+                            <div th:text="'Questions: ' + ${user.questionCount}">Questions: 0</div>
+                            <div th:text="'Answers: ' + ${user.answerCount}">Answers: 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pagination">
+            <button class="header-btn">Prev</button>
+            <span>1/10</span>
+            <button class="header-btn">Next</button>
+        </section>
+    </section>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

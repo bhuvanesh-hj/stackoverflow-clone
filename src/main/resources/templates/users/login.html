@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user='')}"/>
+
+<div class="login-container">
+    <div class="login-form">
+        <h1>Welcome Back</h1>
+        <p class="subheading">Please log in to your account</p>
+        <form th:action="@{/authenticateTheUser}" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+            </div>
+            <span th:if="${error != null}">
+                "Something went wrong."
+            </span>
+            <div th:if="${param.error}" style="margin: 10px 0;">
+                <span style="color: red;">
+                    Invalid username or password. Please try again.
+                </span>
+            </div>
+            <button type="submit" class="login-btnn">Log In</button>
+            <div class="form-footer">
+                <p>Don't have an account? <a href="/users/register">Sign Up</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

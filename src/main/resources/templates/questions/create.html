@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask a public question - Stackoverflow</title>
+    <link rel="stylesheet" href="/css/questions/create.css">
+    <link rel="stylesheet" href="/css/footer.css"/>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#body',  // The textarea id
+            menubar: false,
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 400
+        });
+    </script>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
+
+<main class="question-main">
+    <section class="question-header">
+        <h4 class="question-heading">Ask a public question</h4>
+    </section>
+    <section class="question-form-section">
+        <form th:action="@{/questions/create}" method="post" th:object="${questionRequestDTO}">
+            <div class="input-title">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" th:field="*{title}" required>
+            </div>
+            <div class="input-body">
+                <label for="body">Body</label>
+                <textarea id="body" th:field="*{body}" name="body"></textarea>
+            </div>
+            <div class="input-tags">
+                <label for="tags">Tags (comma-separated</label>
+                <input type="text" class="tags" id="tags" name="tagsList">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>
