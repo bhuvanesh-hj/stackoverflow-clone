@@ -68,7 +68,8 @@ public class UserController {
     public String getUserById(@PathVariable("id") Long userId, Model model) {
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
-        return "users/details";
+        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        return "users/profile";
     }
 
     @GetMapping("/update/{id}")
@@ -126,7 +127,8 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("questions", null);
         model.addAttribute("tags", null);
+        model.addAttribute("loggedIn",userService.getLoggedInUser());
+
         return "user";
     }
-
 }
