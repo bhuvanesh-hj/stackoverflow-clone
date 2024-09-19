@@ -36,6 +36,11 @@ public class QuestionController {
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
+        if(userService.isUserLoggedIn()){
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        }else{
+            model.addAttribute("loggedIn", null);
+        }
         model.addAttribute("loggedIn", userService.isUserLoggedIn() ? modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class) : null);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -71,7 +76,6 @@ public class QuestionController {
         System.out.println(questionRequestDTO);
         QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
         return "redirect:/questions/" + createdQuestion.getId();
-//        return "redirect:/questions";
     }
 
     @GetMapping("/update/{id}")
