@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "answers")
@@ -31,7 +30,7 @@ public class Answer extends BaseEntity {
     private LocalDateTime updatedAt;
 
     @ManyToOne(cascade = {
-            CascadeType.ALL})
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "author_id")
     private User author;
 

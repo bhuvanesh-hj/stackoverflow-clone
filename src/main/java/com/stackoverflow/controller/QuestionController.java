@@ -1,6 +1,7 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
+import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
@@ -57,6 +58,7 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/questions?error=NotFound";
         }
+
         model.addAttribute("question", question);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -65,6 +67,8 @@ public class QuestionController {
         } else {
             model.addAttribute("loggedIn", null);
         }
+        model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
+
         return "questions/detail";
     }
 
@@ -122,7 +126,7 @@ public class QuestionController {
         }
     }
 
-   @PostMapping("/upvote/{questionId}/{userId}")
+    @PostMapping("/upvote/{questionId}/{userId}")
     public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
         voteService.upvoteQuestion(questionId, userId);
         return "redirect:/questions/" + questionId;

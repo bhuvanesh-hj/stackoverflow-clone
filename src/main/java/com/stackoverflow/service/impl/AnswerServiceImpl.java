@@ -6,6 +6,7 @@ import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.UserRepository;
@@ -13,9 +14,6 @@ import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +45,8 @@ public class AnswerServiceImpl implements AnswerService {
 
     public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId) {
 
+        if (!userService.isUserLoggedIn()) {
+            throw new UserNotAuthenticatedException("User is not logged in");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -54,17 +54,19 @@ public class AnswerServiceImpl implements AnswerService {
             throw new UsernameNotFoundException("User name not found");
         }
 
+        User user = userService.getLoggedInUser();
+
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+//        User author = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         Answer answer = modelMapper.map(answerRequestDTO, Answer.class);
 
         answer.setQuestion(question);
         answer.setCreatedAt(LocalDateTime.now());
         answer.setUpdatedAt(LocalDateTime.now());
-        answer.setAuthor(author);
+        answer.setAuthor(user);
         Answer savedAnswer = answerRepository.save(answer);
 
         return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);

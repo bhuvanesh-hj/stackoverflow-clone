@@ -11,10 +11,9 @@ public class HtmlUtils {
         Document doc = Jsoup.parse(html);
         Element body = doc.body();
 
-        String text = body.text(); // Get the plain text
+        String text = body.text();
         String truncatedText = text.length() > maxLines ? text.substring(0, maxLines) + "..." : text;
 
-        // Return truncated text wrapped in HTML tags
         return "<p>" + truncatedText + "</p>";
     }
 
@@ -22,11 +21,8 @@ public class HtmlUtils {
         Document doc = Jsoup.parse(html);
         StringBuilder formattedContent = new StringBuilder();
 
-        // Extracting different sections
-        for (Element element : doc.select("p, strong, div, code,li")) {
-//            formattedContent.append(element.outerHtml()).append("<br/><br/>"); // Adding gap between tags
-            formattedContent
-                    .append(element.outerHtml()).append("<br/></b>");
+        for (Element element : doc.select("p, div")) {
+            formattedContent.append(element.outerHtml()).append("<br></br>");
         }
 
         return formattedContent.toString();
