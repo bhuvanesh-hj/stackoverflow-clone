@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoggedInUser() {
+    public User getLoggedInUserOrNull() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotAuthenticatedException("User not logged in ");
@@ -171,5 +171,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllUsersWithQuestionAndAnswerCount();
     }
 
+    @Override
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException("User not logged in ");
+        }
+
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not found by username"));
+    }
 
 }

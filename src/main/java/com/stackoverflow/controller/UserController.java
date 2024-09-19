@@ -67,7 +67,7 @@ public class UserController {
     public String getUserById(@PathVariable("id") Long userId, Model model) {
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
-        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
         System.out.println("coming in user..");
         return "users/profile";
     }
@@ -77,7 +77,7 @@ public class UserController {
         UserDetailsDTO userDetails = userService.getUserById(userId);
         System.out.println("UserDetailsDTO from userProfile: " + userDetails);
         model.addAttribute("userDetails", userDetails);
-        model.addAttribute("loggedIn", userService.getLoggedInUser());
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
         return "users/profile";
     }
 
@@ -92,7 +92,7 @@ public class UserController {
             model.addAttribute("errors_update", errorsList);
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
-            model.addAttribute("loggedIn", userService.getLoggedInUser());
+            model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
             return "users/profile";
         }
 
@@ -103,13 +103,13 @@ public class UserController {
             model.addAttribute("error_message", "An error occurred while updating your profile.");
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
-            model.addAttribute("loggedIn", userService.getLoggedInUser());
+            model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
             return "users/profile";
         }
 
         model.addAttribute("userDetails", userService.getUserById(userId));
         model.addAttribute("loggedIn", userService.getUserById(userId));
-        System.out.println("userService.getLoggedInUser() = " + userService.getUserById(userId));
+        System.out.println("userService.getLoggedInUserOrNull() = " + userService.getUserById(userId));
 
         return "users/profile";
     }
@@ -148,7 +148,7 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("questions", null);
         model.addAttribute("tags", null);
-        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
 
         return "user";
     }

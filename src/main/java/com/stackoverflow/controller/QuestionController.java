@@ -41,7 +41,7 @@ public class QuestionController {
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
         if (userService.isUserLoggedIn()) {
-            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
@@ -61,7 +61,7 @@ public class QuestionController {
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
         if (userService.isUserLoggedIn()) {
-            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
@@ -75,7 +75,7 @@ public class QuestionController {
         }
 
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
         return "questions/create";
     }
@@ -96,7 +96,7 @@ public class QuestionController {
         }
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
         model.addAttribute("HtmlUtils", htmlUtils);
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
         return "questions/update";
     }
