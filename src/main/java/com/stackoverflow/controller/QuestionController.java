@@ -36,12 +36,11 @@ public class QuestionController {
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
-        if(userService.isUserLoggedIn()){
+        if (userService.isUserLoggedIn()) {
             model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
-        }else{
+        } else {
             model.addAttribute("loggedIn", null);
         }
-        model.addAttribute("loggedIn", userService.isUserLoggedIn() ? modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class) : null);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
 
@@ -55,6 +54,13 @@ public class QuestionController {
             return "redirect:/questions?error=NotFound";
         }
         model.addAttribute("question", question);
+        model.addAttribute("users", null);
+        model.addAttribute("tags", null);
+        if (userService.isUserLoggedIn()) {
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        } else {
+            model.addAttribute("loggedIn", null);
+        }
         return "questions/detail";
     }
 
@@ -86,6 +92,8 @@ public class QuestionController {
         }
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
         model.addAttribute("HtmlUtils", htmlUtils);
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+
         return "questions/update";
     }
 
