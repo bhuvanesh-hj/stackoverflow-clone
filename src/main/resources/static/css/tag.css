@@ -26,16 +26,16 @@ body{
 }
 
 .main-content-tags-section {
+    grid-column: 1 / -1;
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 0 20px;
-    padding: 0 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 5px;
+    margin-left: 20px;
+    padding: 0;
 }
 
 .tag-card {
-    width: 150px;
     border: 1px solid #e1e1e1;
     border-radius: 5px;
     padding: 20px;
@@ -89,4 +89,5 @@ body{
 
  h2 {
     margin-bottom: 10px;
+    font-weight: normal;
 }

@@ -1,8 +1,6 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.dto.user.UserRegistrationDTO;
-import com.stackoverflow.dto.user.UserUpdateDTO;
+import com.stackoverflow.dto.user.*;
 import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
@@ -164,5 +162,10 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<UserViewDTO> getAllUsersWithCounts() {
+        return userRepository.findAllUsersWithQuestionAndAnswerCount();
     }
 }

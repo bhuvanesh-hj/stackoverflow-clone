@@ -118,7 +118,7 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/upvote/{questionId}/{userId}")
+   @PostMapping("/upvote/{questionId}/{userId}")
     public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
         QuestionDetailsDTO question = questionService.vote(true, questionId, userId);
         return "redirect:/questions/" + question.getId();
