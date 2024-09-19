@@ -13,6 +13,8 @@ import java.util.Set;
 @Setter
 @ToString
 public class QuestionDetailsDTO {
+    boolean upvoted = false;
+    boolean downvoted = false;
     private Long id;
     private String title;
     private String body;
@@ -22,11 +24,11 @@ public class QuestionDetailsDTO {
     private Integer downvotes = 0;
     private Integer answersCount = 0;
     private Integer views;
-
     private UserDTO author;
-
     private List<TagDTO> tags;
     private Set<AnswerDetailsDTO> answers;
     private Set<CommentDetailsDTO> comments;
+
+
 }
 

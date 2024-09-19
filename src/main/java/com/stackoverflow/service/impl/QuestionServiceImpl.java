@@ -4,8 +4,11 @@ import com.stackoverflow.dto.*;
 import com.stackoverflow.entity.*;
 
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
+import com.stackoverflow.repository.UserRepository;
+import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
@@ -13,7 +16,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("questionService")
@@ -21,17 +26,23 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
     private final TagRepository tagRepository;
+    private final AnswerRepository answerRepository;
     private final ModelMapper modelMapper;
     private final UserServiceImpl userService;
     private final VoteService voteService;
+    private final UserRepository userRepository;
+    private final AnswerService answerService;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository,
-                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository, AnswerRepository answerRepository,
+                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository, AnswerService answerService) {
         this.questionRepository = questionRepository;
         this.tagRepository = tagRepository;
+        this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.voteService = voteService;
+        this.userRepository = userRepository;
+        this.answerService = answerService;
     }
 
     @Override
@@ -46,12 +57,6 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
-        QuestionDetailsDTO questionDetailsDTO = modelMapper.map(question, QuestionDetailsDTO.class);
-        List<AnswerDetailsDTO> answerDetailsList = new ArrayList<AnswerDetailsDTO>();
-
-        for (AnswerDetailsDTO answerDetailsDTO : questionDetailsDTO.getAnswers()) {
-            System.out.println(answerDetailsDTO);
-        }
         return getQuestionDetailsDTO(question);
     }
 
@@ -59,17 +64,13 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
         User user = userService.getLoggedInUser();
-        if (user == null) {
-            // Return error message or redirect to login page
-            throw new RuntimeException("User not logged in");
-        }
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);
 
         Set<Tag> tags = questionRequestDTO.getTagsList().stream()
-                .map(tagName ->tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName))
-        ).collect(Collectors.toSet());
+                .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
+                .collect(Collectors.toSet());
 
         question.setTags(tags);
 
@@ -79,7 +80,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails) {
         Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() ->  new RuntimeException("Question not found"));
+                .orElseThrow(() -> new RuntimeException("Question not found"));
 
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
@@ -94,7 +95,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Boolean deleteQuestion(Long questionId) {
         User user = userService.getLoggedInUser();
         Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() ->  new RuntimeException("Question not found"));
+                .orElseThrow(() -> new RuntimeException("Question not found"));
 
         questionRepository.deleteById(questionId);
         return true;
@@ -106,38 +107,81 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
-        QuestionVote upvote = new QuestionVote(isUpvote?true:false, question, user);
+        QuestionVote upvote = new QuestionVote(isUpvote, question, user);
         question.getQuestionVotes().add(upvote);
         Question updateQuestion = questionRepository.save(question);
 
         return getQuestionDetailsDTO(question);
     }
 
+    @Transactional
+    public void saveQuestionForUser(Long questionId) {
+        User user = userService.getLoggedInUser();
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
+        user.getQuestionsSaved().add(question);
+        question.getSavedByUsers().add(user);
 
-//    @Override
-//    public List<Question> getSearchedQuestions(String keyword) {
-//        return questionRepository.searchQuestions(keyword);
-//    }
+        userRepository.save(user);
+    }
 
-    public QuestionDetailsDTO getQuestionDetailsDTO(Question question){
+    @Override
+    public void unsaveQuestionForUser(Long questionId) {
+        User user = userService.getLoggedInUser();
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+
+        user.getQuestionsSaved().remove(question);
+        question.getSavedByUsers().remove(user);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<QuestionDetailsDTO> getQuestionsByUser(Long userId) {
+        return questionRepository.findByAuthorId(userId).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
+        return userRepository.findQuestionsSavedById(userId).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public QuestionDetailsDTO getQuestionDetailsDTO(Question question) {
         int upvotes = voteService.getQuestionUpvotes(question.getId());
         int downvotes = voteService.getQuestionDownvotes(question.getId());
+        boolean upvoted = false;
+        boolean downvoted = false;
 
         QuestionDetailsDTO questionDetailsDTO = modelMapper.map(question, QuestionDetailsDTO.class);
 
-        Iterator<AnswerDetailsDTO> iterate = questionDetailsDTO.getAnswers().iterator();
+        Set<AnswerDetailsDTO> answerDetailsDTOS = question.getAnswers().stream()
+                .map(answer -> answerService.getAnswerDetailsDTO(answer)).collect(Collectors.toSet());
 
-        while (iterate.hasNext()) {
-            AnswerDetailsDTO answerDetailsDTO = iterate.next();
-            answerDetailsDTO.setUpvotes(voteService.getAnswerUpvotes(answerDetailsDTO.getId()));
-            answerDetailsDTO.setDownvotes(voteService.getAnswerDownvotes(answerDetailsDTO.getId()));
+        if (userService.isUserLoggedIn()) {
+            User user = userService.getLoggedInUser();
+            Integer status = questionRepository.getUserVoteStatus(question.getId(), user.getId());
+            if (status != null && status == 1) {
+                upvoted = true;
+            } else if (status != null && status == 0) {
+                downvoted = true;
+            }
         }
 
-        questionDetailsDTO.setAnswersCount(question.getAnswers().size());
+        questionDetailsDTO.setAnswers(answerDetailsDTOS);
+        questionDetailsDTO.setAnswersCount(answerRepository.countByQuestionId(questionDetailsDTO.getId()));
         questionDetailsDTO.setUpvotes(upvotes);
         questionDetailsDTO.setDownvotes(downvotes);
+        questionDetailsDTO.setUpvoted(upvoted);
+        questionDetailsDTO.setDownvoted(downvoted);
 
         return questionDetailsDTO;
     }
+
 }

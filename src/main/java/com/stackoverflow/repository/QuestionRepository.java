@@ -21,4 +21,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 //            "OR LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
 //            "OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 //    List<Question> searchQuestions(@Param("keyword") String keyword);
+
+    @Query("SELECT CASE " +
+            "WHEN qv.isUpvote = true THEN 1 " +
+            "WHEN qv.isUpvote = false THEN 0 " +
+            "ELSE -1 " +
+            "END " +
+            "FROM QuestionVote qv " +
+            "WHERE qv.question.id = :questionId AND qv.user.id = :userId")
+    Integer getUserVoteStatus(@Param("questionId") Long questionId, @Param("userId") Long userId);
 }

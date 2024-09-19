@@ -1,9 +1,7 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
-import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -22,13 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +50,7 @@ public class AnswerServiceImpl implements AnswerService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        if(username == null){
+        if (username == null) {
             throw new UsernameNotFoundException("User name not found");
         }
 
@@ -98,7 +90,7 @@ public class AnswerServiceImpl implements AnswerService {
         existingAnswer.setUpdatedAt(LocalDateTime.now());
 
         Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new RuntimeException("Question not found"));
         existingAnswer.setQuestion(question);
 
         Answer updatedAnswer = answerRepository.save(existingAnswer);
@@ -128,13 +120,27 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer){
+    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer) {
+        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(answer, AnswerDetailsDTO.class);
+        boolean upvoted = false;
+        boolean downvoted = false;
         int upvotes = voteService.getAnswerUpvotes(answer.getId());
         int downvotes = voteService.getAnswerDownvotes(answer.getId());
 
-        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(answer, AnswerDetailsDTO.class);
+        if (userService.isUserLoggedIn()) {
+            User user = userService.getLoggedInUser();
+            Integer status = answerRepository.getUserVoteStatus(answer.getId(), user.getId());
+            if (status != null && status == 1) {
+                upvoted = true;
+            } else if (status != null && status == 0) {
+                downvoted = true;
+            }
+        }
+
         answerDetailsDTO.setUpvotes(upvotes);
         answerDetailsDTO.setDownvotes(downvotes);
+        answerDetailsDTO.setUpvoted(upvoted);
+        answerDetailsDTO.setDownvoted(downvoted);
 
         return answerDetailsDTO;
     }
