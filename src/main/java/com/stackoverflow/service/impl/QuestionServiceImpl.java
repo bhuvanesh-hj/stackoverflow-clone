@@ -2,8 +2,9 @@ package com.stackoverflow.service.impl;
 
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
-import com.stackoverflow.entity.*;
-import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.Tag;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
 import com.stackoverflow.service.QuestionService;
@@ -32,24 +33,27 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDetailsDTO> getAllQuestions() {
-        return questionRepository.findAll().stream()
-                .map(question -> getQuestionDetailsDTO(question))
-                .collect(Collectors.toList());
+    public List<Question> getAllQuestions() {
+        return questionRepository.findAll();
     }
 
     @Override
     public QuestionDetailsDTO getQuestionById(Long questionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-
-        return getQuestionDetailsDTO(question);
+        QuestionDetailsDTO q = modelMapper.map(questionRepository.findById(questionId), QuestionDetailsDTO.class);
+        System.out.println(q);
+        return q;
+        //return modelMapper.map(questionRepository.findById(questionId), QuestionDetailsDTO.class);
     }
 
     @Override
     @Transactional
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
+        // Validate the user
         User user = userService.getLoggedInUser();
+        if (user == null) {
+            // Return error message or redirect to login page
+            throw new RuntimeException("User not logged in");
+        }
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);
@@ -61,12 +65,17 @@ public class QuestionServiceImpl implements QuestionService {
         question.setTags(tags);
 
         Question updatedQuestion = questionRepository.save(question);
-        return getQuestionDetailsDTO(updatedQuestion);
+        return modelMapper.map(updatedQuestion, QuestionDetailsDTO.class);
     }
 
     public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails) {
-        Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() ->  new RuntimeException("Question not found"));
+        Optional<Question> existingQuestionOpt = questionRepository.findById(questionId);
+
+        if (!existingQuestionOpt.isPresent()) {
+            throw new RuntimeException("Question not found");
+        }
+
+        Question existingQuestion = existingQuestionOpt.get();
 
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
@@ -74,50 +83,18 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
 
-        return getQuestionDetailsDTO(updatedQuestion);
+        return modelMapper.map(updatedQuestion, QuestionDetailsDTO.class);
     }
 
     @Override
     public Boolean deleteQuestion(Long questionId) {
-        User user = userService.getLoggedInUser();
-        Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() ->  new RuntimeException("Question not found"));
+        Optional<Question> existingQuestion = questionRepository.findById(questionId);
+
+        if (!existingQuestion.isPresent()) {
+            return false;
+        }
 
         questionRepository.deleteById(questionId);
         return true;
-    }
-
-    @Override
-    public QuestionDetailsDTO vote(Boolean isUpvote, Long questionId, Long userId) {
-        User user = userService.getLoggedInUser();
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-
-        QuestionVote upvote = new QuestionVote(isUpvote?true:false, question, user);
-        question.getQuestionVotes().add(upvote);
-        Question updateQuestion = questionRepository.save(question);
-
-        return getQuestionDetailsDTO(question);
-    }
-
-    public QuestionDetailsDTO getQuestionDetailsDTO(Question question){
-        int upvotes = 0;
-        int downvotes = 0;
-
-        for(QuestionVote questionVote : question.getQuestionVotes()){
-            if(questionVote.getIsUpvote()){
-                ++upvotes;
-            }else{
-                ++downvotes;
-            }
-        }
-
-        QuestionDetailsDTO questionDetailsDTO = modelMapper.map(question, QuestionDetailsDTO.class);
-
-        questionDetailsDTO.setAnswersCount(question.getAnswers().size());
-        questionDetailsDTO.setUpvotes(upvotes);
-        questionDetailsDTO.setDownvotes(downvotes);
-
-        return questionDetailsDTO;
     }
 }
