@@ -12,7 +12,7 @@
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn.username : ''})}"/>
 
 <main>
-    <div th:replace="~{fragments/sidebar :: sidebar}"/>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${question},tags=${tags},users=${users})}"/>
 
     <section class="main-content">
         <section class="main-content-header">
