@@ -23,7 +23,7 @@ public class QuestionDetailsDTO {
     private Integer answersCount = 0;
     private Integer views;
 
-    private UserDTO authorDTO;
+    private UserDTO author;
 
     private List<TagDTO> tags;
     private Set<AnswerDetailsDTO> answers;
