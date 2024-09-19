@@ -17,7 +17,7 @@ public class AnswerVote extends BaseEntity{
     @Column(name = "isUpvote")
     private Boolean isUpvote;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", nullable = false)
     private Answer answer;
 
