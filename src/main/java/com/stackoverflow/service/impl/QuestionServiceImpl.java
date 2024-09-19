@@ -7,6 +7,7 @@ import com.stackoverflow.entity.*;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
+import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
@@ -25,14 +26,16 @@ public class QuestionServiceImpl implements QuestionService {
     private final ModelMapper modelMapper;
     private final UserServiceImpl userService;
     private final VoteService voteService;
+    private final UserRepository userRepository;
 
     public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository,
-                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService) {
+                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository) {
         this.questionRepository = questionRepository;
         this.tagRepository = tagRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.voteService = voteService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -114,6 +117,44 @@ public class QuestionServiceImpl implements QuestionService {
         return getQuestionDetailsDTO(question);
     }
 
+    @Transactional
+    public void saveQuestionForUser(Long questionId) {
+        User user = userService.getLoggedInUser();
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+
+        user.getQuestionsSaved().add(question);
+        question.getSavedByUsers().add(user);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unsaveQuestionForUser(Long questionId) {
+        User user = userService.getLoggedInUser();
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+
+        user.getQuestionsSaved().remove(question);
+        question.getSavedByUsers().remove(user);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<QuestionDetailsDTO> getQuestionsByUser(Long userId) {
+        return questionRepository.findByAuthorId(userId).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
+        return userRepository.findQuestionsSavedById(userId).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question){
         int upvotes = voteService.getQuestionUpvotes(question.getId());
         int downvotes = voteService.getQuestionDownvotes(question.getId());
@@ -134,4 +175,5 @@ public class QuestionServiceImpl implements QuestionService {
 
         return questionDetailsDTO;
     }
+
 }

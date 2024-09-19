@@ -3,6 +3,7 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
+import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -24,8 +25,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -114,6 +118,25 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.deleteById(answerId);
         return true;
 
+    }
+
+    @Override
+    public List<AnswerDetailsDTO> getAnswersByUser(Long userId) {
+        return answerRepository.findByAuthorId(userId).stream()
+                .map(answer -> getAnswerDetailsDTO(answer))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer){
+        int upvotes = voteService.getAnswerUpvotes(answer.getId());
+        int downvotes = voteService.getAnswerDownvotes(answer.getId());
+
+        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(answer, AnswerDetailsDTO.class);
+        answerDetailsDTO.setUpvotes(upvotes);
+        answerDetailsDTO.setDownvotes(downvotes);
+
+        return answerDetailsDTO;
     }
 
 }
