@@ -153,6 +153,18 @@ public class QuestionController {
         }
     }
 
+    @PostMapping("/save/{id}")
+    public String saveQuestion(@PathVariable("id") Long questionId) {
+        questionService.saveQuestionForUser(questionId);
+        return "redirect:/questions/" + questionId;
+    }
+
+    @PostMapping("/unsave/{id}")
+    public String unsaveQuestion(@PathVariable("id") Long questionId) {
+        questionService.unsaveQuestionForUser(questionId);
+        return "redirect:/questions/" + questionId;
+    }
+
     @PostMapping("/{questionId}/upvote")
     public String upVoteQuestion(@PathVariable("questionId") Long questionId) {
         try {

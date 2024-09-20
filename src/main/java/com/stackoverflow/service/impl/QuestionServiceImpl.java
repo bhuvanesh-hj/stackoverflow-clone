@@ -166,7 +166,14 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
-        return userRepository.findQuestionsSavedById(userId).stream()
+        return questionRepository.findBySavedByUsers_Id(userId).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id) {
+        return questionRepository.findByAnswers_AuthorId(id).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
