@@ -4,18 +4,20 @@ import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.entity.Answer;
+import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
+import com.stackoverflow.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,30 +25,25 @@ import java.util.stream.Collectors;
 
 
 @Controller
-@RequestMapping("/{questionId}/answers")
+@RequestMapping("/questions/{questionId}/answers")
 public class AnswerController {
 
     private final AnswerService answerService;
     private final QuestionService questionService;
     private final VoteService voteService;
+    private final UserServiceImpl userService;
+    private final ModelMapper modelMapper;
 
-
-    @Autowired
-    public AnswerController(AnswerService answerService, QuestionService questionService, VoteService voteService) {
+    public AnswerController(AnswerService answerService, QuestionService questionService,
+                            VoteService voteService, UserServiceImpl userService,
+                            ModelMapper modelMapper) {
         this.answerService = answerService;
         this.questionService = questionService;
         this.voteService = voteService;
+        this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/add-answer")
-    public String showAnswerForm(Model model,@PathVariable Long questionId){
-
-        QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
-
-        model.addAttribute("answerDTO", new AnswerDetailsDTO());
-        model.addAttribute("question",questionDetailsDTO);
-        return "answer/create";
-    }
 
     @PostMapping("/saveAnswer")
     public String saveAnswer(
@@ -57,61 +54,93 @@ public class AnswerController {
 
         List<String> errorsList = new ArrayList<>();
 
+        if (!userService.isUserLoggedIn()) {
+            return "redirect:/users/login";
+        }
+
         if (result.hasErrors()) {
             errorsList = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
-            model.addAttribute("errors_register", errorsList);
+            model.addAttribute("errors_answers", errorsList);
 
             QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
             model.addAttribute("question", questionDetailsDTO);
 
-            return "answer/create";
+            return "redirect:/questions/" + questionId;
         }
 
         try {
             AnswerDetailsDTO answerDetailsDTO = answerService.createAnswer(answerRequestDTO, questionId);
-            String formattedTime = StackoverflowCloneApplication.formatTime(answerDetailsDTO.getCreatedAt());
-            model.addAttribute("formattedTime", formattedTime);
-
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
         } catch (Exception e) {
             errorsList.add(e.getMessage());
-            model.addAttribute("errors_register", errorsList);
-
+            model.addAttribute("errors_answers", errorsList);
             QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
             model.addAttribute("question", questionDetailsDTO);
-            return "answer/create";
+
+            return "redirect:/questions/" + questionId;
         }
-        return "redirect:/question/view/" + questionId;
+
+        return "redirect:/questions/" + questionId;
     }
 
-    @GetMapping("/editAnswer{answerId}")
-    public String editAnswer(@PathVariable Long answerId,Model model){
+    @GetMapping("/{answerId}/editAnswer")
+    public String editAnswer(@PathVariable Long answerId,
+                             @PathVariable("questionId") Long questionId,
+                             Model model) {
+        QuestionDetailsDTO question = questionService.getQuestionById(questionId);
         AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
-        model.addAttribute("answer",answerDetailsDTO);
-        return "answer/edit";
+
+        if (!userService.isUserLoggedIn()) {
+            return "redirect:/users/login";
+        } else if (question == null) {
+            throw new ResourceNotFoundException("Question not found");
+        } else if (answerDetailsDTO == null) {
+            throw new ResourceNotFoundException("Answer not found");
+        } else if (!answerDetailsDTO.getAuthor().getUsername().equals(userService.getLoggedInUser().getUsername())) {
+            throw new UserNotAuthenticatedException("You are not authorized to edit this answer");
+        }
+
+        model.addAttribute("question", question);
+        model.addAttribute("users", null);
+        model.addAttribute("tags", null);
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("updatingAnswer", answerDetailsDTO);
+
+        return "questions/detail";
     }
 
-    @PostMapping("/updateAnswer/{answerId}")
+    @PostMapping("/{answerId}/updateAnswer")
     public String updateAnswer(
             @PathVariable Long answerId,
-            @RequestParam Long questionId,
+            @PathVariable Long questionId,
             @Valid @ModelAttribute("answerRequestDTO") AnswerRequestDTO answerRequestDTO,
             BindingResult result,
             Model model) {
 
+        if (!userService.isUserLoggedIn()) {
+            return "redirect:/users/login";
+        }
+
+        QuestionDetailsDTO question = questionService.getQuestionById(questionId);
         List<String> errorsList = new ArrayList<>();
 
         if (result.hasErrors()) {
             errorsList = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
-            model.addAttribute("error_update", errorsList);
+            model.addAttribute("errors_answers", errorsList);
 
             AnswerDetailsDTO existingAnswer = answerService.getAnswerById(answerId);
-            model.addAttribute("answer", existingAnswer);
+            model.addAttribute("question", question);
+            model.addAttribute("users", null);
+            model.addAttribute("tags", null);
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+            model.addAttribute("updatingAnswer", existingAnswer);
 
-            return "answer/edit";
+            return "questions/detail";
         }
 
         try {
@@ -123,21 +152,21 @@ public class AnswerController {
 
         } catch (ResourceNotFoundException e) {
             errorsList.add(e.getMessage());
-            model.addAttribute("error_update", errorsList);
+            model.addAttribute("errors_answers", errorsList);
 
             AnswerDetailsDTO existingAnswer = answerService.getAnswerById(answerId);
             model.addAttribute("answer", existingAnswer);
 
-            return "answer/edit";
+            return "questions/detail";
         }
 
-        return "redirect:/question/view/" + questionId;
+        return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/delete{answerId}")
-    public String deleteAnswer(@PathVariable Long answerId,@PathVariable Long questionId){
+    @PostMapping("/{answerId}/deleteAnswer")
+    public String deleteAnswer(@PathVariable Long answerId, @PathVariable Long questionId) {
         answerService.delete(answerId);
-        return "redirect:/question/view" + questionId;
+        return "redirect:/questions/" + questionId;
     }
 
     @PostMapping("/upvote/{answerId}/{userId}")

@@ -28,4 +28,6 @@ public interface UserService {
     public List<UserViewDTO> getAllUsersWithCounts();
 
     public Boolean isUserLoggedIn();
+
+    public User getLoggedInUserOrNull();
 }

@@ -4,7 +4,6 @@ import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
-import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
@@ -68,32 +67,54 @@ public class UserController {
     public String getUserById(@PathVariable("id") Long userId, Model model) {
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
-        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
+        System.out.println("coming in user..");
         return "users/profile";
     }
 
-    @GetMapping("/update/{id}")
-    public String updateUserForm(@PathVariable("id") Long userId, Model model) {
+    @GetMapping("/profile/{id}")
+    public String userProfile(@PathVariable("id") Long userId, Model model) {
         UserDetailsDTO userDetails = userService.getUserById(userId);
+        System.out.println("UserDetailsDTO from userProfile: " + userDetails);
         model.addAttribute("userDetails", userDetails);
-        return "users/update";
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        return "users/profile";
     }
 
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") Long userId,
                              @Valid @ModelAttribute("userRegistrationDTO") UserUpdateDTO userUpdateDTO,
                              BindingResult bindingResult, Model model) {
-        List<String> errorsList = new ArrayList<>();
         if (bindingResult.hasErrors()) {
-            errorsList = bindingResult.getFieldErrors().stream()
+            List<String> errorsList = bindingResult.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
             model.addAttribute("errors_update", errorsList);
-            return "users/update";
+            UserDetailsDTO userDetails = userService.getUserById(userId);
+            model.addAttribute("userDetails", userDetails);
+            model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+            return "users/profile";
         }
-        userService.updateUser(userId, userUpdateDTO);
-        return "redirect:/users/" + userId;
+
+        try {
+            userService.updateUser(userId, userUpdateDTO);
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the exception
+            model.addAttribute("error_message", "An error occurred while updating your profile.");
+            UserDetailsDTO userDetails = userService.getUserById(userId);
+            model.addAttribute("userDetails", userDetails);
+            model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+            return "users/profile";
+        }
+
+        model.addAttribute("userDetails", userService.getUserById(userId));
+        model.addAttribute("loggedIn", userService.getUserById(userId));
+        System.out.println("userService.getLoggedInUserOrNull() = " + userService.getUserById(userId));
+
+        return "users/profile";
     }
+
+
 
     @GetMapping("/change-password/{id}")
     public String changePasswordForm(@PathVariable("id") Long userId, Model model) {
@@ -127,8 +148,9 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("questions", null);
         model.addAttribute("tags", null);
-        model.addAttribute("loggedIn",userService.getLoggedInUser());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
 
         return "user";
     }
+
 }

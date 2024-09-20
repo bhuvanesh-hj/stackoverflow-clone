@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userUpdateDTO.getEmail());
         user.setFirstName(userUpdateDTO.getFirstName());
         user.setLastName(userUpdateDTO.getLastName());
+        user.setUsername(userUpdateDTO.getUsername());
 
         User updatedUser = userRepository.save(user);
 
@@ -145,11 +146,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getLoggedInUser() {
+    public User getLoggedInUserOrNull() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotAuthenticatedException("User not logged in ");
         }
+        System.out.println();
 
         return userRepository.findByUsername(authentication.getName())
                 .orElse(null);
@@ -168,4 +170,16 @@ public class UserServiceImpl implements UserService {
     public List<UserViewDTO> getAllUsersWithCounts() {
         return userRepository.findAllUsersWithQuestionAndAnswerCount();
     }
+
+    @Override
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException("User not logged in ");
+        }
+
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not found by username"));
+    }
+
 }

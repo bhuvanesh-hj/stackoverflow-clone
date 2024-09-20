@@ -18,4 +18,16 @@ public interface QuestionService {
     public Boolean deleteQuestion(Long questionId);
 
     public QuestionDetailsDTO  vote(Boolean isUpvote, Long questionId, Long userId);
+
+    public void saveQuestionForUser(Long questionId);
+
+    public void unsaveQuestionForUser(Long questionId);
+
+    public List<QuestionDetailsDTO> getQuestionsByUser(Long id);
+
+    public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long id);
+
+//    public List<Question> getSearchedQuestions(String keyword);
+
+    public QuestionDetailsDTO getQuestionDetailsDTO(Question question);
 }

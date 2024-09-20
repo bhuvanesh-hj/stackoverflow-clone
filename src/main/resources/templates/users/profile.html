@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/sidebar.css"/>
     <link rel="stylesheet" href="/css/footer.css"/>
     <link rel="stylesheet" href="/css/users/profile.css"/>
+    <link rel="stylesheet" href="/css/users/editProfileForm.css"/>
 </head>
 <body>
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
@@ -23,10 +24,48 @@
                 <div class="profile-info">
                     <h1 th:text="${loggedIn.username}"></h1>
                 </div>
-                <div class="profile-actions">
-                    <button>Edit Profile</button>
+                <div id="editBtn" class="profile-actions">
+                    <button type="button" onclick="toggleForm()">Edit Profile</button>
                 </div>
             </div>
+
+
+
+
+
+            <div id="updateForm" class="signup-form" style="display: none;">
+                <h1>Update Your Profile</h1>
+                <form th:action="@{/users/update/{id}(id=${userDetails.id})}" method="post" th:object="${userDetails}">
+
+                    <!-- First Name and Last Name in one row -->
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="signupFirstName">First Name</label>
+                            <input type="text" id="signupFirstName" name="firstName" th:field="*{firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupLastName">Last Name</label>
+                            <input type="text" id="signupLastName" name="lastName" th:field="*{lastName}" required>
+                        </div>
+                    </div>
+
+                    <!-- Email and Username in one row -->
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="signupEmail">Email</label>
+                            <input type="email" id="signupEmail" name="email" th:field="*{email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupUsername">Username</label>
+                            <input type="text" id="signupUsername" name="username" th:field="*{username}" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="signup-btn">Update Profile</button>
+                </form>
+            </div>
+
+
 
             <!-- Profile Content: Questions & Answers -->
             <div class="profile-content">
@@ -93,4 +132,15 @@
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
 </body>
+<script>
+    function toggleForm() {
+        var form = document.getElementById('updateForm');
+        // Check the current display style and toggle between 'none' and 'block'
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block'; // Show the form
+        } else {
+            form.style.display = 'none'; // Hide the form
+        }
+    }
+</script>
 </html>

@@ -1,9 +1,11 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
+import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
@@ -40,7 +42,7 @@ public class QuestionController {
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
         if (userService.isUserLoggedIn()) {
-            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
@@ -60,10 +62,12 @@ public class QuestionController {
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
         if (userService.isUserLoggedIn()) {
-            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
+        model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
+
         return "questions/detail";
     }
 
@@ -74,7 +78,7 @@ public class QuestionController {
         }
 
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
         return "questions/create";
     }
@@ -95,7 +99,7 @@ public class QuestionController {
         }
         model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
         model.addAttribute("HtmlUtils", htmlUtils);
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
         return "questions/update";
     }
@@ -121,16 +125,40 @@ public class QuestionController {
         }
     }
 
-   @PostMapping("/upvote/{questionId}/{userId}")
-    public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        voteService.upvoteQuestion(questionId, userId);
+    @PostMapping("/{questionId}/upvote")
+    public String upVoteQuestion(@PathVariable("questionId") Long questionId,
+                                 @PathVariable("userId") Long userId) {
+        try {
+            voteService.upvoteQuestion(questionId, userId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/downvote/{questionId}/{userId}")
-    public String downVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question = questionService.vote(false, questionId, userId);
-        return "redirect:/questions/" + question.getId();
+    @PostMapping("/{questionId}/downvote/")
+    public String downVoteQuestion(@PathVariable("questionId") Long questionId,
+                                   @PathVariable("userId") Long userId) {
+        try {
+            voteService.downvoteQuestion(questionId, userId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
+        return "redirect:/questions/" + questionId;
     }
+
+//    @GetMapping("/search")
+//    public String searchQuestions(@RequestParam String keyword){
+//
+//        List<Question> questionList = questionService.getSearchedQuestions(keyword);
+//
+//        return "questions/list";
+//    }
 }
 

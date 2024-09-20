@@ -1,6 +1,5 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.entity.Answer;
@@ -14,18 +13,12 @@ import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -50,25 +43,17 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        if(username == null){
-            throw new UsernameNotFoundException("User name not found");
-        }
+        User user = userService.getLoggedInUser();
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         Answer answer = modelMapper.map(answerRequestDTO, Answer.class);
 
         answer.setQuestion(question);
         answer.setCreatedAt(LocalDateTime.now());
         answer.setUpdatedAt(LocalDateTime.now());
-        answer.setAuthor(author);
+        answer.setAuthor(user);
         Answer savedAnswer = answerRepository.save(answer);
 
         return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);
@@ -94,7 +79,7 @@ public class AnswerServiceImpl implements AnswerService {
         existingAnswer.setUpdatedAt(LocalDateTime.now());
 
         Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new RuntimeException("Question not found"));
         existingAnswer.setQuestion(question);
 
         Answer updatedAnswer = answerRepository.save(existingAnswer);
@@ -114,6 +99,39 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.deleteById(answerId);
         return true;
 
+    }
+
+    @Override
+    public List<AnswerDetailsDTO> getAnswersByUser(Long userId) {
+        return answerRepository.findByAuthorId(userId).stream()
+                .map(answer -> getAnswerDetailsDTO(answer))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer) {
+        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(answer, AnswerDetailsDTO.class);
+        boolean upvoted = false;
+        boolean downvoted = false;
+        int upvotes = voteService.getAnswerUpvotes(answer.getId());
+        int downvotes = voteService.getAnswerDownvotes(answer.getId());
+
+        if (userService.isUserLoggedIn()) {
+            User user = userService.getLoggedInUser();
+            Integer status = answerRepository.getUserVoteStatus(answer.getId(), user.getId());
+            if (status != null && status == 1) {
+                upvoted = true;
+            } else if (status != null && status == 0) {
+                downvoted = true;
+            }
+        }
+
+        answerDetailsDTO.setUpvotes(upvotes);
+        answerDetailsDTO.setDownvotes(downvotes);
+        answerDetailsDTO.setUpvoted(upvoted);
+        answerDetailsDTO.setDownvoted(downvoted);
+
+        return answerDetailsDTO;
     }
 
 }
