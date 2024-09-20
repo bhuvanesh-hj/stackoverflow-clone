@@ -34,6 +34,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(length = 1000)
     private String profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER,

@@ -6,8 +6,6 @@ import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.Comment;
-import com.stackoverflow.entity.Question;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
@@ -23,9 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -80,7 +76,6 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/questions?error=NotFound";
         }
-        System.out.println(question);
         model.addAttribute("question", question);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -228,7 +223,7 @@ public class QuestionController {
         Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page, size, sort);
 
         model.addAttribute("questions", questionPage.getContent());
-        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", questionPage.getTotalPages());
         model.addAttribute("size", size);

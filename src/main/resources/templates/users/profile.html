@@ -20,7 +20,9 @@
         <div class="profile-container">
             <div class="profile-header">
                 <div class="profile-image">
-                    <img width="148" height="148" th:src="${userDetails.profilePicture != null ? userDetails.profilePicture : '/images/profile.png'}" alt="Profile Picture">
+                    <img width="148" height="148"
+                         th:src="${userDetails.profilePicture != null ? userDetails.profilePicture : '/images/profile.png'}"
+                         alt="Profile Picture">
                 </div>
                 <div class="profile-info">
                     <h1 th:text="${userDetails.username}"></h1>
@@ -35,7 +37,16 @@
             <div id="updateForm" class="signup-form" style="display: none;">
                 <h1>Update Your Profile</h1>
                 <form th:action="@{/users/update/{id}(id=${userDetails.id})}" method="post" th:object="${userDetails}">
-                    <!-- Email and Username in one row -->
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="signupEmail">FirstName</label>
+                            <input type="text" id="firstName" name="firstname" th:field="*{firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupUsername">LastName</label>
+                            <input type="text" id="lastname" name="lastname" th:field="*{lastName}" required>
+                        </div>
+                    </div>
                     <div class="form-group-row">
                         <div class="form-group">
                             <label for="signupEmail">Email</label>
@@ -43,10 +54,16 @@
                         </div>
                         <div class="form-group">
                             <label for="signupUsername">Username</label>
-                            <input type="text" id="signupUsername" name="username" th:field="*{username}" required>
+                            <input type="text" id="signupUsername" name="username"
+                                   th:value="${userDetails.username}" th:field="*{username}"
+                                   readonly>
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <label for="signupUsername">Add Profile picture link</label>
+                        <input type="text" id="profilePicture" name="profilePicture" th:field="*{profilePicture}"
+                        >
+                    </div>
                     <button type="submit" class="signup-btn">Update Profile</button>
                 </form>
             </div>
@@ -76,7 +93,7 @@
 
             <!-- Full-width Saved Questions Section -->
             <div class="saved-questions">
-                <h2>Saved Questions</h2>
+                <h2 class="section-heading">Saved Questions</h2>
                 <div class="saved-list" th:each="savedQuestion : ${saved}">
                     <a th:href="@{/questions/{id}(id=${savedQuestion.id})}">
                         <span th:text="${savedQuestion.title}"></span>
@@ -92,11 +109,10 @@
 <script>
     function toggleForm() {
         var form = document.getElementById('updateForm');
-        // Check the current display style and toggle between 'none' and 'block'
         if (form.style.display === 'none' || form.style.display === '') {
-            form.style.display = 'block'; // Show the form
+            form.style.display = 'block';
         } else {
-            form.style.display = 'none'; // Hide the form
+            form.style.display = 'none';
         }
     }
 </script>

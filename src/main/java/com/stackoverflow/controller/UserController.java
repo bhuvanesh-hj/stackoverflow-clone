@@ -122,25 +122,24 @@ public class UserController {
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
             model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-            return "users/profile";
+
+            return "redirect:/users/" + userId;
         }
 
         try {
             userService.updateUser(userId, userUpdateDTO);
         } catch (Exception e) {
-            e.printStackTrace(); // Log the exception
             model.addAttribute("error_message", "An error occurred while updating your profile.");
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
             model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-            return "users/profile";
+            return "redirect:/users/" + userId;
         }
 
         model.addAttribute("userDetails", userService.getUserById(userId));
         model.addAttribute("loggedIn", userService.getUserById(userId));
-        System.out.println("userService.getLoggedInUserOrNull() = " + userService.getUserById(userId));
 
-        return "users/profile";
+        return "redirect:/users/" + userId;
     }
 
 
