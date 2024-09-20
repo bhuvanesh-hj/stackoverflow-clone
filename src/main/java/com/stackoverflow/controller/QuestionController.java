@@ -131,6 +131,7 @@ public class QuestionController {
         return "questions/create";
     }
 
+
     @PostMapping("/update/{id}")
     public String updateQuestion(@PathVariable("id") Long questionId,
                                  @ModelAttribute("questionRequestDTO") QuestionRequestDTO updatedQuestionDetails,
@@ -140,6 +141,7 @@ public class QuestionController {
         updatedQuestionDetails.setUpdatedAt(LocalDateTime.now());
         String formattedTime = StackoverflowCloneApplication.formatTime(updatedQuestionDetails.getUpdatedAt());
         model.addAttribute("formattedTime", formattedTime);
+
         return "redirect:/questions/" + questionId;
     }
 

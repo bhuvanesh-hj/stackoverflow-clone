@@ -118,11 +118,10 @@
                     </section>
                 </section>
             </section>
-            <section style="width: 100%;">
-                <p class="answer-heading"
-                   th:text="${question.answers.size() > 1 ? question.answers.size() + ' Answers' : question.answers.size() + ' Answer'}"></p>
-                <section th:each="answer : ${question.answers}" class="answer-section">
-                    <section class="qs-side answer">
+            <section>
+                <p class="answer-heading">1 Answer</p>
+                <section class="answer-section">
+                    <section class="qs-side">
                         <section class="qs-like">
                         <span class="qs-like-btn">
                             <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
@@ -147,18 +146,14 @@
                         </section>
                     </section>
                     <section class="qs-detail-content">
-                        <div style="width: 100%; min-width: 98%;">
-                            <p th:utext="${@htmlUtils.extractFormattedContent(answer.body)}"></p>
-                        </div>
-                        <section class="answer-section-act">
-                            <section class="qs-actions"
-                                     th:if="${loggedIn != null && answer.author.username.equals(loggedIn.username)}">
-                                <a style="text-decoration: none;color: #636B74;"
-                                   th:href="@{/questions/{questionId}/answers/{answerId}/editAnswer(questionId=${question.id},answerId=${answer.id})}">Edit</a>
-                                <form th:action="@{/questions/{questionId}/answers/{answerId}/deleteAnswer(questionId=${question.id},answerId=${answer.id})}"
-                                      method="post">
-                                    <input type="submit" class="ans-delete-btn" th:value="Delete"/>
-                                </form>
+                        <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
+                        <section class="qs-tags-section">
+                            <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
+                        </section>
+                        <section>
+                            <section class="qs-actions">
+                                <a>Edit</a>
+                                <a>Delete</a>
                             </section>
                             <section class="qs-actions ans-details">
                                 <p th:text="'answered ' + ${answer.createdAt}"></p>
@@ -166,8 +161,22 @@
                             </section>
                         </section>
                         <section class="qs-comment-section">
-                            <!--                            <p th:if="{answer.comments.size() > 0}" class="qs-comment"/>-->
-                            <!--                            </p>-->
+<!--                            <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a-->
+<!--                                bridge-->
+<!--                                or-->
+<!--                                temporary table to maintain the relation.. The you can many to one and one to many-->
+<!--                                relations-->
+<!--                                to-->
+<!--                                this temp table. Eg: if you want many to many relation between table A and B, have a-->
+<!--                                temp-->
+<!--                                table-->
+<!--                                AB which will have primary keys from both tables. Then you can have many to one relation-->
+<!--                                between-->
+<!--                                table A and AB, B and AB. –-->
+<!--                                Arv-->
+<!--                                CommentedMar 12, 2022 at 0:14-->
+<!--                            </p>-->
+
                             <p class="qs-comment-add">
                                 <a>
                                     Add a comment
@@ -222,8 +231,6 @@
     </section>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
-
-</body>
 <script>
     function submitForm(formId) {
         document.getElementById(formId).submit();
