@@ -10,11 +10,11 @@
     <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '#body',  // The textarea id
+            selector: '.body',  // The textarea id
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
             toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            height: 400
+            height: 350
         });
     </script>
 </head>
@@ -42,15 +42,24 @@
             <section class="question-section">
                 <section class="qs-side">
                     <section class="qs-like">
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
-                        </span>
-                        <span class="qs-like-count">2,345</span>
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
-                        </span>
+                        <form th:action="@{/questions/{questionId}/upvote(questionId=${question.id})}" method="post">
+                            <button type="submit" th:class=" ${question.upvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 12h16L9 4z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                        <span class="qs-like-count" th:text="${question.upvotes - question.downvotes}"></span>
+                        <form th:action="@{/questions/{questionId}/downvote(questionId=${question.id})}" method="post">
+                            <button type="submit"
+                                    th:class=" ${question.downvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 6h16l-8 8z"></path>
+                                </svg>
+                            </button>
+                        </form>
                     </section>
                     <section class="qs-save">
                         <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
@@ -64,12 +73,10 @@
                     </section>
                 </section>
                 <section class="qs-detail-content">
-
                     <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
                     <section class="qs-tags-section">
                         <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
                     </section>
-
                     <section>
                         <section class="qs-actions">
                             <a href="#" class="link-style"
@@ -92,27 +99,16 @@
                                 <input type="hidden" name="_method" value="delete"/>
                             </form>
                         </section>
-
                         <section>
-
+                            <section class="qs-actions ans-details qs-details">
+                                <p th:text="'asked ' + ${#temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                <p th:text="'by ' + ${question.author.username}"></p>
+                            </section>
                         </section>
                     </section>
                     <section class="qs-comment-section">
-                        <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
-                            bridge
-                            or
-                            temporary table to maintain the relation.. The you can many to one and one to many
-                            relations
-                            to
-                            this temp table. Eg: if you want many to many relation between table A and B, have a
-                            temp
-                            table
-                            AB which will have primary keys from both tables. Then you can have many to one relation
-                            between
-                            table A and AB, B and AB. –
-                            Arv
-                            CommentedMar 12, 2022 at 0:14
-                        </p>
+                        <!--                        <p class="qs-comment">-->
+                        <!--                        </p>-->
 
                         <p class="qs-comment-add">
                             <a>
@@ -159,26 +155,27 @@
                                 <a>Edit</a>
                                 <a>Delete</a>
                             </section>
-                            <section>
-
+                            <section class="qs-actions ans-details">
+                                <p th:text="'answered ' + ${answer.createdAt}"></p>
+                                <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
                         <section class="qs-comment-section">
-                            <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
-                                bridge
-                                or
-                                temporary table to maintain the relation.. The you can many to one and one to many
-                                relations
-                                to
-                                this temp table. Eg: if you want many to many relation between table A and B, have a
-                                temp
-                                table
-                                AB which will have primary keys from both tables. Then you can have many to one relation
-                                between
-                                table A and AB, B and AB. –
-                                Arv
-                                CommentedMar 12, 2022 at 0:14
-                            </p>
+<!--                            <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a-->
+<!--                                bridge-->
+<!--                                or-->
+<!--                                temporary table to maintain the relation.. The you can many to one and one to many-->
+<!--                                relations-->
+<!--                                to-->
+<!--                                this temp table. Eg: if you want many to many relation between table A and B, have a-->
+<!--                                temp-->
+<!--                                table-->
+<!--                                AB which will have primary keys from both tables. Then you can have many to one relation-->
+<!--                                between-->
+<!--                                table A and AB, B and AB. –-->
+<!--                                Arv-->
+<!--                                CommentedMar 12, 2022 at 0:14-->
+<!--                            </p>-->
 
                             <p class="qs-comment-add">
                                 <a>
@@ -188,17 +185,54 @@
                         </section>
                     </section>
                 </section>
-                <section class="answer-add-section">
-                    <p>Your Answer</p>
-                    <form th:action="@{/questions/create}" method="post">
-                        <div class="input-body">
-                            <textarea id="body" name="body"></textarea>
-                        </div>
-                        <button class="header-btn" type="submit">Post Your Answer</button>
-                    </form>
-                </section>
             </section>
+            <section class="answer-add-section">
+                <p>Your Answer</p>
+                <form
+                        th:if="${updatingAnswer == null}"
+                        th:action="@{/questions/{questionId}/answers/saveAnswer(questionId=${question.id})}"
+                        th:object="${answerRequestDTO}"
+                        method="post">
+                    <div class="input-body">
+                    <textarea id="body"
+                              class="body"
+                              name="body"
+                    ></textarea>
+                    </div>
+                    <button th:if="${loggedIn == null}" disabled class="header-btn" type="submit"
+                    >Post Your Answer (to post answer, please log in)
+                    </button>
+                    <button th:if="${loggedIn != null}" class="header-btn" type="submit"
+                    >Post Your Answer
+                    </button>
+                    <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
+                       style="color: red;"></p>
+                </form>
+                <form
+                        th:if="${updatingAnswer != null}"
+                        th:action="@{/questions/{questionId}/answers/{answerId}/updateAnswer(questionId=${question.id},answerId=${updatingAnswer.id})}"
+                        th:object="${answerRequestDTO}"
+                        method="post">
+                    <div class="input-body">
+                    <textarea id="updatingBody"
+                              class="body"
+                              th:text="${updatingAnswer.body}"
+                              name="body"
+                    ></textarea>
+                    </div>
+                    <section style="display: flex; gap: 10px;">
+                        <button class="header-btn" type="submit"
+                        >Update your answer
+                        </button>
+                        <a th:href="@{/questions/{questionId}(questionId=${question.id})}">
+                            <button type="button" class="header-btn login-btn">Cancel</button>
+                        </a>
+                    </section>
 
+                    <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
+                       style="color: red;"></p>
+                </form>
+            </section>
         </section>
     </section>
 </main>
@@ -213,5 +247,4 @@
     }
 
 </script>
-</body>
 </html>
