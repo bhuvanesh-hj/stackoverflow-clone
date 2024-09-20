@@ -75,26 +75,12 @@ public class CommentServiceImpl implements CommentService {
     public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
         Comment existingComment = getCommentById(commentId);
 
-        modelMapper.map(commentRequestDTO, existingComment);
-
+        existingComment.setComment(commentRequestDTO.getComment());
         existingComment.setUpdatedAt(LocalDateTime.now());
-
-        if (questionId != null) {
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Question not found"));
-            existingComment.setQuestion(question);
-        }
-
-        if (answerId != null) {
-            Answer answer = answerRepository.findById(answerId)
-                    .orElseThrow(() -> new RuntimeException("Answer not found"));
-            existingComment.setAnswer(answer);
-        }
 
         Comment updatedComment = commentRepository.save(existingComment);
 
         CommentDetailsDTO commentDetailsDTO = modelMapper.map(updatedComment, CommentDetailsDTO.class);
-
     }
 
     public void delete(Long commentId) {
