@@ -145,7 +145,7 @@
                                 </form>
                             </section>
                             <section class="qs-actions ans-details">
-                                <p th:text="'answered ' + ${answer.createdAt}"></p>
+                                <p th:text="'answered ' + ${#temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') != #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm') ? #temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') : #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
@@ -195,9 +195,15 @@
                               name="body"
                     ></textarea>
                     </div>
-                    <button class="header-btn" type="submit"
-                    >Update your answer
-                    </button>
+                    <section style="display: flex; gap: 10px;">
+                        <button class="header-btn" type="submit"
+                        >Update your answer
+                        </button>
+                        <a th:href="@{/questions/{questionId}(questionId=${question.id})}">
+                            <button type="button" class="header-btn login-btn">Cancel</button>
+                        </a>
+                    </section>
+
                     <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
                        style="color: red;"></p>
                 </form>
