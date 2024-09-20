@@ -38,11 +38,12 @@ public class QuestionController {
 
     @GetMapping
     public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
-                                  @RequestParam(value = "size", defaultValue = "1") int size,
+                                  @RequestParam(value = "size", defaultValue = "3") int size,
                                   @RequestParam(value = "sort", defaultValue = "desc") String sort,
                                   Model model) {
-        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page,size,sort);
+        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page, size, sort);
         List<QuestionDetailsDTO> questions = questionsPage.getContent();
+        int totalPages = questionsPage.getTotalPages();
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
@@ -53,8 +54,9 @@ public class QuestionController {
         }
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
-        model.addAttribute("page",page);
-        model.addAttribute("total_pages", size);
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", totalPages);
+        model.addAttribute("size", size);
         model.addAttribute("sort", sort);
 
         return "dashboard";

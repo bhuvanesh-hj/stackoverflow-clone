@@ -1,7 +1,6 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.TagDTO;
-import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.service.TagService;
 import com.stackoverflow.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class TagController {
@@ -27,19 +24,20 @@ public class TagController {
 
     @GetMapping("/tags")
     public String getAllTags(@RequestParam(value = "page", defaultValue = "0") int page,
-                             @RequestParam(value = "size", defaultValue = "1") int size,
+                             @RequestParam(value = "size", defaultValue = "15") int size,
                              @RequestParam(value = "sort", defaultValue = "desc") String sort,
-                             @RequestParam(value = "query", defaultValue = "") String searchQuery,
+                             @RequestParam(value = "search", defaultValue = "") String searchQuery,
                              Model model) {
         Page<TagDTO> tagsWithCount = tagService.getAllTagsWithQuestionCount(page, size, sort, searchQuery);
 
-        model.addAttribute("tags", tagsWithCount);
+        model.addAttribute("tags", tagsWithCount.getContent());
         model.addAttribute("questions", null);
         model.addAttribute("users", null);
-        model.addAttribute("page",page);
-        model.addAttribute("total_pages", size);
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", tagsWithCount.getTotalPages());
+        model.addAttribute("size", size);
         model.addAttribute("sort", sort);
-        model.addAttribute("query", searchQuery);
+        model.addAttribute("search", searchQuery);
         model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
 
         return "tags/tag";

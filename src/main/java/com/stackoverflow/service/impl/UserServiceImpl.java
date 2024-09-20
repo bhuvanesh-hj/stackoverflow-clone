@@ -168,6 +168,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserViewDTO> getAllUsersWithCounts() {
+
         return userRepository.findAllUsersWithQuestionAndAnswerCount();
     }
 
