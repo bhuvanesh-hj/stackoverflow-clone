@@ -15,6 +15,7 @@ import java.util.Set;
 public class QuestionDetailsDTO {
     boolean upvoted = false;
     boolean downvoted = false;
+    private Boolean isSaved = false;
     private Long id;
     private String title;
     private String body;
@@ -28,7 +29,5 @@ public class QuestionDetailsDTO {
     private List<TagDTO> tags;
     private Set<AnswerDetailsDTO> answers;
     private Set<CommentDetailsDTO> comments;
-
-
 }
 

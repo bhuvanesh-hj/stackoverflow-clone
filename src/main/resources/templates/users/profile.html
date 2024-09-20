@@ -28,7 +28,7 @@
                     <h5 class="user-email" th:text="${userDetails.email}"></h5>
                 </div>
                 <div class="profile-actions">
-                    <button sec:authorize="isAuthenticated()" onclick="toggleForm()">Edit Profile</button>
+                    <button th:if="${loggedIn.id == userDetails.id}" onclick="toggleForm()">Edit Profile</button>
                 </div>
             </div>
 

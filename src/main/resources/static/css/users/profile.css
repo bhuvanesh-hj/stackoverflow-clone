@@ -103,6 +103,10 @@ a {
     text-decoration: none;
 }
 
+.profile-info h1, h2 {
+    font-weight: normal;
+}
+
 .saved-questions {
     width: 100%;
     background-color: #f2f2f2;

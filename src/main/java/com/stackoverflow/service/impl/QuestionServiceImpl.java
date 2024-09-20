@@ -203,6 +203,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         if (userService.isUserLoggedIn()) {
             User user = userService.getLoggedInUser();
+            questionDetailsDTO.setIsSaved(question.getSavedByUsers().contains(user));
+
             Integer status = questionRepository.getUserVoteStatus(question.getId(), user.getId());
             if (status != null && status == 1) {
                 upvoted = true;
