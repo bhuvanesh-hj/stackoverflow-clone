@@ -5,7 +5,7 @@ import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
@@ -58,7 +58,6 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/questions?error=NotFound";
         }
-
         model.addAttribute("question", question);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -126,16 +125,32 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/upvote/{questionId}/{userId}")
-    public String upVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        voteService.upvoteQuestion(questionId, userId);
+    @PostMapping("/{questionId}/upvote")
+    public String upVoteQuestion(@PathVariable("questionId") Long questionId,
+                                 @PathVariable("userId") Long userId) {
+        try {
+            voteService.upvoteQuestion(questionId, userId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/downvote/{questionId}/{userId}")
-    public String downVoteQuestion(@PathVariable("questionId") Long questionId, @PathVariable("userId") Long userId) {
-        QuestionDetailsDTO question = questionService.vote(false, questionId, userId);
-        return "redirect:/questions/" + question.getId();
+    @PostMapping("/{questionId}/downvote/")
+    public String downVoteQuestion(@PathVariable("questionId") Long questionId,
+                                   @PathVariable("userId") Long userId) {
+        try {
+            voteService.downvoteQuestion(questionId, userId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
+        return "redirect:/questions/" + questionId;
     }
 
 //    @GetMapping("/search")
