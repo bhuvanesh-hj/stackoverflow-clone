@@ -2,11 +2,14 @@ package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerRequestDTO;
+import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
+import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
@@ -20,7 +23,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -32,13 +37,15 @@ public class QuestionController {
     private final HtmlUtils htmlUtils;
     private final ModelMapper modelMapper;
     private final VoteService voteService;
+    private final CommentService commentService;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
         this.modelMapper = modelMapper;
         this.voteService = voteService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -64,6 +71,7 @@ public class QuestionController {
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
 
+
         return "dashboard";
     }
 
@@ -83,6 +91,7 @@ public class QuestionController {
             model.addAttribute("loggedIn", null);
         }
         model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
+        model.addAttribute("comment", new CommentRequestDTO());
 
         return "questions/detail";
     }
@@ -207,11 +216,13 @@ public class QuestionController {
 
         model.addAttribute("questions", questionPage.getContent());
         model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", questionPage.getTotalPages());
-        model.addAttribute("totalElements", questionPage.getTotalElements());
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", questionPage.getTotalPages());
         model.addAttribute("size", size);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("users", null);
+        model.addAttribute("tags", null);
+        model.addAttribute("sort", sort);
 
         return "dashboard";
     }
