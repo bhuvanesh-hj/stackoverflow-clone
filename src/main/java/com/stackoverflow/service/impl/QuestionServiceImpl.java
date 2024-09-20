@@ -98,9 +98,14 @@ public class QuestionServiceImpl implements QuestionService {
         Set<Tag> updatedTags = new HashSet<>();
         for (String tagName : updatedUserDetails.getTagsList()) {
             Tag tag = tagRepository.findByName(tagName)
-                    .orElseThrow(() -> new RuntimeException("Tag not found: " + tagName));
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        return tagRepository.save(newTag);
+                    });
             updatedTags.add(tag);
         }
+
         existingQuestion.setTags(updatedTags);
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
