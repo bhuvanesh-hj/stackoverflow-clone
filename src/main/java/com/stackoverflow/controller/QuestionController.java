@@ -11,6 +11,7 @@ import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,12 @@ public class QuestionController {
     }
 
     @GetMapping
-    public String getAllQuestions(Model model) {
-        List<QuestionDetailsDTO> questions = questionService.getAllQuestions();
+    public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "size", defaultValue = "1") int size,
+                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
+                                  Model model) {
+        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page,size,sort);
+        List<QuestionDetailsDTO> questions = questionsPage.getContent();
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
@@ -48,6 +53,9 @@ public class QuestionController {
         }
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
+        model.addAttribute("page",page);
+        model.addAttribute("total_pages", size);
+        model.addAttribute("sort", sort);
 
         return "dashboard";
     }
