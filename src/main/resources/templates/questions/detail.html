@@ -106,16 +106,40 @@
                             </section>
                         </section>
                     </section>
+
                     <section class="qs-comment-section">
-                        <!--                        <p class="qs-comment">-->
-                        <!--                        </p>-->
+                        <div class="comments-list">
+                            <h2>Comments:</h2>
+                            <div th:each="this_comment : ${question.comments}">
+                                <p th:text="${this_comment.comment}" class="qs-comment"></p>
+                                <small th:text="${#temporals.format(this_comment.updatedAt, 'yyyy-MM-dd HH:mm')}"></small>
+
+                                <a href="#" class="link-style"
+                                   th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
+                                   onclick="submitForm('deleteComment'); return true;">Delete</a>
+
+                                <form id="deleteComment"
+                                      th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"
+                                      method="post" style="display: none;">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                </form>
+
+                                <!--       edit comment          -->
+                            </div>
+                        </div>
 
                         <p class="qs-comment-add">
-                            <a>
-                                Add a comment
-                            </a>
+                        <div id="toggleComment" onclick="toggleCommentForm();">Add a comment</div>
                         </p>
+
+                        <div id="commentForm" class="comment-form" style="display: none;">
+                            <form th:action="@{/questions/{questionId}/comments(questionId=${question.id})}" method="POST">
+                                <textarea rows="4" cols="50" name="comment" placeholder="Write your comment here..." required></textarea><br>
+                                <button type="submit">Submit Comment</button>
+                            </form>
+                        </div>
                     </section>
+
                 </section>
             </section>
             <section style="width: 100%;">
@@ -236,12 +260,27 @@
 </body>
 <script>
     function submitForm(formId) {
-        document.getElementById(formId).submit();
-    }
-
-    function submitUpdateForm(formId) {
          document.getElementById(formId).submit();
-    }
+     }
+
+     function submitUpdateForm(formId) {
+          document.getElementById(formId).submit();
+     }
+
+     function toggleCommentForm() {
+     const commentForm = document.getElementById("commentForm");
+
+     if (commentForm) {
+         // Toggle the display property
+         commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+     } else {
+         console.error("Comment form not found");
+     }
+
+ }
+
+
+
 
 </script>
 </html>

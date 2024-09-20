@@ -36,7 +36,8 @@ public class CommentServiceImpl implements CommentService {
         this.userRepository = userRepository;
     }
 
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
+    @Override
+    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -78,9 +79,16 @@ public class CommentServiceImpl implements CommentService {
         existingComment.setComment(commentRequestDTO.getComment());
         existingComment.setUpdatedAt(LocalDateTime.now());
 
+        if (questionId != null) {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            existingComment.setQuestion(question);
+        }
+
         Comment updatedComment = commentRepository.save(existingComment);
 
         CommentDetailsDTO commentDetailsDTO = modelMapper.map(updatedComment, CommentDetailsDTO.class);
+
     }
 
     public void delete(Long commentId) {
