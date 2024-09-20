@@ -42,15 +42,24 @@
             <section class="question-section">
                 <section class="qs-side">
                     <section class="qs-like">
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
-                        </span>
-                        <span class="qs-like-count">2,345</span>
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
-                        </span>
+                        <form th:action="@{/questions/{questionId}/upvote(questionId=${question.id})}" method="post">
+                            <button type="submit" th:class=" ${question.upvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 12h16L9 4z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                        <span class="qs-like-count" th:text="${question.upvotes - question.downvotes}"></span>
+                        <form th:action="@{/questions/{questionId}/downvote(questionId=${question.id})}" method="post">
+                            <button type="submit"
+                                    th:class=" ${question.downvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 6h16l-8 8z"></path>
+                                </svg>
+                            </button>
+                        </form>
                     </section>
                     <section class="qs-save">
                         <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
@@ -70,29 +79,36 @@
                     </section>
                     <section>
                         <section class="qs-actions">
-                            <a>Edit</a>
-                            <a>Delete</a>
+                            <a href="#" class="link-style"
+                               th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
+                               onclick="submitUpdateForm('updateForm'); return true;">Edit</a>
+
+                            <form id="updateForm"
+                                  th:action="@{/questions/{id}/update(id=${question.id})}"
+                                  method="get" style="display: none;">
+                                <input type="hidden" th:name="id" th:value="${question.id}"/>
+                            </form>
+
+                            <a href="#" class="link-style"
+                               th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
+                               onclick="submitForm('deleteForm'); return true;">Delete</a>
+
+                            <form id="deleteForm"
+                                  th:action="@{/questions/{id}/delete(id=${question.id})}"
+                                  method="post" style="display: none;">
+                                <input type="hidden" name="_method" value="delete"/>
+                            </form>
                         </section>
                         <section>
-
+                            <section class="qs-actions ans-details qs-details">
+                                <p th:text="'asked ' + ${#temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                <p th:text="'by ' + ${question.author.username}"></p>
+                            </section>
                         </section>
                     </section>
                     <section class="qs-comment-section">
-                        <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
-                            bridge
-                            or
-                            temporary table to maintain the relation.. The you can many to one and one to many
-                            relations
-                            to
-                            this temp table. Eg: if you want many to many relation between table A and B, have a
-                            temp
-                            table
-                            AB which will have primary keys from both tables. Then you can have many to one relation
-                            between
-                            table A and AB, B and AB. –
-                            Arv
-                            CommentedMar 12, 2022 at 0:14
-                        </p>
+                        <!--                        <p class="qs-comment">-->
+                        <!--                        </p>-->
 
                         <p class="qs-comment-add">
                             <a>
@@ -108,15 +124,27 @@
                 <section th:each="answer : ${question.answers}" class="answer-section">
                     <section class="qs-side answer">
                         <section class="qs-like">
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
-                        </span>
-                            <span class="qs-like-count">2,345</span>
-                            <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
-                        </span>
+                            <form th:action="@{/questions/{questionId}/answers/{answerId}/upvote(questionId=${question.id}, answerId=${answer.id})}"
+                                  method="post">
+                                <button type="submit"
+                                        th:class=" ${answer.upvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                    <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                         viewBox="0 0 18 18">
+                                        <path d="M1 12h16L9 4z"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                            <span class="qs-like-count" th:text="${answer.upvotes - answer.downvotes}"></span>
+                            <form th:action="@{/questions/{questionId}/answers/{answerId}/downvote(questionId=${question.id}, answerId=${answer.id})}"
+                                  method="post">
+                                <button type="submit"
+                                        th:class=" ${answer.downvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                    <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                         viewBox="0 0 18 18">
+                                        <path d="M1 6h16l-8 8z"></path>
+                                    </svg>
+                                </button>
+                            </form>
                         </section>
                         <section class="qs-save">
                             <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
@@ -145,7 +173,7 @@
                                 </form>
                             </section>
                             <section class="qs-actions ans-details">
-                                <p th:text="'answered ' + ${answer.createdAt}"></p>
+                                <p th:text="'answered ' + ${#temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') != #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm') ? #temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') : #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
@@ -158,8 +186,7 @@
                                 </a>
                             </p>
                         </section>
-                    </section>
-                </section>
+                    </section> </section>
             </section>
             <section class="answer-add-section">
                 <p>Your Answer</p>
@@ -206,8 +233,15 @@
     </section>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
-
 </body>
 <script>
+    function submitForm(formId) {
+        document.getElementById(formId).submit();
+    }
+
+    function submitUpdateForm(formId) {
+         document.getElementById(formId).submit();
+    }
+
 </script>
 </html>

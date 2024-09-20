@@ -1,9 +1,10 @@
 package com.stackoverflow.service;
 
 import com.stackoverflow.dto.TagDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface TagService {
-    List<TagDTO> getAllTagsWithQuestionCount();
+    Page<TagDTO> getAllTagsWithQuestionCount(int page, int size, String sort, String searchQuery);
 }

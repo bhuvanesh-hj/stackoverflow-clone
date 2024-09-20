@@ -100,6 +100,9 @@ body{
     justify-content: center;
 }
 .qs-like-count{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px 0;
 }
 .qs-like-btn:hover{
@@ -141,6 +144,7 @@ body{
 }
 
 .question-section{
+    width: 100%;
     display: flex;
     min-height: 300px;
 }
@@ -207,4 +211,11 @@ body{
     border: none;
     cursor: pointer;
     color: #636B74;
+}
+.qs-details{
+    background-color: #EDF5FD;
+    border-radius: 5px;
+}
+.voted{
+    background-color: #FBDBC0;
 }

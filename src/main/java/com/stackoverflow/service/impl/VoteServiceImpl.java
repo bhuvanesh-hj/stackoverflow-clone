@@ -33,12 +33,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void upvoteQuestion(Long questionId, Long userId) {
+    public void upvoteQuestion(Long questionId) {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-        Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, userId);
-
+        Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
         if (existingVote.isPresent()) {
             QuestionVote vote = existingVote.get();
             if (vote.getIsUpvote()) {
@@ -49,7 +48,7 @@ public class VoteServiceImpl implements VoteService {
             }
         } else {
             QuestionVote vote = new QuestionVote();
-            vote.setQuestion(new Question(questionId));
+            vote.setQuestion(question);
             vote.setUser(user);
             vote.setIsUpvote(true);
             questionVoteRepository.save(vote);
@@ -58,12 +57,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void downvoteQuestion(Long questionId, Long userId) {
+    public void downvoteQuestion(Long questionId) {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-        Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, userId);
-
+        Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
         if (existingVote.isPresent()) {
             QuestionVote vote = existingVote.get();
             if (!vote.getIsUpvote()) {
@@ -83,11 +81,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void upvoteAnswer(Long answerId, Long userId) {
+    public void upvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
-        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, userId);
+        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
@@ -108,11 +106,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void downvoteAnswer(Long answerId, Long userId) {
+    public void downvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
-        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, userId);
+        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
@@ -143,14 +141,14 @@ public class VoteServiceImpl implements VoteService {
     public int getQuestionDownvotes(Long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-        int count =  questionVoteRepository.countByQuestionIdAndIsUpvoteFalse(questionId);
+        int count = questionVoteRepository.countByQuestionIdAndIsUpvoteFalse(questionId);
         return count;
     }
 
     @Override
     public int getAnswerUpvotes(Long answerId) {
         Answer answer = answerRepository.findById(answerId).orElseThrow();
-        int count =  answerVoteRepository.countByAnswerIdAndIsUpvoteTrue(answerId);
+        int count = answerVoteRepository.countByAnswerIdAndIsUpvoteTrue(answerId);
         return count;
     }
 
@@ -158,7 +156,7 @@ public class VoteServiceImpl implements VoteService {
     public int getAnswerDownvotes(Long answerId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
-        int count =  answerVoteRepository.countByAnswerIdAndIsUpvoteFalse(answerId);
+        int count = answerVoteRepository.countByAnswerIdAndIsUpvoteFalse(answerId);
         return count;
     }
 

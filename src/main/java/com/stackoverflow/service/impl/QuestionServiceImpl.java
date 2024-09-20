@@ -1,8 +1,12 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.*;
-import com.stackoverflow.entity.*;
-
+import com.stackoverflow.dto.AnswerDetailsDTO;
+import com.stackoverflow.dto.QuestionDetailsDTO;
+import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.QuestionVote;
+import com.stackoverflow.entity.Tag;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -13,10 +17,12 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,10 +52,10 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDetailsDTO> getAllQuestions() {
-        return questionRepository.findAll().stream()
-                .map(question -> getQuestionDetailsDTO(question))
-                .collect(Collectors.toList());
+    public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+        return questionRepository.findAll(pageable)
+                .map(question -> getQuestionDetailsDTO(question));
     }
 
     @Override
@@ -85,6 +91,19 @@ public class QuestionServiceImpl implements QuestionService {
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
         existingQuestion.setUpdatedAt(LocalDateTime.now());
+
+        Set<Tag> updatedTags = new HashSet<>();
+        for (String tagName : updatedUserDetails.getTagsList()) {
+            Tag tag = tagRepository.findByName(tagName)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        return tagRepository.save(newTag);
+                    });
+            updatedTags.add(tag);
+        }
+
+        existingQuestion.setTags(updatedTags);
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
 
@@ -147,10 +166,28 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
-        return userRepository.findQuestionsSavedById(userId).stream()
+        return questionRepository.findBySavedByUsers_Id(userId).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id) {
+        return questionRepository.findByAnswers_AuthorId(id).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword,int page,int size,String sort) {
+        // Fetch paginated Question entities
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+        return questionRepository.getSearchQuestions(keyword,pageable)
+                .map(question -> getQuestionDetailsDTO(question));
+    }
+
+
+
 
     @Transactional
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question) {
@@ -166,6 +203,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         if (userService.isUserLoggedIn()) {
             User user = userService.getLoggedInUser();
+            questionDetailsDTO.setIsSaved(question.getSavedByUsers().contains(user));
+
             Integer status = questionRepository.getUserVoteStatus(question.getId(), user.getId());
             if (status != null && status == 1) {
                 upvoted = true;

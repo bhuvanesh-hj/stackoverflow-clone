@@ -24,25 +24,55 @@
                 </div>
             </div>
             <div class="main-content-header-actions">
-                <form action="/tagsSearch" method="get">
-                    <input class="search-bar" name="searchQuery" placeholder="Filter by tag name" type="text"/>
+                <form th:action="@{/tags}" method="get">
+                    <input class="search-bar" name="search" placeholder="Filter by tag name" th:value="${search}"
+                           type="search"/>
                     <button class="header-btn login-btn" type="submit">Search</button>
                 </form>
                 <ul class="main-content-header-actions-sort">
-                    <li class="sort-tab selec">Popular</li>
-                    <li class="sort-tab">Name</li>
-                    <li class="sort-tab">New</li>
+                    <form th:action="@{/tags}" method="get">
+                        <input type="hidden" name="sort" value="asc" id="sortOrder"/>
+                        <input type="submit" th:class="${sort == 'asc' ? 'sort-tab selec' : 'sort-tab'}" value="New"
+                               onclick="setSortOrder('asc')"/>
+                    </form>
+                    <form th:action="@{/tags}" method="get">
+                        <input type="hidden" name="sort" value="desc" id="sortOrderOld"/>
+                        <input type="submit" th:class="${sort == 'desc' ? 'sort-tab selec' : 'sort-tab'}" value="Old"
+                               onclick="setSortOrder('desc')"/>
+                    </form>
                 </ul>
             </div>
         </section>
         <section class="main-content-tags-section">
             <div class="tag-card" th:each="tag : ${tags}">
                 <div class="tag-name" th:text="${tag.name}">Tag Name</div>
-                <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}">Questions: 0</div>
+                <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}"></div>
             </div>
+        </section>
+        <section class="pagination">
+            <a th:if="${current_page > 0}"
+               th:href="@{/tags?(page=${current_page - 1}, size=${size}, sort=${sort})}"
+               th:text="'Prev'"
+               class="header-btn">
+            </a>
+            <a th:each="page : ${#numbers.sequence(1, total_pages)}"
+               th:class="${page == current_page + 1} ? 'page-number current-page' : 'page-number'"
+               th:text="${page}"
+               th:href="@{/tags?(page=${page - 1}, size=${size}, sort=${sort})}"></a>
+            <a th:if="${current_page < total_pages - 1}"
+               th:href="@{/tags?(page=${current_page + 1}, size=${size}, sort=${sort})}"
+               th:text="'Next'"
+               class="header-btn">
+            </a>
         </section>
     </section>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>
 </body>
+<script>
+    function setSortOrder(order) {
+        document.getElementById('sortOrder').value = order;
+        document.getElementById('sortOrderOld').value = order;
+    }
+</script>
 </html>

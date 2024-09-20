@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class TagDTO {
     private String name;
-    private Long questionCount;
+    private int questionCount;
 }

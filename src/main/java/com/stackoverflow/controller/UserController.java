@@ -1,13 +1,19 @@
 package com.stackoverflow.controller;
 
+import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
+import com.stackoverflow.repository.QuestionRepository;
+import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,10 +29,12 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private  final QuestionService questionService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, QuestionService questionService) {
         this.userService = userService;
+        this.questionService = questionService;
     }
 
     @GetMapping("/login")
@@ -65,19 +73,23 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String getUserById(@PathVariable("id") Long userId, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/users/login";
+        }
+
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
-        System.out.println("coming in user..");
-        return "users/profile";
-    }
 
-    @GetMapping("/profile/{id}")
-    public String userProfile(@PathVariable("id") Long userId, Model model) {
-        UserDetailsDTO userDetails = userService.getUserById(userId);
-        System.out.println("UserDetailsDTO from userProfile: " + userDetails);
-        model.addAttribute("userDetails", userDetails);
-        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        List<QuestionDetailsDTO> questions = questionService.getQuestionsByUser(userId);
+        List<QuestionDetailsDTO> answered = questionService.getAnsweredQuestions(userId);
+        List<QuestionDetailsDTO> saved = questionService.getSavedQuestionsByUser(userId);
+
+        model.addAttribute("questions", questions);
+        model.addAttribute("answered", answered);
+        model.addAttribute("saved", saved);
         return "users/profile";
     }
 

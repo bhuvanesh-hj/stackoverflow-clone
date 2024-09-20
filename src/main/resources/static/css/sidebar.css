@@ -181,3 +181,17 @@ main{
     margin: 20px;
     background-color: #fff
 }
+
+.page-number {
+        display: inline-block;
+        margin: 0 5px;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: black;
+        cursor: pointer;
+}
+.current-page {
+        border: 2px solid #D6D9DC;
+        font-weight: bold;
+        border-radius: 5px;
+}

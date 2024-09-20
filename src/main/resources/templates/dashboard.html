@@ -57,9 +57,20 @@
                 </div>
             </section>
             <section class="pagination">
-                <button class="header-btn">Prev</button>
-                <span>1/10</span>
-                <button class="header-btn">Next</button>
+                <a th:if="${current_page > 0}"
+                   th:href="@{/questions?(page=${current_page - 1}, size=${size}, sort=${sort})}"
+                   th:text="'Prev'"
+                   class="header-btn">
+                </a>
+                <a th:each="page : ${#numbers.sequence(1, total_pages)}"
+                   th:class="${page == current_page + 1} ? 'page-number current-page' : 'page-number'"
+                   th:text="${page}"
+                   th:href="@{/questions?(page=${page - 1}, size=${size}, sort=${sort})}"></a>
+                <a th:if="${current_page < total_pages - 1}"
+                   th:href="@{/questions?(page=${current_page + 1}, size=${size}, sort=${sort})}"
+                   th:text="'Next'"
+                   class="header-btn">
+                </a>
             </section>
         </section>
     </section>

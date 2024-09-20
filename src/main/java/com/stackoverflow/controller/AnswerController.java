@@ -44,7 +44,6 @@ public class AnswerController {
         this.modelMapper = modelMapper;
     }
 
-
     @PostMapping("/saveAnswer")
     public String saveAnswer(
             @PathVariable Long questionId,
@@ -169,16 +168,30 @@ public class AnswerController {
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/upvote/{answerId}/{userId}")
-    public String upvoteAnswer(@PathVariable("answerId") Long answerId, @PathVariable("userId") Long userId) {
-        voteService.upvoteAnswer(answerId, userId);
-        return "redirect:/questions/" + answerId;
+    @PostMapping("/{answerId}/upvote")
+    public String upvoteAnswer(@PathVariable("answerId") Long answerId,
+                               @PathVariable("questionId") Long questionId) {
+        try {
+            voteService.upvoteAnswer(answerId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+        return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/downvote/{answerId}/{userId}")
-    public String downvoteAnswer(@PathVariable("answerId") Long answerId, @PathVariable("userId") Long userId) {
-        voteService.downvoteAnswer(answerId, userId);
-        return "redirect:/questions/" + answerId;
+    @PostMapping("/{answerId}/downvote")
+    public String downvoteAnswer(@PathVariable("answerId") Long answerId,
+                                 @PathVariable("questionId") Long questionId) {
+        try {
+            voteService.downvoteAnswer(answerId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+        return "redirect:/questions/" + questionId;
     }
 
 }
