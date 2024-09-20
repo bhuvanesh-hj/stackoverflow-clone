@@ -28,6 +28,8 @@ public interface QuestionService {
 
     public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long id);
 
+    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id);
+
 //    public List<Question> getSearchedQuestions(String keyword);
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question);
