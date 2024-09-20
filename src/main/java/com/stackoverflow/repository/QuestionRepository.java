@@ -1,5 +1,6 @@
 package com.stackoverflow.repository;
 
+import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.entity.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +18,16 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByAuthorId(Long userId);
 
-//    @Query("SELECT q FROM Question q " +
-//            "JOIN q.tags t " +
-//            "JOIN q.author u " +
-//            "WHERE LOWER(q.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-//            "OR LOWER(q.body) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-//            "OR LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-//            "OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-//    List<Question> searchQuestions(@Param("keyword") String keyword);
+    @Query("SELECT q FROM Question q " +
+            "JOIN q.tags t " +
+            "JOIN q.author u " +
+            "JOIN q.answers a " +
+            "WHERE LOWER(q.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(q.body) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(a.body) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Question> getSearchQuestions(@Param("keyword") String keyword,Pageable pageable);
 
     @Query("SELECT CASE " +
             "WHEN qv.isUpvote = true THEN 1 " +
