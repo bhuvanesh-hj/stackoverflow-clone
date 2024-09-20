@@ -5,12 +5,15 @@ import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -70,6 +73,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String getUserById(@PathVariable("id") Long userId, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/users/login";
+        }
+
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
