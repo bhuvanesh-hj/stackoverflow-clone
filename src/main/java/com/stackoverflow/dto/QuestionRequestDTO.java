@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,9 @@ import java.util.Set;
 @Setter
 @ToString
 public class QuestionRequestDTO {
+
+
+    private Long Id;
 
     @NotBlank(message = "Title is required")
     @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
@@ -24,5 +28,7 @@ public class QuestionRequestDTO {
     private String body;
 
     private Set<String> tagsList;
+
+    private LocalDateTime updatedAt;
 
 }

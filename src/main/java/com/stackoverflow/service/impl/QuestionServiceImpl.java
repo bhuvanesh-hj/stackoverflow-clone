@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,6 +90,14 @@ public class QuestionServiceImpl implements QuestionService {
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
         existingQuestion.setUpdatedAt(LocalDateTime.now());
+
+        Set<Tag> updatedTags = new HashSet<>();
+        for (String tagName : updatedUserDetails.getTagsList()) {
+            Tag tag = tagRepository.findByName(tagName)
+                    .orElseThrow(() -> new RuntimeException("Tag not found: " + tagName));
+            updatedTags.add(tag);
+        }
+        existingQuestion.setTags(updatedTags);
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
 
