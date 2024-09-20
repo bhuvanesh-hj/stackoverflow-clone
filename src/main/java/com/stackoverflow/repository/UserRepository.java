@@ -19,11 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrUsername(String email, String username);
 
-    @Query("SELECT new com.stackoverflow.dto.user.UserViewDTO(u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id)) " +
+    @Query("SELECT new com.stackoverflow.dto.user.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id)) " +
             "FROM User u " +
             "LEFT JOIN u.questions q " +
             "LEFT JOIN u.answers a " +
-            "GROUP BY u.firstName, u.lastName")
+            "GROUP BY u.id")
     List<UserViewDTO> findAllUsersWithQuestionAndAnswerCount();
 
     List<Question> findQuestionsSavedById(Long userId);
