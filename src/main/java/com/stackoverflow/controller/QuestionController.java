@@ -5,6 +5,7 @@ import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.entity.Question;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
@@ -12,6 +13,8 @@ import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -70,6 +73,7 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/questions?error=NotFound";
         }
+        System.out.println(question);
         model.addAttribute("question", question);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -176,12 +180,28 @@ public class QuestionController {
         return "redirect:/questions/" + questionId;
     }
 
-//    @GetMapping("/search")
-//    public String searchQuestions(@RequestParam String keyword){
-//
-//        List<Question> questionList = questionService.getSearchedQuestions(keyword);
-//
-//        return "questions/list";
-//    }
+    @GetMapping("/search")
+    public String searchQuestions(@RequestParam("keyword") String keyword,
+                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "size", defaultValue = "5") int size,
+                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
+                                  Model model) {
+
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page,size,sort);
+
+        model.addAttribute("questions", questionPage.getContent());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", questionPage.getTotalPages());
+        model.addAttribute("totalElements", questionPage.getTotalElements());
+        model.addAttribute("size", size);
+        model.addAttribute("keyword", keyword);
+
+        return "dashboard";
+    }
+
+
 }
 

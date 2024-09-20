@@ -17,10 +17,7 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -173,6 +170,17 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword,int page,int size,String sort) {
+        // Fetch paginated Question entities
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+        return questionRepository.getSearchQuestions(keyword,pageable)
+                .map(question -> getQuestionDetailsDTO(question));
+    }
+
+
+
 
     @Transactional
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question) {
