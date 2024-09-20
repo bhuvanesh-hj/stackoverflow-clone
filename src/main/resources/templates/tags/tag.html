@@ -51,7 +51,7 @@
         </section>
         <section class="pagination">
             <a th:if="${current_page > 0}"
-               th:href="@{/tags?(page=${current_page - 1}, size=${size}, sort=${sort})}"
+               th:href="@{/tags?(page=${current_page - 1}, size=${size}, sort=${sort}, search=${search})}"
                th:text="'Prev'"
                class="header-btn">
             </a>
@@ -60,7 +60,7 @@
                th:text="${page}"
                th:href="@{/tags?(page=${page - 1}, size=${size}, sort=${sort})}"></a>
             <a th:if="${current_page < total_pages - 1}"
-               th:href="@{/tags?(page=${current_page + 1}, size=${size}, sort=${sort})}"
+               th:href="@{/tags?(page=${current_page + 1}, size=${size}, sort=${sort}, search=${search})}"
                th:text="'Next'"
                class="header-btn">
             </a>

@@ -12,6 +12,7 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -155,13 +156,19 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUsers(Model model) {
-        List<UserViewDTO> users = userService.getAllUsersWithCounts();
-        model.addAttribute("users", users);
+    public String getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "size", defaultValue = "15") int size,
+                           @RequestParam(value = "search", defaultValue = "") String searchQuery,
+                           Model model) {
+        Page<UserViewDTO> paginatdUsers = userService.getAllUsersWithCounts(page, size, searchQuery);
+        model.addAttribute("users", paginatdUsers.getContent());
         model.addAttribute("questions", null);
         model.addAttribute("tags", null);
         model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
-
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", paginatdUsers.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("search", searchQuery);
         return "user";
     }
 

@@ -11,6 +11,9 @@ import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -167,9 +170,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserViewDTO> getAllUsersWithCounts() {
-
-        return userRepository.findAllUsersWithQuestionAndAnswerCount();
+    public Page<UserViewDTO> getAllUsersWithCounts(int page, int size, String searchQuery) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAllUsersWithQuestionAndAnswerCount(searchQuery, pageable);
     }
 
     @Override

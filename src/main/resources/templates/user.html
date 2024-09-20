@@ -20,8 +20,8 @@
                 <h2>Users</h2>
             </div>
             <div class="main-content-header-actions">
-                <form action="/Search" method="get">
-                    <input class="search-bar" name="searchQuery" placeholder="Filter by user" type="text"/>
+                <form action="/users" method="get">
+                    <input class="search-bar" name="search" placeholder="Filter by user" type="text"/>
                     <button class="header-btn login-btn" type="submit">Search</button>
                 </form>
             </div>
@@ -46,10 +46,22 @@
         </section>
 
         <section class="pagination">
-            <button class="header-btn">Prev</button>
-            <span>1/10</span>
-            <button class="header-btn">Next</button>
+            <a th:if="${current_page > 0}"
+               th:href="@{/users?(page=${current_page - 1}, size=${size}, search=${search})}"
+               th:text="'Prev'"
+               class="header-btn">
+            </a>
+            <a th:each="page : ${#numbers.sequence(1, total_pages)}"
+               th:class="${page == current_page + 1} ? 'page-number current-page' : 'page-number'"
+               th:text="${page}"
+               th:href="@{/users?(page=${page - 1}, size=${size}, sort=${sort})}"></a>
+            <a th:if="${current_page < total_pages - 1}"
+               th:href="@{/users?(page=${current_page + 1}, size=${size}, search=${search})}"
+               th:text="'Next'"
+               class="header-btn">
+            </a>
         </section>
+
     </section>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>

@@ -2,6 +2,7 @@ package com.stackoverflow.service;
 
 import com.stackoverflow.dto.user.*;
 import com.stackoverflow.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface UserService {
 
     public User getLoggedInUser();
 
-    public List<UserViewDTO> getAllUsersWithCounts();
+    public Page<UserViewDTO> getAllUsersWithCounts(int page, int size, String searchQuery);
 
     public Boolean isUserLoggedIn();
 
