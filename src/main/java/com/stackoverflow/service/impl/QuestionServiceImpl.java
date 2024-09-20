@@ -17,6 +17,10 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -49,10 +53,10 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDetailsDTO> getAllQuestions() {
-        return questionRepository.findAll().stream()
-                .map(question -> getQuestionDetailsDTO(question))
-                .collect(Collectors.toList());
+    public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+        return questionRepository.findAll(pageable)
+                .map(question -> getQuestionDetailsDTO(question));
     }
 
     @Override

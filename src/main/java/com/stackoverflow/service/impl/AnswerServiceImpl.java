@@ -64,13 +64,11 @@ public class AnswerServiceImpl implements AnswerService {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
 
-        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(answer, AnswerDetailsDTO.class);
-        answerDetailsDTO.setUpvotes(voteService.getAnswerUpvotes(answerId));
-        answerDetailsDTO.setDownvotes(voteService.getAnswerUpvotes(answerId));
+        AnswerDetailsDTO answerDetailsDTO = getAnswerDetailsDTO(answer);
         return answerDetailsDTO;
     }
 
-
+    @Override
     public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
         Answer existingAnswer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
@@ -83,13 +81,10 @@ public class AnswerServiceImpl implements AnswerService {
         existingAnswer.setQuestion(question);
 
         Answer updatedAnswer = answerRepository.save(existingAnswer);
+        AnswerDetailsDTO answerDetailsDTO = getAnswerDetailsDTO(updatedAnswer);
 
-        AnswerDetailsDTO answerDetailsDTO = modelMapper.map(updatedAnswer, AnswerDetailsDTO.class);
-        answerDetailsDTO.setUpvotes(voteService.getAnswerUpvotes(answerId));
-        answerDetailsDTO.setDownvotes(voteService.getAnswerUpvotes(answerId));
         return answerDetailsDTO;
     }
-
 
     @Override
     public Boolean delete(Long answerId) {
@@ -98,7 +93,6 @@ public class AnswerServiceImpl implements AnswerService {
 
         answerRepository.deleteById(answerId);
         return true;
-
     }
 
     @Override

@@ -3,11 +3,12 @@ package com.stackoverflow.service;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.entity.Question;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface QuestionService {
-    public List<QuestionDetailsDTO> getAllQuestions();
+    public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort);
 
     public QuestionDetailsDTO getQuestionById(Long questionId);
 

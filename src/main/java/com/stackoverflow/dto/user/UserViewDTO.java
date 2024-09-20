@@ -1,5 +1,6 @@
 package com.stackoverflow.dto.user;
 
+import com.stackoverflow.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserViewDTO {
+    private Long id;
+
     private String firstName;
 
     private String lastName;
@@ -15,4 +18,6 @@ public class UserViewDTO {
     private Long questionCount;
 
     private Long answerCount;
+
+
 }
