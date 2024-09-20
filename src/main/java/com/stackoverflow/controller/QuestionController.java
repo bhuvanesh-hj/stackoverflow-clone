@@ -39,21 +39,21 @@ public class QuestionController {
     private final VoteService voteService;
     private final CommentService commentService;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService, CommentService commentService1) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
         this.modelMapper = modelMapper;
         this.voteService = voteService;
-        this.commentService = commentService;
+        this.commentService = commentService1;
     }
 
     @GetMapping
     public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size,
-                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
+                                  @RequestParam(value = "sort", defaultValue = "newest") String sort,
                                   Model model) {
-        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page,size,sort);
+        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page, size, sort);
         List<QuestionDetailsDTO> questions = questionsPage.getContent();
         int totalPages = questionsPage.getTotalPages();
 
@@ -70,7 +70,6 @@ public class QuestionController {
         model.addAttribute("total_pages", totalPages);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
-
 
         return "dashboard";
     }
@@ -165,15 +164,29 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/save/{id}")
+    @PostMapping("/{id}/save")
     public String saveQuestion(@PathVariable("id") Long questionId) {
-        questionService.saveQuestionForUser(questionId);
+        try {
+            questionService.saveQuestionForUser(questionId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/unsave/{id}")
+    @PostMapping("/{id}/unsave")
     public String unsaveQuestion(@PathVariable("id") Long questionId) {
-        questionService.unsaveQuestionForUser(questionId);
+        try {
+            questionService.unsaveQuestionForUser(questionId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
@@ -212,7 +225,7 @@ public class QuestionController {
 
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page,size,sort);
+        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page, size, sort);
 
         model.addAttribute("questions", questionPage.getContent());
         model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());

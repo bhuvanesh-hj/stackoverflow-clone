@@ -17,11 +17,13 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,9 +55,22 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+
+        Pageable pageable;
+        switch (sort.toLowerCase()) {
+            case "oldest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+                break;
+            case "newest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+                break;
+            default:
+                return questionRepository.findAllQuestionsOrderedByUpvotes(PageRequest.of(page, size))
+                        .map(this::getQuestionDetailsDTO);
+        }
+
         return questionRepository.findAll(pageable)
-                .map(question -> getQuestionDetailsDTO(question));
+                .map(this::getQuestionDetailsDTO);
     }
 
     @Override
@@ -179,14 +194,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword,int page,int size,String sort) {
+    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page, int size, String sort) {
         // Fetch paginated Question entities
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
-        return questionRepository.getSearchQuestions(keyword,pageable)
+        return questionRepository.getSearchQuestions(keyword, pageable)
                 .map(question -> getQuestionDetailsDTO(question));
     }
-
-
 
 
     @Transactional

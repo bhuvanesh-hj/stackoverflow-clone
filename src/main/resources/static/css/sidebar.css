@@ -1,3 +1,6 @@
+body{
+     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 main{
     margin-top: 55px;
     padding: 0 170px;
@@ -8,6 +11,7 @@ main{
     width: 13%;
     height: 100vh;
     border-right: 1px solid #D6D9DC;
+    font-size: 13px;
 }
 .main-content{
     width: 87%;
@@ -21,7 +25,7 @@ main{
      overflow-x: hidden;
 }
 .side-list{
-    padding: 25px 0;
+    padding: 15px 0;
 }
 .side-list a{
     color: #1d1c1c;
@@ -30,12 +34,12 @@ main{
 
 .side-li{
     list-style: none;
-    margin-bottom: 25px;
+    margin-bottom: 6px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 15px;
+    gap: 7px;
     padding: 10px 5px;
     cursor: pointer;
 }
@@ -99,6 +103,7 @@ main{
 .selec{
     background-color: #d7d8da;
     border-radius: 5px;
+    font-weight: 600;
 }
 
 /* Question card */
@@ -123,6 +128,7 @@ main{
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    font-size: 13px;
     gap: 1rem;
     color: #666666;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -131,11 +137,12 @@ main{
     width: 100%;
     display: flex;
     flex-direction: column;
+    font-size:  13px;
     gap: 1rem;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .qs-content h4{
-    font-size: 1.5rem;
+    font-size: 17px;
     font-weight: 600;
     width: 100%;
     overflow: hidden;
@@ -144,7 +151,7 @@ main{
     cursor: pointer;
 }
 .qs-content p{
-    font-size: 1.2rem;
+    font-size: 13px;
     font-weight: 500;
     color: #666666;
     width: 100%;

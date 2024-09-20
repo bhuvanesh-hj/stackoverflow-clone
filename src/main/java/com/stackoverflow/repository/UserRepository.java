@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrUsername(String email, String username);
 
-    @Query("SELECT DISTINCT new com.stackoverflow.dto.user.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id)) " +
+    @Query("SELECT DISTINCT new com.stackoverflow.dto.user.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id), u.profilePicture) " +
             "FROM User u " +
             "LEFT JOIN u.questions q " +
             "LEFT JOIN u.answers a " +

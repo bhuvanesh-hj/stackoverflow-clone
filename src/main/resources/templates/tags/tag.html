@@ -30,16 +30,8 @@
                     <button class="header-btn login-btn" type="submit">Search</button>
                 </form>
                 <ul class="main-content-header-actions-sort">
-                    <form th:action="@{/tags}" method="get">
-                        <input type="hidden" name="sort" value="asc" id="sortOrder"/>
-                        <input type="submit" th:class="${sort == 'asc' ? 'sort-tab selec' : 'sort-tab'}" value="New"
-                               onclick="setSortOrder('asc')"/>
-                    </form>
-                    <form th:action="@{/tags}" method="get">
-                        <input type="hidden" name="sort" value="desc" id="sortOrderOld"/>
-                        <input type="submit" th:class="${sort == 'desc' ? 'sort-tab selec' : 'sort-tab'}" value="Old"
-                               onclick="setSortOrder('desc')"/>
-                    </form>
+                    <li class="sort-tab" data-sort="asc">New</li>
+                    <li class="sort-tab" data-sort="desc">Old</li>
                 </ul>
             </div>
         </section>
@@ -70,9 +62,26 @@
 <footer th:replace="~{fragments/footer :: footer}"/>
 </body>
 <script>
-    function setSortOrder(order) {
-        document.getElementById('sortOrder').value = order;
-        document.getElementById('sortOrderOld').value = order;
-    }
+    const currentSort = new URLSearchParams(window.location.search).get('sort') || 'asc'; // Default to 'asc'
+
+    document.querySelectorAll('.sort-tab').forEach(tab => {
+        if (tab.getAttribute('data-sort') === currentSort) {
+            tab.classList.add('selec'); // Add selec class if it matches the current sort
+        }
+
+        tab.addEventListener('click', function() {
+            // Remove the 'selec' class from all tabs
+            document.querySelectorAll('.sort-tab').forEach(t => t.classList.remove('selec'));
+            // Add the 'selec' class to the clicked tab
+            this.classList.add('selec');
+
+            const sortType = this.getAttribute('data-sort');
+            const currentPage = new URLSearchParams(window.location.search).get('page') || 0;
+            const currentSize = new URLSearchParams(window.location.search).get('size') || 5;
+
+            // Redirect to the same page with the updated sort parameter
+            window.location.href = `?page=${currentPage}&size=${currentSize}&sort=${sortType}`;
+        });
+    });
 </script>
 </html>

@@ -23,17 +23,15 @@
             </div>
             <div class="main-content-header-actions">
                 <p th:text="${questions.size() + ' questions' }"/>
-                <div class="main-content-header-actions-sort">
-                    <li class="sort-tab selec">Newest</li>
-                    <li class="sort-tab">Oldest</li>
-                    <li class="sort-tab">MostLiked</li>
-                </div>
-                <button class="header-btn login-btn filter-btn">
-                    <svg aria-hidden="true" class="svg-icon iconFilter" width="18" height="18" viewBox="0 0 18 18">
-                        <path d="M2 4h14v2H2zm2 4h10v2H4zm8 4H6v2h6z"></path>
-                    </svg>
-                    Filters
-                </button>
+                <ul class="main-content-header-actions-sort">
+                    <li th:class="${sort.equals('newest') ? 'sort-tab selec' : 'sort-tab'}" data-sort="newest">Newest
+                    </li>
+                    <li th:class="${sort.equals('oldest') ? 'sort-tab selec' : 'sort-tab'}" data-sort="oldest">Oldest
+                    </li>
+                    <li th:class="${sort.equals('mostliked') ? 'sort-tab selec' : 'sort-tab'}" data-sort="mostliked">
+                        Most Liked
+                    </li>
+                </ul>
             </div>
         </section>
 
@@ -80,6 +78,13 @@
 
 </body>
 <script>
-
+    document.querySelectorAll('.sort-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const sortType = this.textContent.toLowerCase().trim().split(' ').join('');
+            const currentPage = new URLSearchParams(window.location.search).get('page') || 0;
+            const currentSize = new URLSearchParams(window.location.search).get('size') || 5;
+            window.location.href = `?page=${currentPage}&size=${currentSize}&sort=${sortType}`;
+        });
+    });
 </script>
 </html>

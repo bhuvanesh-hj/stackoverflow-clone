@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
 <head>
     <meta charset="UTF-8">
     <title>Profile | Stackoverflow</title>
@@ -20,7 +20,7 @@
         <div class="profile-container">
             <div class="profile-header">
                 <div class="profile-image">
-                    <img width="148" height="148" src="/images/profile.png" alt="Profile Picture">
+                    <img width="148" height="148" th:src="${userDetails.profilePicture != null ? userDetails.profilePicture : '/images/profile.png'}" alt="Profile Picture">
                 </div>
                 <div class="profile-info">
                     <h1 th:text="${userDetails.username}"></h1>
