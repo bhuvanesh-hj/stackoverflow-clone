@@ -86,7 +86,6 @@ public class QuestionController {
     @PostMapping("/create")
     public String createQuestion(@ModelAttribute("questionRequestDTO") QuestionRequestDTO questionRequestDTO,
                                  @RequestParam("tagsList") String tags) {
-        System.out.println(questionRequestDTO);
         QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
         return "redirect:/questions/" + createdQuestion.getId();
     }
@@ -126,24 +125,22 @@ public class QuestionController {
     }
 
     @PostMapping("/{questionId}/upvote")
-    public String upVoteQuestion(@PathVariable("questionId") Long questionId,
-                                 @PathVariable("userId") Long userId) {
+    public String upVoteQuestion(@PathVariable("questionId") Long questionId) {
         try {
-            voteService.upvoteQuestion(questionId, userId);
+            voteService.upvoteQuestion(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
         } catch (Exception e) {
-            return "redirect:/questions" + questionId + "?error=FailedToVote";
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
 
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/{questionId}/downvote/")
-    public String downVoteQuestion(@PathVariable("questionId") Long questionId,
-                                   @PathVariable("userId") Long userId) {
+    @PostMapping("/{questionId}/downvote")
+    public String downVoteQuestion(@PathVariable("questionId") Long questionId) {
         try {
-            voteService.downvoteQuestion(questionId, userId);
+            voteService.downvoteQuestion(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
         } catch (Exception e) {

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Table(name = "answer_votes")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerVote extends BaseEntity{
+public class AnswerVote extends BaseEntity {
 
     @Column(name = "isUpvote")
     private Boolean isUpvote;
@@ -24,12 +24,4 @@ public class AnswerVote extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

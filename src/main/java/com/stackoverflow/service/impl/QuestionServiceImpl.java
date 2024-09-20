@@ -1,8 +1,12 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.*;
-import com.stackoverflow.entity.*;
-
+import com.stackoverflow.dto.AnswerDetailsDTO;
+import com.stackoverflow.dto.QuestionDetailsDTO;
+import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.QuestionVote;
+import com.stackoverflow.entity.Tag;
+import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -16,7 +20,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

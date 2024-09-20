@@ -25,25 +25,4 @@ public class QuestionVote extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Boolean getIsUpvote() {
-        return isUpvote;
-    }
-
-    public void setIsUpvote(Boolean isUpvote) {
-        this.isUpvote = isUpvote;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.isUpvote = false;
-    }
-
 }

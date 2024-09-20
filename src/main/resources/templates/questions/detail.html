@@ -42,15 +42,24 @@
             <section class="question-section">
                 <section class="qs-side">
                     <section class="qs-like">
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 12h16L9 4z"></path></svg>
-                        </span>
-                        <span class="qs-like-count">2,345</span>
-                        <span class="qs-like-btn">
-                            <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
-                                 viewBox="0 0 18 18"><path d="M1 6h16l-8 8z"></path></svg>
-                        </span>
+                        <form th:action="@{/questions/{questionId}/upvote(questionId=${question.id})}" method="post">
+                            <button type="submit" th:class=" ${question.upvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowUp" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 12h16L9 4z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                        <span class="qs-like-count" th:text="${question.upvotes - question.downvotes}"></span>
+                        <form th:action="@{/questions/{questionId}/downvote(questionId=${question.id})}" method="post">
+                            <button type="submit"
+                                    th:class=" ${question.downvoted ? 'qs-like-btn voted' : 'qs-like-btn'}">
+                                <svg aria-hidden="true" class="svg-icon iconArrowDown" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M1 6h16l-8 8z"></path>
+                                </svg>
+                            </button>
+                        </form>
                     </section>
                     <section class="qs-save">
                         <svg aria-hidden="true" class="js-saves-btn-unselected svg-icon iconBookmarkAlt" width="18"
@@ -74,25 +83,15 @@
                             <a>Delete</a>
                         </section>
                         <section>
-
+                            <section class="qs-actions ans-details qs-details">
+                                <p th:text="'asked ' + ${#temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                <p th:text="'by ' + ${question.author.username}"></p>
+                            </section>
                         </section>
                     </section>
                     <section class="qs-comment-section">
-                        <p class="qs-comment">You cannot have a manytomany relation directly, you need to have a
-                            bridge
-                            or
-                            temporary table to maintain the relation.. The you can many to one and one to many
-                            relations
-                            to
-                            this temp table. Eg: if you want many to many relation between table A and B, have a
-                            temp
-                            table
-                            AB which will have primary keys from both tables. Then you can have many to one relation
-                            between
-                            table A and AB, B and AB. –
-                            Arv
-                            CommentedMar 12, 2022 at 0:14
-                        </p>
+                        <!--                        <p class="qs-comment">-->
+                        <!--                        </p>-->
 
                         <p class="qs-comment-add">
                             <a>
