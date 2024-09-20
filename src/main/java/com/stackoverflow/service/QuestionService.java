@@ -29,6 +29,9 @@ public interface QuestionService {
 
     public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long id);
 
+    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id);
+
+//    public List<Question> getSearchedQuestions(String keyword);
    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page,int size,String sort);
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question);

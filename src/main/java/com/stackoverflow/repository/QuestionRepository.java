@@ -37,4 +37,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             "FROM QuestionVote qv " +
             "WHERE qv.question.id = :questionId AND qv.user.id = :userId")
     Integer getUserVoteStatus(@Param("questionId") Long questionId, @Param("userId") Long userId);
+
+    List<Question> findBySavedByUsers_Id(Long userId);
+
+    List<Question>  findByAnswers_AuthorId(Long id);
 }
