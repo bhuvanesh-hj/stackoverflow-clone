@@ -79,8 +79,25 @@
                     </section>
                     <section>
                         <section class="qs-actions">
-                            <a>Edit</a>
-                            <a>Delete</a>
+                            <a href="#" class="link-style"
+                               th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
+                               onclick="submitUpdateForm('updateForm'); return true;">Edit</a>
+
+                            <form id="updateForm"
+                                  th:action="@{/questions/{id}/update(id=${question.id})}"
+                                  method="get" style="display: none;">
+                                <input type="hidden" th:name="id" th:value="${question.id}"/>
+                            </form>
+
+                            <a href="#" class="link-style"
+                               th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
+                               onclick="submitForm('deleteForm'); return true;">Delete</a>
+
+                            <form id="deleteForm"
+                                  th:action="@{/questions/{id}/delete(id=${question.id})}"
+                                  method="post" style="display: none;">
+                                <input type="hidden" name="_method" value="delete"/>
+                            </form>
                         </section>
                         <section>
                             <section class="qs-actions ans-details qs-details">
@@ -144,7 +161,7 @@
                                 </form>
                             </section>
                             <section class="qs-actions ans-details">
-                                <p th:text="'answered ' + ${#temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') != #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm') ? #temporals.format(answer.updatedAt, 'yyyy-MM-dd HH:mm') : #temporals.format(answer.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                <p th:text="'answered ' + ${answer.createdAt}"></p>
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
@@ -194,15 +211,9 @@
                               name="body"
                     ></textarea>
                     </div>
-                    <section style="display: flex; gap: 10px;">
-                        <button class="header-btn" type="submit"
-                        >Update your answer
-                        </button>
-                        <a th:href="@{/questions/{questionId}(questionId=${question.id})}">
-                            <button type="button" class="header-btn login-btn">Cancel</button>
-                        </a>
-                    </section>
-
+                    <button class="header-btn" type="submit"
+                    >Update your answer
+                    </button>
                     <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
                        style="color: red;"></p>
                 </form>
@@ -214,5 +225,13 @@
 
 </body>
 <script>
+    function submitForm(formId) {
+        document.getElementById(formId).submit();
+    }
+
+    function submitUpdateForm(formId) {
+         document.getElementById(formId).submit();
+    }
+
 </script>
 </html>
