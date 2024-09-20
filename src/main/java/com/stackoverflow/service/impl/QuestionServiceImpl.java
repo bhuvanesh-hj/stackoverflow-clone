@@ -17,13 +17,12 @@ import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,6 +92,19 @@ public class QuestionServiceImpl implements QuestionService {
         existingQuestion.setBody(updatedUserDetails.getBody());
         existingQuestion.setUpdatedAt(LocalDateTime.now());
 
+        Set<Tag> updatedTags = new HashSet<>();
+        for (String tagName : updatedUserDetails.getTagsList()) {
+            Tag tag = tagRepository.findByName(tagName)
+                    .orElseGet(() -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        return tagRepository.save(newTag);
+                    });
+            updatedTags.add(tag);
+        }
+
+        existingQuestion.setTags(updatedTags);
+
         Question updatedQuestion = questionRepository.save(existingQuestion);
 
         return getQuestionDetailsDTO(updatedQuestion);
@@ -154,10 +166,28 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
-        return userRepository.findQuestionsSavedById(userId).stream()
+        return questionRepository.findBySavedByUsers_Id(userId).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id) {
+        return questionRepository.findByAnswers_AuthorId(id).stream()
+                .map(question -> getQuestionDetailsDTO(question))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword,int page,int size,String sort) {
+        // Fetch paginated Question entities
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "updatedAt"));
+        return questionRepository.getSearchQuestions(keyword,pageable)
+                .map(question -> getQuestionDetailsDTO(question));
+    }
+
+
+
 
     @Transactional
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question) {

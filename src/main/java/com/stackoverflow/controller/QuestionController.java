@@ -5,6 +5,7 @@ import com.stackoverflow.dto.AnswerRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.entity.Question;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
@@ -12,11 +13,15 @@ import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/questions")
@@ -38,10 +43,10 @@ public class QuestionController {
 
     @GetMapping
     public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
-                                  @RequestParam(value = "size", defaultValue = "3") int size,
+                                  @RequestParam(value = "size", defaultValue = "5") int size,
                                   @RequestParam(value = "sort", defaultValue = "desc") String sort,
                                   Model model) {
-        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page, size, sort);
+        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page,size,sort);
         List<QuestionDetailsDTO> questions = questionsPage.getContent();
         int totalPages = questionsPage.getTotalPages();
 
@@ -100,31 +105,46 @@ public class QuestionController {
         return "redirect:/questions/" + createdQuestion.getId();
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/{id}/update")
     public String showUpdateQuestionForm(@PathVariable("id") Long questionId, Model model) {
-        QuestionDetailsDTO question = questionService.getQuestionById(questionId);
-        if (question == null) {
+        QuestionDetailsDTO existingQuestion = questionService.getQuestionById(questionId);
+        if (existingQuestion == null) {
             return "redirect:/questions?error=NotFound";
         }
-        model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
-        model.addAttribute("HtmlUtils", htmlUtils);
-        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
-        return "questions/update";
+        QuestionRequestDTO questionRequestDTO = new QuestionRequestDTO();
+        questionRequestDTO.setId(existingQuestion.getId());
+        questionRequestDTO.setTitle(existingQuestion.getTitle());
+        questionRequestDTO.setBody(existingQuestion.getBody());
+        questionRequestDTO.setTagsList(
+                existingQuestion.getTags().stream()
+                        .map(tagDTO -> tagDTO.getName())
+                        .collect(Collectors.toSet())
+        );
+
+        model.addAttribute("questionRequestDTO", questionRequestDTO);
+        model.addAttribute("formAction", "/questions/update/" + questionId);  // Set the form action URL for updating
+        model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
+
+        return "questions/create";
     }
+
 
     @PostMapping("/update/{id}")
     public String updateQuestion(@PathVariable("id") Long questionId,
                                  @ModelAttribute("questionRequestDTO") QuestionRequestDTO updatedQuestionDetails,
                                  Model model) {
-        QuestionDetailsDTO existingQuestion = questionService.getQuestionById(questionId);
         questionService.updateQuestion(questionId, updatedQuestionDetails);
-        String formattedTime = StackoverflowCloneApplication.formatTime(existingQuestion.getUpdatedAt());
+
+        updatedQuestionDetails.setUpdatedAt(LocalDateTime.now());
+        String formattedTime = StackoverflowCloneApplication.formatTime(updatedQuestionDetails.getUpdatedAt());
         model.addAttribute("formattedTime", formattedTime);
+
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/delete/{id}")
+
+    @PostMapping("/{id}/delete")
     public String deleteQuestion(@PathVariable("id") Long questionId) {
         Boolean isDeleted = questionService.deleteQuestion(questionId);
         if (isDeleted) {
@@ -132,6 +152,18 @@ public class QuestionController {
         } else {
             return "redirect:/questions?error=NotDeleted";
         }
+    }
+
+    @PostMapping("/save/{id}")
+    public String saveQuestion(@PathVariable("id") Long questionId) {
+        questionService.saveQuestionForUser(questionId);
+        return "redirect:/questions/" + questionId;
+    }
+
+    @PostMapping("/unsave/{id}")
+    public String unsaveQuestion(@PathVariable("id") Long questionId) {
+        questionService.unsaveQuestionForUser(questionId);
+        return "redirect:/questions/" + questionId;
     }
 
     @PostMapping("/{questionId}/upvote")
@@ -160,12 +192,28 @@ public class QuestionController {
         return "redirect:/questions/" + questionId;
     }
 
-//    @GetMapping("/search")
-//    public String searchQuestions(@RequestParam String keyword){
-//
-//        List<Question> questionList = questionService.getSearchedQuestions(keyword);
-//
-//        return "questions/list";
-//    }
+    @GetMapping("/search")
+    public String searchQuestions(@RequestParam("keyword") String keyword,
+                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "size", defaultValue = "5") int size,
+                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
+                                  Model model) {
+
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page,size,sort);
+
+        model.addAttribute("questions", questionPage.getContent());
+        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", questionPage.getTotalPages());
+        model.addAttribute("totalElements", questionPage.getTotalElements());
+        model.addAttribute("size", size);
+        model.addAttribute("keyword", keyword);
+
+        return "dashboard";
+    }
+
+
 }
 

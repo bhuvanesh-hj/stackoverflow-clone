@@ -65,10 +65,10 @@
 
                 <!-- Answers Section -->
                 <div class="answers-section">
-                    <h2 class="section-heading">Answers</h2>
-                    <div class="answers-list" th:each="answer : ${answers}">
-                        <a th:href="@{/answers/{id}(id=${answer.id})}">
-                            <span th:text="${answer.question.title}"></span>
+                    <h2 class="section-heading">Answered Questions</h2>
+                    <div class="answers-list" th:each="question : ${answered}">
+                        <a th:href="@{/questions/{id}(id=${question.id})}">
+                            <span th:text="${question.title}"></span>
                         </a>
                     </div>
                 </div>
