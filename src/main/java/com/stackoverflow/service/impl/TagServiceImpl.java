@@ -4,6 +4,10 @@ import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.repository.TagRepository;
 import com.stackoverflow.service.TagService;
 import com.stackoverflow.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,15 +22,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<TagDTO> getAllTagsWithQuestionCount() {
-        List<Object[]> results = tagRepository.findAllTagsWithQuestionCount();
-        List<TagDTO> tagsWithCount = new ArrayList<>();
+    public Page<TagDTO> getAllTagsWithQuestionCount(int page, int size, String sort, String searchQuery) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "createdAt"));
+        Page<Tag> results = tagRepository.findAllTagsWithQuestionCount(searchQuery, pageable);
 
-        for (Object[] result : results) {
-            Tag tag = (Tag) result[0];
-            Long questionCount = (Long) result[1];
-            tagsWithCount.add(new TagDTO(tag.getName(), questionCount));
-        }
-        return tagsWithCount;
+        return  results.map(tag -> {
+            int questionCount = tag.getQuestions().size();
+            return new TagDTO(tag.getName(), questionCount);
+        });
     }
 }
