@@ -81,11 +81,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void upvoteAnswer(Long answerId, Long userId) {
+    public void upvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
-        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, userId);
+        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
@@ -106,11 +106,11 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void downvoteAnswer(Long answerId, Long userId) {
+    public void downvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
-        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, userId);
+        Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();

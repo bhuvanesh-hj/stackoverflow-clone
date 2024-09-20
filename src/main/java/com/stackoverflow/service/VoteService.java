@@ -5,9 +5,9 @@ public interface VoteService {
 
     void downvoteQuestion(Long questionId);
 
-    void upvoteAnswer(Long answerId, Long userId);
+    void upvoteAnswer(Long answerId);
 
-    void downvoteAnswer(Long answerId, Long userId);
+    void downvoteAnswer(Long answerId);
 
     int getQuestionUpvotes(Long questionId);
 
