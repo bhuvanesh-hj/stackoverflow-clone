@@ -2,7 +2,9 @@ package com.stackoverflow.service;
 
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.entity.Question;
+import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,4 +39,6 @@ public interface QuestionService {
 
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question);
+
+    public List<QuestionDetailsDTO> getRelatedQuestionsByTags(List<String> tags, Long questionId);
 }

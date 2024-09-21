@@ -3,6 +3,7 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.QuestionVote;
 import com.stackoverflow.entity.Tag;
@@ -234,6 +235,16 @@ public class QuestionServiceImpl implements QuestionService {
         questionDetailsDTO.setDownvoted(downvoted);
 
         return questionDetailsDTO;
+    }
+
+    public List<QuestionDetailsDTO> getRelatedQuestionsByTags(List<String> tags, Long questionId) {
+        Pageable limit = PageRequest.of(0, 3);
+
+        List<Question> relatedQuestions = questionRepository.findRelatedQuestionsByTags(tags, questionId, limit);
+
+        return relatedQuestions.stream()
+                .map(question -> modelMapper.map(question, QuestionDetailsDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

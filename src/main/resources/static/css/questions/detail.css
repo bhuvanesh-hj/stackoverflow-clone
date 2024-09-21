@@ -509,3 +509,26 @@ small {
 .comment-form button:hover {
     background-color: #005999;
 }
+
+.related-questions-body {
+   border-top: 1px solid #e3e6e8;
+   width: 100%;
+   box-sizing: border-box;
+   padding-top: 20px;
+}
+
+.related-questions-body h3 {
+    margin-bottom : 10px;
+}
+
+.related-questions-body a {
+    color : #1E90FF;
+}
+
+.related-questions-body a:hover {
+    text-decoration: underline;
+}
+
+.related-question-item {
+    margin-bottom: 10px;
+}
