@@ -88,12 +88,12 @@ public class CommentController {
             if (questionId != null) {
                 model.addAttribute("question", questionService.getQuestionById(questionId));
             }
-            return "comment/edit";
+            return "redirect:/questions/" +  questionId;
         }
 
         commentService.update(commentId, commentRequestDTO, questionId);
 
-        return "redirect:/questions/detail/" +  questionId;
+        return "redirect:/questions/" +  questionId;
     }
 
     @PostMapping("/{commentId}/delete")
