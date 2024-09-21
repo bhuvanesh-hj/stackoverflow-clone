@@ -57,12 +57,6 @@ public class CommentServiceImpl implements CommentService {
             comment.setQuestion(question);
         }
 
-        if (answerId != null) {
-            Answer answer = answerRepository.findById(answerId)
-                    .orElseThrow(() -> new RuntimeException("Answer not found"));
-            comment.setAnswer(answer);
-        }
-
         commentRepository.save(comment);
 
         return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
@@ -73,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
     }
 
-    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
+    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
         Comment existingComment = getCommentById(commentId);
 
         existingComment.setComment(commentRequestDTO.getComment());

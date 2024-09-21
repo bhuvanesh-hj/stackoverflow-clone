@@ -121,36 +121,80 @@
                         </section>
                     </section>
 
-                    <section class="qs-comment-section">
-                        <div class="comments-list">
-                            <h2>Comments:</h2>
-                            <div th:each="this_comment : ${question.comments}">
-                                <p th:text="${this_comment.comment}" class="qs-comment"></p>
-                                <small th:text="${#temporals.format(this_comment.updatedAt, 'yyyy-MM-dd HH:mm')}"></small>
+                    <section class="comment-section js-comment-component">
+                        <div class="comment-container js-comment-list-container border-top border-gray mt-12">
+                            <ul class="comment-list js-comment-list">
+                                <div class="comment-item js-comment-text-form">
+                                    <li class="comment-item-element js-comment"
+                                        th:each="this_comment : ${question.comments}">
+                                        <div class="comment-body js-comment-edit-hide">
+                                            <span class="comment-text" th:text="${this_comment.comment}"></span>
 
-                                <a href="#" class="link-style"
-                                   th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"
-                                   onclick="submitForm('deleteComment'); return true;">Delete</a>
+                                            <div class="comment-author d-inline-flex ai-center">
+                                                –&nbsp;
+                                                <a class="comment-author-name"
+                                                   th:href="@{/users/{user_id}(user_id=${this_comment.author.id})}">
+                                                    <span th:text="${this_comment.author.username}"></span>
+                                                </a>
+                                            </div>
 
-                                <form id="deleteComment"
-                                      th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"
-                                      method="post" style="display: none;">
-                                    <input type="hidden" name="_method" value="delete"/>
+                                            <span class="comment-timestamp" dir="ltr">
+                                                <a class="comment-link">
+                                                    <span class="comment-time">
+                                                        <span th:text="${#temporals.format(this_comment.updatedAt, 'MMM d, yyyy ''at'' HH:mm')}"/>
+                                                    </span>
+                                                </a>
+                                            </span>
+
+                                                <!-- Add comment section -->
+                                                <p class="comment-edit-link">
+                                                <div id="toggleEditComment" onclick="toggleEditCommentForm();"
+                                                     th:if="${loggedIn != null && question.author != null && loggedIn.username == this_comment.author.username}">
+                                            Edit</div>
+                                                </p>
+
+                                            <div class="comment-form" id="editCommentForm" style="display: none;">
+                                                <form method="POST"
+                                                      th:action="@{/questions/{questionId}/comments/{commentId}/edit(questionId=${question.id},commentId=${this_comment.id})}">
+                                                    <textarea cols="50" name="comment" placeholder="Write your comment here..." required
+                                                              th:text ="${this_comment.comment}"
+                                                              rows="4"></textarea><br>
+                                                    <button type="submit">Update Comment</button>
+                                                </form>
+                                            </div>
+
+
+                                           <a class="comment-delete-link"
+                                               href="#"
+                                               onclick="submitForm('deleteComment'); return true;"
+                                               th:if="${loggedIn != null && question.author != null && loggedIn.username == this_comment.author.username}">
+                                                Delete
+                                            </a>
+
+                                            <form id="deleteComment"
+                                                  method="post"
+                                                  style="display: none;" th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}">
+                                                <input name="_method" type="hidden" value="delete"/>
+                                            </form>
+                                        </div>
+                                    </li>
+                                </div>
+                            </ul>
+
+                            <!-- Add comment section -->
+                            <p class="comment-add-toggle">
+                            <div id="toggleComment" onclick="toggleCommentForm();">Add a comment</div>
+                            </p>
+
+                            <div class="comment-form" id="commentForm" style="display: none;">
+                                <form method="POST"
+                                      th:action="@{/questions/{questionId}/comments(questionId=${question.id})}">
+                                    <textarea cols="50" name="comment" placeholder="Write your comment here..." required
+                                              rows="4"></textarea><br>
+                                    <button type="submit">Submit Comment</button>
                                 </form>
-
-                                <!--       edit comment          -->
                             </div>
-                        </div>
 
-                        <p class="qs-comment-add">
-                        <div id="toggleComment" onclick="toggleCommentForm();">Add a comment</div>
-                        </p>
-
-                        <div id="commentForm" class="comment-form" style="display: none;">
-                            <form th:action="@{/questions/{questionId}/comments(questionId=${question.id})}" method="POST">
-                                <textarea rows="4" cols="50" name="comment" placeholder="Write your comment here..." required></textarea><br>
-                                <button type="submit">Submit Comment</button>
-                            </form>
                         </div>
                     </section>
 
@@ -284,7 +328,17 @@
  }
 
 
+     function toggleEditCommentForm(thisCommentValue) {
+     if (editCommentForm) {
+         // Toggle the display property
+         editCommentForm.style.display = (editCommentForm.style.display === "none" || editCommentForm.style.display === "") ? "block" : "none";
 
+         document.getElementById("commentValue").value = thisCommentValue;
+     } else {
+         console.error("Comment form not found");
+     }
+
+    }
 
 </script>
 </html>

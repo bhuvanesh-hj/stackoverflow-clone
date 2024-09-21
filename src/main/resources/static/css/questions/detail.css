@@ -219,3 +219,136 @@ body{
 .voted{
     background-color: #FBDBC0;
 }
+
+/* Container and layout */
+.comment-section {
+    padding: 10px;
+}
+
+.comment-container {
+    padding: 12px;
+    border-top: 1px solid #ccc;
+}
+
+.comment-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.comment-item {
+    margin-bottom: 12px;
+}
+
+.comment-item-element {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+/* Comment body */
+.comment-body {
+    display: flex;
+    justify-content: space-between; /* Align text and author/timestamp far apart */
+    align-items: center;
+}
+
+/* Comment text */
+.comment-text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    flex-grow: 1; /* Take up available space */
+}
+
+/* Author and timestamp (aligned to the right) */
+.comment-author,
+.comment-timestamp {
+    white-space: nowrap; /* Prevent breaking to new lines */
+}
+
+.comment-author {
+    font-size: 13px;
+    color: #0077cc;
+    margin-left: 8px;
+    max-width: 150px; /* Optional: max width to prevent overflow */
+    text-align: right;
+}
+
+.comment-author-name {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.comment-author-name:hover {
+    text-decoration: underline;
+}
+
+.comment-timestamp {
+    font-size: 12px;
+    color: #6a737c;
+    margin-left: 10px;
+    max-width: 180px; /* Optional: max width for the timestamp */
+    text-align: right;
+}
+
+.comment-link {
+    color: #6a737c;
+    text-decoration: none;
+}
+
+.comment-link:hover {
+    text-decoration: underline;
+}
+
+/* Delete link */
+.comment-delete-link,
+ comment-edit-link{
+    color: #d73a49;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.comment-delete-link:hover {
+    text-decoration: underline;
+}
+
+/* Add comment button */
+.comment-add-toggle {
+    margin-top: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #0077cc;
+}
+
+.comment-add-toggle:hover {
+    text-decoration: underline;
+}
+
+/* Comment form */
+.comment-form {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.comment-form textarea {
+    width: 100%;
+    border: 1px solid #d1d5da;
+    padding: 8px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.comment-form button {
+    background-color: #0077cc;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.comment-form button:hover {
+    background-color: #005999;
+}
