@@ -10,7 +10,7 @@
     <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '.body',  // The textarea id
+            selector: '.body',
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
             toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
@@ -120,17 +120,6 @@
                             </section>
                         </section>
                     </section>
-
-
-                    <section class="related-questions-body">
-                        <div class="related-questions">
-                            <h3>Related Questions</h3>
-                            <div th:each="relatedQuestion : ${relatedQuestions}" class="related-question-item">
-                                <a th:href="@{/questions/{id}(id=${relatedQuestion.id})}" th:text="${relatedQuestion.title}"></a>
-                            </div>
-                        </div>
-                    </section>
-
                     <section class="qs-comment-section">
                         <div th:if="${question.comments.size() > 0}" th:each="this_comment : ${question.comments}"
                              class="qs-comment">
@@ -147,30 +136,12 @@
                                     </form>
                                 </section>
                                 <section class="qs-actions ans-details comments-details">
-                                    <p th:text="'by ' + ${this_comment.author.username}"></p>
-                                    <p th:text="'commented ' + ${#temporals.format(this_comment.updatedAt, 'yyyy-MM-dd HH:mm') != #temporals.format(this_comment.createdAt, 'yyyy-MM-dd HH:mm') ? #temporals.format(this_comment.updatedAt, 'yyyy-MM-dd HH:mm') : #temporals.format(this_comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                    <a th:href="@{/users/{id}(id=${this_comment.author.id})}"
+                                       th:text="'by ' + ${this_comment.author.username} + ', '"></a>
+                                    <span th:text="${#temporals.format(this_comment.updatedAt, 'MMM d, yyyy ''at'' HH:mm')}"></span>
                                 </section>
                             </section>
                         </div>
-                        <!--                        <div class="comments-list">-->
-                        <!--                            <div th:each="this_comment : ${question.comments}">-->
-                        <!--                                <p th:text="${this_comment.comment}" class="qs-comment"></p>-->
-                        <!--                                <small th:text="${#temporals.format(this_comment.updatedAt, 'yyyy-MM-dd HH:mm')}"></small>-->
-
-                        <!--                                <a href="#" class="link-style"-->
-                        <!--                                   th:if="${loggedIn != null && question.author != null && loggedIn.username == question.author.username}"-->
-                        <!--                                   onclick="submitForm('deleteComment'); return true;">Delete</a>-->
-
-                        <!--                                <form id="deleteComment"-->
-                        <!--                                      th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"-->
-                        <!--                                      method="post" style="display: none;">-->
-                        <!--                                    <input type="hidden" name="_method" value="delete"/>-->
-                        <!--                                </form>-->
-
-                        <!--                                &lt;!&ndash;       edit comment          &ndash;&gt;-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-
                         <p class="qs-comment-add" id="toggleComment" onclick="toggleCommentForm();">Add a comment
                         </p>
 
@@ -181,6 +152,16 @@
                                           required></textarea><br>
                                 <button type="submit">Submit Comment</button>
                             </form>
+                        </div>
+                    </section>
+
+                    <section th:if="${relatedQuestions.size() > 0}" class="related-questions-body">
+                        <div class="related-questions">
+                            <h3>Related Questions</h3>
+                            <div th:each="relatedQuestion : ${relatedQuestions}" class="related-question-item">
+                                <a th:href="@{/questions/{id}(id=${relatedQuestion.id})}"
+                                   th:text="${relatedQuestion.title}"></a>
+                            </div>
                         </div>
                     </section>
 

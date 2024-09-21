@@ -1,9 +1,8 @@
 package com.stackoverflow.service.impl;
 
 import com.stackoverflow.dto.AnswerDetailsDTO;
-import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.dto.QuestionRequestDTO;
-import com.stackoverflow.dto.TagDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionRequestDTO;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.QuestionVote;
 import com.stackoverflow.entity.Tag;
@@ -246,5 +245,4 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(question -> modelMapper.map(question, QuestionDetailsDTO.class))
                 .collect(Collectors.toList());
     }
-
 }

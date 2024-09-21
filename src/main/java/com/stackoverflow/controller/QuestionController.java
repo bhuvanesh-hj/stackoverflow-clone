@@ -1,9 +1,12 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
-import com.stackoverflow.dto.*;
+import com.stackoverflow.dto.AnswerRequestDTO;
+import com.stackoverflow.dto.CommentRequestDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.Tag;
+import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
@@ -13,8 +16,6 @@ import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +66,7 @@ public class QuestionController {
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
+
         if (userService.isUserLoggedIn()) {
             model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
@@ -76,31 +78,34 @@ public class QuestionController {
         model.addAttribute("total_pages", totalPages);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
+        model.addAttribute("recentTags", tagService.getRecentTags());
 
         return "dashboard";
     }
 
+
     @GetMapping("/{id}")
     public String getQuestionById(@PathVariable("id") Long questionId, Model model) {
-        QuestionDetailsDTO question = questionService.getQuestionById(questionId);
-        if (question == null) {
+
+        try {
+            QuestionDetailsDTO question = questionService.getQuestionById(questionId);
+            List<String> questionTags = question.getTags().stream().
+                    map(tagDTO -> tagDTO.getName())
+                    .collect(Collectors.toList());
+            List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
+
+            model.addAttribute("question", question);
+            model.addAttribute("users", null);
+            model.addAttribute("tags", null);
+            model.addAttribute("relatedQuestions", relatedQuestions);
+            model.addAttribute("recentTags", tagService.getRecentTags());
+            model.addAttribute("loggedIn", userService.isUserLoggedIn() ? modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class) : null);
+            model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
+            model.addAttribute("comment", new CommentRequestDTO());
+
+        } catch (ResourceNotFoundException e) {
             return "redirect:/questions?error=NotFound";
         }
-        model.addAttribute("question", question);
-        model.addAttribute("users", null);
-        model.addAttribute("tags", null);
-        if (userService.isUserLoggedIn()) {
-            model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
-        } else {
-            model.addAttribute("loggedIn", null);
-        }
-        model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
-        model.addAttribute("comment", new CommentRequestDTO());
-
-        List<String> questionTags = question.getTags().stream().map(tagDTO -> tagDTO.getName()).collect(Collectors.toList());
-        List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
-
-        model.addAttribute("relatedQuestions", relatedQuestions);
 
         return "questions/detail";
     }

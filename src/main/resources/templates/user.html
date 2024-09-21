@@ -34,19 +34,22 @@
                 found.</p>
             <div class="user-card" th:each="user : ${users}"
                  th:if="${loggedIn == null or user.id != loggedIn.id}">
-                <div class="user-card-content">
-                    <img th:src="${user.profilePicture != null ? user.profilePicture : '/images/profile.png'}"
-                         alt="User Icon" class="user-icon">
-                    <div class="user-info">
-                        <a th:href="@{/users/{id}(id=${user.id})}">
-                            <div class="user-name" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name</div>
-                        </a>
-                        <div class="counts">
-                            <div th:text="'Questions: ' + ${user.questionCount}">Questions: 0</div>
-                            <div th:text="'Answers: ' + ${user.answerCount}">Answers: 0</div>
+                <a th:href="@{/users/{userId}(userId=${user.id})}">
+                    <div class="user-card-content">
+                        <img th:src="${user.profilePicture != null ? user.profilePicture : '/images/profile.png'}"
+                             alt="User Icon" class="user-icon">
+                        <div class="user-info">
+                            <a th:href="@{/users/{id}(id=${user.id})}">
+                                <div class="user-name" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name
+                                </div>
+                            </a>
+                            <div class="counts">
+                                <div th:text="'Questions: ' + ${user.questionCount}">Questions: 0</div>
+                                <div th:text="'Answers: ' + ${user.answerCount}">Answers: 0</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </section>
 

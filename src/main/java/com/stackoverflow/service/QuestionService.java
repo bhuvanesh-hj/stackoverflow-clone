@@ -1,12 +1,9 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.dto.QuestionRequestDTO;
-import com.stackoverflow.dto.TagDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionRequestDTO;
 import com.stackoverflow.entity.Question;
-import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ public interface QuestionService {
 
     public Boolean deleteQuestion(Long questionId);
 
-    public QuestionDetailsDTO  vote(Boolean isUpvote, Long questionId, Long userId);
+    public QuestionDetailsDTO vote(Boolean isUpvote, Long questionId, Long userId);
 
     public void saveQuestionForUser(Long questionId);
 
@@ -33,10 +30,7 @@ public interface QuestionService {
 
     public List<QuestionDetailsDTO> getAnsweredQuestions(Long id);
 
-//    public List<Question> getSearchedQuestions(String keyword);
-   
-    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page,int size,String sort);
-
+    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page, int size, String sort);
 
     public QuestionDetailsDTO getQuestionDetailsDTO(Question question);
 

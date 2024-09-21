@@ -1,4 +1,4 @@
-package com.stackoverflow.dto;
+package com.stackoverflow.dto.questions;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -15,13 +14,11 @@ import java.util.Set;
 @ToString
 public class QuestionRequestDTO {
 
-
     private Long Id;
 
     @NotBlank(message = "Title is required")
     @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
     private String title;
-
 
     @NotBlank(message = "Body is required")
     @Size(min = 20, message = "Body must contain at least 20 characters")
