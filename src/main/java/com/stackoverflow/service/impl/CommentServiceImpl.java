@@ -12,9 +12,6 @@ import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.CommentService;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,27 +23,25 @@ public class CommentServiceImpl implements CommentService {
     private final AnswerRepository answerRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
-    public CommentServiceImpl(CommentRepository commentRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, ModelMapper modelMapper, UserRepository userRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, QuestionRepository questionRepository, AnswerRepository answerRepository,
+                              ModelMapper modelMapper, UserRepository userRepository, UserServiceImpl userService) {
         this.commentRepository = commentRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
     public String createComment(CommentRequestDTO commentRequestDTO, Long questionId) {
+        User user = userService.getLoggedInUser();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
 
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-
-        Comment comment = modelMapper.map(commentRequestDTO,Comment.class);
-
-        comment.setAuthor(author);
+        comment.setAuthor(user);
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUpdatedAt(LocalDateTime.now());
 

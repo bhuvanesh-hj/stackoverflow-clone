@@ -1,10 +1,9 @@
 package com.stackoverflow.controller;
 
-import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
@@ -28,39 +27,33 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-//    @GetMapping("/{questionId}/addComment")
-//    public String showCommentForm(@PathVariable(required = false) Long questionId,
-//                                  @PathVariable(required = false) Long answerId,
-//                                  Model model) {
-//        if (questionId != null) {
-//            QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
-//            model.addAttribute("question", questionDetailsDTO);
-//        }
-//
-//        model.addAttribute("comment", new CommentRequestDTO());
-//        return "comment/create";
-//    }
-
     @PostMapping()
     public String saveComment(@PathVariable(required = false) Long questionId,
                               @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
                               BindingResult result,
                               Model model) {
-        if (result.hasErrors()) {
-            if (questionId != null) {
-                QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
-                model.addAttribute("question", questionDetailsDTO);
+        try {
+            if (result.hasErrors()) {
+                if (questionId != null) {
+                    QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+                    model.addAttribute("question", questionDetailsDTO);
+                }
+                return "redirect:/questions/" + questionId;
             }
-            return "redirect:/questions/" + questionId;
+
+            String formattedTime = "";
+
+            if (questionId != null) {
+                formattedTime = commentService.createComment(commentRequestDTO, questionId);
+            }
+
+            model.addAttribute("formattedTime", formattedTime);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=Failed to create comment";
         }
 
-        String formattedTime = "";
-
-        if (questionId != null) {
-             formattedTime = commentService.createComment(commentRequestDTO, questionId);
-        }
-
-        model.addAttribute("formattedTime", formattedTime);
 
         return "redirect:/questions/" + questionId;
     }
@@ -88,12 +81,12 @@ public class CommentController {
             if (questionId != null) {
                 model.addAttribute("question", questionService.getQuestionById(questionId));
             }
-            return "redirect:/questions/" +  questionId;
+            return "redirect:/questions/" + questionId;
         }
 
         commentService.update(commentId, commentRequestDTO, questionId);
 
-        return "redirect:/questions/" +  questionId;
+        return "redirect:/questions/" + questionId;
     }
 
     @PostMapping("/{commentId}/delete")
