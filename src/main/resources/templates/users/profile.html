@@ -14,7 +14,7 @@
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
 
 <main>
-    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users})}"/>
+    <div th:replace="~{fragments/sidebar :: sidebar(questions=${questions},tags=${tags},users=${users},recentTags=${recentTags})}"/>
 
     <section class="profile">
         <div class="profile-container">
