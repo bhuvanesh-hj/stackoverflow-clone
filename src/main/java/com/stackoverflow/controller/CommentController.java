@@ -11,7 +11,12 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/questions/{questionId}/comments")
@@ -56,6 +61,42 @@ public class CommentController {
 
 
         return "redirect:/questions/" + questionId;
+    }
+
+    @PostMapping("/{commentId}")
+    public String saveComment(@PathVariable(required = false) Long questionId,
+                              @PathVariable(required = false) Long commentId,
+                              @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
+                              BindingResult bindingResult,
+                              Model model){
+        List<String> errorsList = new ArrayList<>();
+        try {
+            if (bindingResult.hasErrors()) {
+                errorsList = bindingResult.getFieldErrors().stream()
+                        .map(FieldError::getDefaultMessage)
+                        .collect(Collectors.toList());
+                model.addAttribute("errors_comment", errorsList);
+                if (questionId != null) {
+                    QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+                    model.addAttribute("question", questionDetailsDTO);
+                }
+                return "redirect:/questions/" + questionId;
+            }
+            String formattedTime = "";
+
+            if (questionId != null) {
+                formattedTime = commentService.createComment(commentRequestDTO, questionId, commentId);
+            }
+
+            model.addAttribute("formattedTime", formattedTime);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=Failed to create comment";
+        }
+
+        return "redirect:/questions/" + questionId;
+
     }
 
     @GetMapping("/{commentId}/edit")

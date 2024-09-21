@@ -3,12 +3,14 @@ package com.stackoverflow.dto;
 import com.stackoverflow.dto.user.UserDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.entity.Answer;
+import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -23,4 +25,7 @@ public class CommentDetailsDTO {
     private LocalDateTime updatedAt;
 
     private UserDTO author;
+
+    private List<CommentDetailsDTO> comments;
+
 }

@@ -6,6 +6,7 @@ import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
+import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.CommentRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -83,5 +84,27 @@ public class CommentServiceImpl implements CommentService {
     public void delete(Long commentId) {
         commentRepository.deleteById(commentId);
     }
+
+    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
+        User user = userService.getLoggedInUser();
+
+        Comment parentComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found"));
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question comment not found"));
+
+        Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
+
+        comment.setAuthor(user);
+        comment.setParentComment(parentComment);
+        comment.setCreatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
+
+        commentRepository.save(comment);
+
+        return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
+
+    }
+
 
 }

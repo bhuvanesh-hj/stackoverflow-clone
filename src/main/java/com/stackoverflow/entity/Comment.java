@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Setter
@@ -36,6 +37,13 @@ public class Comment extends BaseEntity{
 
         @Column(name = "updated_at")
         private LocalDateTime updatedAt;
+
+        @ManyToOne
+        @JoinColumn(name = "parent_id")
+        private Comment parentComment;
+
+        @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
+        private List<Comment> comments;
 
 }
 
