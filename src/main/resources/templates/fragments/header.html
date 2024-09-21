@@ -32,7 +32,7 @@
                 <a style="display: flex; align-items: center; justify-content: space-between; gap: 5px;"
                    th:href="@{/users/{userId}(userId=${user.id})}">
                     <img width="40" height="40" style="border-radius: 50%;"
-                         th:src="${user.profilePicture != null ? user.profilePicture : '/images/profile.png'}"
+                         th:src="${user.profilePicture != null || userDetails.profilePicture.isEmpty() ? user.profilePicture : '/images/profile.png'}"
                          alt="name--v1"/>
                     <p th:text="${user.username}"/>
                 </a>
