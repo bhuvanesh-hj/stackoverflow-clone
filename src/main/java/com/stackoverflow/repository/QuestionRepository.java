@@ -1,6 +1,8 @@
 package com.stackoverflow.repository;
 
 import com.stackoverflow.entity.Question;
+
+import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,4 +44,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT q FROM Question q LEFT JOIN q.questionVotes v GROUP BY q.id ORDER BY COUNT(CASE WHEN v.isUpvote = true THEN 1 END) DESC")
     Page<Question> findAllQuestionsOrderedByUpvotes(Pageable pageable);
+
+    @Query("SELECT q FROM Question q JOIN q.tags t WHERE t IS NULL OR t.name IN :tags AND q.id != :questionId GROUP BY q.id ORDER BY COUNT(t) DESC")
+    List<Question> findRelatedQuestionsByTags(@Param("tags") List<String> tags, @Param("questionId") Long questionId, Pageable pageable);
+
 }

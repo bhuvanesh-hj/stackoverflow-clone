@@ -121,6 +121,16 @@
                         </section>
                     </section>
 
+
+                    <section class="related-questions-body">
+                        <div class="related-questions">
+                            <h3>Related Questions</h3>
+                            <div th:each="relatedQuestion : ${relatedQuestions}" class="related-question-item">
+                                <a th:href="@{/questions/{id}(id=${relatedQuestion.id})}" th:text="${relatedQuestion.title}"></a>
+                            </div>
+                        </div>
+                    </section>
+
                     <section class="qs-comment-section">
                         <div th:if="${question.comments.size() > 0}" th:each="this_comment : ${question.comments}"
                              class="qs-comment">

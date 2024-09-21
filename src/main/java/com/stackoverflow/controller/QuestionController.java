@@ -1,11 +1,9 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
-import com.stackoverflow.dto.AnswerRequestDTO;
-import com.stackoverflow.dto.CommentRequestDTO;
-import com.stackoverflow.dto.QuestionDetailsDTO;
-import com.stackoverflow.dto.QuestionRequestDTO;
+import com.stackoverflow.dto.*;
 import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.entity.Tag;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
@@ -67,15 +65,13 @@ public class QuestionController {
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
-
         if (userService.isUserLoggedIn()) {
             model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
-
         model.addAttribute("users", null);
-        model.addAttribute("tags", tagService.getRecentTags());
+        model.addAttribute("tags", null);
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", totalPages);
         model.addAttribute("size", size);
@@ -83,7 +79,6 @@ public class QuestionController {
 
         return "dashboard";
     }
-
 
     @GetMapping("/{id}")
     public String getQuestionById(@PathVariable("id") Long questionId, Model model) {
@@ -101,6 +96,11 @@ public class QuestionController {
         }
         model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
         model.addAttribute("comment", new CommentRequestDTO());
+
+        List<String> questionTags = question.getTags().stream().map(tagDTO -> tagDTO.getName()).collect(Collectors.toList());
+        List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
+
+        model.addAttribute("relatedQuestions", relatedQuestions);
 
         return "questions/detail";
     }
