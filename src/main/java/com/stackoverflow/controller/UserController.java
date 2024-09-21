@@ -1,12 +1,13 @@
 package com.stackoverflow.controller;
 
-import com.stackoverflow.dto.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.TagService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final QuestionService questionService;
+    private final TagService tagService;
     private static final String[] PROFILE_PICTURES = {
             "https://randomuser.me/api/portraits/men/14.jpg",
             "https://randomuser.me/api/portraits/men/90.jpg",
@@ -45,9 +47,10 @@ public class UserController {
 
 
     @Autowired
-    public UserController(UserService userService, QuestionService questionService) {
+    public UserController(UserService userService, QuestionService questionService, TagService tagService) {
         this.userService = userService;
         this.questionService = questionService;
+        this.tagService = tagService;
     }
 
     @GetMapping("/login")
@@ -107,6 +110,8 @@ public class UserController {
         model.addAttribute("questions", questions);
         model.addAttribute("answered", answered);
         model.addAttribute("saved", saved);
+        model.addAttribute("recentTags", tagService.getRecentTags());
+
         return "users/profile";
     }
 
@@ -183,6 +188,8 @@ public class UserController {
         model.addAttribute("total_pages", paginatdUsers.getTotalPages());
         model.addAttribute("size", size);
         model.addAttribute("search", searchQuery);
+        model.addAttribute("recentTags", tagService.getRecentTags());
+
         return "user";
     }
 

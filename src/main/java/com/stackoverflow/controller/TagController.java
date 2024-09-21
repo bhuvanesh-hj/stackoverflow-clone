@@ -39,6 +39,7 @@ public class TagController {
         model.addAttribute("sort", sort);
         model.addAttribute("search", searchQuery);
         model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        model.addAttribute("recentTags", tagService.getRecentTags());
 
         return "tags/tag";
     }

@@ -1,7 +1,7 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.CommentRequestDTO;
-import com.stackoverflow.dto.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;

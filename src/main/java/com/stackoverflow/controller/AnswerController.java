@@ -3,7 +3,7 @@ package com.stackoverflow.controller;
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerDetailsDTO;
 import com.stackoverflow.dto.AnswerRequestDTO;
-import com.stackoverflow.dto.QuestionDetailsDTO;
+import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
