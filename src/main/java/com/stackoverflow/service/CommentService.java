@@ -14,6 +14,4 @@ public interface CommentService {
     public void delete(Long commentId);
 
 
-
-
 }

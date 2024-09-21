@@ -3,7 +3,6 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.CommentDetailsDTO;
 import com.stackoverflow.dto.CommentRequestDTO;
-import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -67,6 +66,8 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
     }
 
+
+    @Override
     public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
         Comment existingComment = getCommentById(commentId);
 

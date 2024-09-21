@@ -37,7 +37,7 @@
         </section>
         <section class="main-content-tags-section">
             <p th:if="${tags.size() == 0}"
-               style="text-align: left; font-size: 17px;">No users
+               style="text-align: left; font-size: 17px;">No tags
                 found.</p>
             <div class="tag-card" th:each="tag : ${tags}">
                 <div class="tag-name" th:text="${tag.name}">Tag Name</div>
