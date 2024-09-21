@@ -21,7 +21,7 @@
             <div class="profile-header">
                 <div class="profile-image">
                     <img width="148" height="148"
-                         th:src="${userDetails.profilePicture != null || userDetails.profilePicture.isEmpty()  ? userDetails.profilePicture : '/images/profile.png'}"
+                         th:src="${userDetails.profilePicture != null  ? userDetails.profilePicture : '/images/profile.png'}"
                          alt="Profile Picture">
                 </div>
                 <div class="profile-info">

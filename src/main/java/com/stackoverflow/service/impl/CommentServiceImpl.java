@@ -50,7 +50,6 @@ public class CommentServiceImpl implements CommentService {
                     .orElseThrow(() -> new RuntimeException("Question not found"));
             comment.setQuestion(question);
         }
-
         commentRepository.save(comment);
 
         return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());

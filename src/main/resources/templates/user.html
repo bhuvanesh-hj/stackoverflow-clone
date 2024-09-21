@@ -35,7 +35,7 @@
             <div class="user-card" th:each="user : ${users}"
                  th:if="${loggedIn == null or user.id != loggedIn.id}">
                 <div class="user-card-content">
-                    <img th:src="${user.profilePicture != null || userDetails.profilePicture.equals('') ? user.profilePicture : '/images/profile.png'}"
+                    <img th:src="${user.profilePicture != null ? user.profilePicture : '/images/profile.png'}"
                          alt="User Icon" class="user-icon">
                     <div class="user-info">
                         <a th:href="@{/users/{id}(id=${user.id})}">
