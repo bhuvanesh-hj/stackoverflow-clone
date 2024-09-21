@@ -31,4 +31,9 @@ public class TagServiceImpl implements TagService {
             return new TagDTO(tag.getName(), questionCount);
         });
     }
+
+    @Override
+    public List<String> getRecentTags() {
+        return tagRepository.findRecentTags();
+    }
 }

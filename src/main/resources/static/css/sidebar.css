@@ -202,3 +202,18 @@ main{
         font-weight: bold;
         border-radius: 5px;
 }
+.recent-tag{
+    list-style: none;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.recent-tag:hover{
+    color: black;
+    text-decoration: underline;
+}
+
+

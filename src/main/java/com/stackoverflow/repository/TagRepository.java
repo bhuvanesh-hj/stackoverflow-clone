@@ -21,4 +21,8 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllTagsWithQuestionCount(String searchTerm, Pageable pageable);
 
     Optional<Tag> findByName(String tagName);
+
+    @Query("SELECT t.name FROM Tag t ORDER BY t.createdAt DESC LIMIT 5")
+    List<String> findRecentTags();
+
 }

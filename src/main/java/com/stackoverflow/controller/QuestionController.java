@@ -9,6 +9,7 @@ import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.TagService;
 import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
@@ -34,14 +35,16 @@ public class QuestionController {
     private final ModelMapper modelMapper;
     private final VoteService voteService;
     private final CommentService commentService;
+    private final TagService tagService;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService, CommentService commentService1) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService, CommentService commentService1, TagService tagService) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
         this.modelMapper = modelMapper;
         this.voteService = voteService;
         this.commentService = commentService1;
+        this.tagService = tagService;
     }
 
     @GetMapping
@@ -60,12 +63,14 @@ public class QuestionController {
         } else {
             model.addAttribute("loggedIn", null);
         }
+        System.out.println("tagService.getRecentTags() = " + tagService.getRecentTags());
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", totalPages);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
+        model.addAttribute("recentTags", tagService.getRecentTags());
 
         return "dashboard";
     }
