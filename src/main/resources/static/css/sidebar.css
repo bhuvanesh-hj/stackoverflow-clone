@@ -205,6 +205,7 @@ main{
 .recent-tag{
     list-style: none;
     display: flex;
+    color: #7F8083;
     gap: 5px;
     align-items: center;
     cursor: pointer;
@@ -214,6 +215,16 @@ main{
 .recent-tag:hover{
     color: black;
     text-decoration: underline;
+}
+
+.recent-tag-list{
+    padding: 8px 0 !important;
+}
+
+.recent-tag span{
+    width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
