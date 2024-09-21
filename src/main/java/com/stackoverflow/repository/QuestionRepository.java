@@ -16,10 +16,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByAuthorId(Long userId);
 
-    @Query("SELECT q FROM Question q " +
-            "JOIN q.tags t " +
-            "JOIN q.author u " +
-            "JOIN q.answers a " +
+    @Query("SELECT DISTINCT q FROM Question q " +
+            "LEFT JOIN q.tags t " +
+            "LEFT JOIN q.author u " +
+            "LEFT JOIN q.answers a " +
             "WHERE LOWER(q.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(q.body) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(t.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +

@@ -39,10 +39,14 @@
             <p th:if="${tags.size() == 0}"
                style="text-align: left; font-size: 17px;">No tags
                 found.</p>
-            <div class="tag-card" th:each="tag : ${tags}">
-                <div class="tag-name" th:text="${tag.name}">Tag Name</div>
-                <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}"></div>
-            </div>
+            <span th:each="tag : ${tags}">
+                <a th:href="@{/questions/search?keyword={tagName}(tagName=${tag.name})}">
+                    <div class="tag-card">
+                        <div class="tag-name" th:text="${tag.name}">Tag Name</div>
+                        <div class="question-count" th:text="'Questions: ' + ${tag.questionCount}"></div>
+                    </div>
+                </a>
+            </span>
         </section>
         <section class="pagination">
             <a th:if="${current_page > 0}"
