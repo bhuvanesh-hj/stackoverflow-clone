@@ -1,8 +1,9 @@
 body{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-body{
-font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+.profile{
+    width: 100%;
 }
 
 .profile-container {
@@ -84,6 +85,8 @@ font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .section-heading {
@@ -91,7 +94,7 @@ font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-bottom: 10px;
 }
 
-.questions-list , .answers-list{
+.questions-list , .answers-list, .saved-list{
     margin-bottom: 10px;
     background-color: #fff;
     padding: 10px;
@@ -101,6 +104,11 @@ font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
 a {
     text-decoration: none;
+}
+
+a:hover {
+    color: #333;
+    text-decoration-line: underline;
 }
 
 .profile-info h1, h2 {
@@ -114,6 +122,8 @@ a {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .saved-questions h2 {
@@ -138,6 +148,7 @@ a {
     margin: 0;
     color: #555;
 }
+
 
 @media (max-width: 768px) {
     .profile-content {

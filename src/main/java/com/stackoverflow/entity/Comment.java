@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Comment extends BaseEntity{
 
         @Column(name = "comment_text", nullable = false, columnDefinition = "TEXT")
-        private String commentText;
+        private String comment;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "question_id")

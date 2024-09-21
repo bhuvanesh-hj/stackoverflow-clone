@@ -5,13 +5,12 @@ import com.stackoverflow.dto.user.UserDetailsDTO;
 import com.stackoverflow.dto.user.UserRegistrationDTO;
 import com.stackoverflow.dto.user.UserUpdateDTO;
 import com.stackoverflow.dto.user.UserViewDTO;
-import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
-import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RequestMapping("/users")
@@ -29,7 +29,20 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
-    private  final QuestionService questionService;
+    private final QuestionService questionService;
+    private static final String[] PROFILE_PICTURES = {
+            "https://randomuser.me/api/portraits/men/14.jpg",
+            "https://randomuser.me/api/portraits/men/90.jpg",
+            "https://xsgames.co/randomusers/assets/avatars/pixel/39.jpg",
+            "https://xsgames.co/randomusers/assets/avatars/pixel/48.jpg",
+            "https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg",
+            "https://xsgames.co/randomusers/assets/avatars/male/17.jpg",
+            "https://i.pravatar.cc/150?img=6",
+            "https://i.pravatar.cc/150?img=16",
+            "https://img.freepik.com/premium-photo/photorealistic-hyper-realistic-image-white-background-ai-generated-by-freepik_643360-512557.jpg?size=626&ext=jpg",
+            "https://img.freepik.com/free-photo/afro-man_1368-2735.jpg?size=626&ext=jpg"
+    };
+
 
     @Autowired
     public UserController(UserService userService, QuestionService questionService) {
@@ -51,6 +64,8 @@ public class UserController {
     @PostMapping("/register")
     public String register(@Valid UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult, Model model) {
         List<String> errorsList = new ArrayList<>();
+        Random random = new Random();
+        int randomIndex = random.nextInt(PROFILE_PICTURES.length);
 
         if (bindingResult.hasErrors()) {
             errorsList = bindingResult.getFieldErrors().stream()
@@ -61,6 +76,8 @@ public class UserController {
         }
 
         try {
+            String randomProfilePicture = PROFILE_PICTURES[randomIndex];
+            userRegistrationDTO.setProfilePicture(randomProfilePicture);
             userService.createUser(userRegistrationDTO);
         } catch (ResourceAlreadyExistsException e) {
             errorsList.add(e.getMessage());
@@ -81,7 +98,7 @@ public class UserController {
 
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
-        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
 
         List<QuestionDetailsDTO> questions = questionService.getQuestionsByUser(userId);
         List<QuestionDetailsDTO> answered = questionService.getAnsweredQuestions(userId);
@@ -105,27 +122,25 @@ public class UserController {
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
             model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-            return "users/profile";
+
+            return "redirect:/users/" + userId;
         }
 
         try {
             userService.updateUser(userId, userUpdateDTO);
         } catch (Exception e) {
-            e.printStackTrace(); // Log the exception
             model.addAttribute("error_message", "An error occurred while updating your profile.");
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
             model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-            return "users/profile";
+            return "redirect:/users/" + userId;
         }
 
         model.addAttribute("userDetails", userService.getUserById(userId));
         model.addAttribute("loggedIn", userService.getUserById(userId));
-        System.out.println("userService.getLoggedInUserOrNull() = " + userService.getUserById(userId));
 
-        return "users/profile";
+        return "redirect:/users/" + userId;
     }
-
 
 
     @GetMapping("/change-password/{id}")
@@ -155,13 +170,19 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUsers(Model model) {
-        List<UserViewDTO> users = userService.getAllUsersWithCounts();
-        model.addAttribute("users", users);
+    public String getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "size", defaultValue = "15") int size,
+                           @RequestParam(value = "search", defaultValue = "") String searchQuery,
+                           Model model) {
+        Page<UserViewDTO> paginatdUsers = userService.getAllUsersWithCounts(page, size, searchQuery);
+        model.addAttribute("users", paginatdUsers.getContent());
         model.addAttribute("questions", null);
         model.addAttribute("tags", null);
-        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
-
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", paginatdUsers.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("search", searchQuery);
         return "user";
     }
 

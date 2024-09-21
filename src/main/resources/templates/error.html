@@ -1,10 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Error</title>
+    <link rel="stylesheet" href="/css/error.css"> <!-- Add your CSS file for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #e74c3c; /* Red color for error */
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .error-container {
+            border: 1px solid #e74c3c;
+            border-radius: 8px;
+            padding: 20px;
+            display: inline-block;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-<h1>Error</h1>
-<p th:text="${error}"></p>
+<div class="error-container">
+    <h1>Oops! Something went wrong.</h1>
+    <p th:text="${error}">An unexpected error occurred. Please try again later.</p>
+    <p>
+        <a href="/" th:href="@{/}">Return to Home</a> |
+        <a href="javascript:history.back()">Go Back</a>
+    </p>
+</div>
 </body>
 </html>

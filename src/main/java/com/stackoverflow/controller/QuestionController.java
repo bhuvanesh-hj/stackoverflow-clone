@@ -2,11 +2,12 @@ package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.AnswerRequestDTO;
+import com.stackoverflow.dto.CommentRequestDTO;
 import com.stackoverflow.dto.QuestionDetailsDTO;
 import com.stackoverflow.dto.QuestionRequestDTO;
 import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.Question;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
+import com.stackoverflow.service.CommentService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import com.stackoverflow.service.impl.HtmlUtils;
@@ -32,21 +33,23 @@ public class QuestionController {
     private final HtmlUtils htmlUtils;
     private final ModelMapper modelMapper;
     private final VoteService voteService;
+    private final CommentService commentService;
 
-    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService) {
+    public QuestionController(QuestionService questionService, UserServiceImpl userService, HtmlUtils htmlUtils, ModelMapper modelMapper, VoteService voteService, CommentService commentService, CommentService commentService1) {
         this.questionService = questionService;
         this.userService = userService;
         this.htmlUtils = htmlUtils;
         this.modelMapper = modelMapper;
         this.voteService = voteService;
+        this.commentService = commentService1;
     }
 
     @GetMapping
     public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size,
-                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
+                                  @RequestParam(value = "sort", defaultValue = "newest") String sort,
                                   Model model) {
-        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page,size,sort);
+        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page, size, sort);
         List<QuestionDetailsDTO> questions = questionsPage.getContent();
         int totalPages = questionsPage.getTotalPages();
 
@@ -73,7 +76,6 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/questions?error=NotFound";
         }
-        System.out.println(question);
         model.addAttribute("question", question);
         model.addAttribute("users", null);
         model.addAttribute("tags", null);
@@ -83,6 +85,7 @@ public class QuestionController {
             model.addAttribute("loggedIn", null);
         }
         model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
+        model.addAttribute("comment", new CommentRequestDTO());
 
         return "questions/detail";
     }
@@ -156,15 +159,29 @@ public class QuestionController {
         }
     }
 
-    @PostMapping("/save/{id}")
+    @PostMapping("/{id}/save")
     public String saveQuestion(@PathVariable("id") Long questionId) {
-        questionService.saveQuestionForUser(questionId);
+        try {
+            questionService.saveQuestionForUser(questionId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/unsave/{id}")
+    @PostMapping("/{id}/unsave")
     public String unsaveQuestion(@PathVariable("id") Long questionId) {
-        questionService.unsaveQuestionForUser(questionId);
+        try {
+            questionService.unsaveQuestionForUser(questionId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToVote";
+        }
+
         return "redirect:/questions/" + questionId;
     }
 
@@ -203,15 +220,17 @@ public class QuestionController {
 
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page,size,sort);
+        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page, size, sort);
 
         model.addAttribute("questions", questionPage.getContent());
-        model.addAttribute("loggedIn",userService.getLoggedInUserOrNull());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", questionPage.getTotalPages());
-        model.addAttribute("totalElements", questionPage.getTotalElements());
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", questionPage.getTotalPages());
         model.addAttribute("size", size);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("users", null);
+        model.addAttribute("tags", null);
+        model.addAttribute("sort", sort);
 
         return "dashboard";
     }

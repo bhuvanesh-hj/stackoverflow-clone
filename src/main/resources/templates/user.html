@@ -20,18 +20,23 @@
                 <h2>Users</h2>
             </div>
             <div class="main-content-header-actions">
-                <form action="/Search" method="get">
-                    <input class="search-bar" name="searchQuery" placeholder="Filter by user" type="text"/>
+                <form action="/users" method="get">
+                    <input class="search-bar" name="search" placeholder="Filter by user" th:value="${search}"
+                           type="search"/>
                     <button class="header-btn login-btn" type="submit">Search</button>
                 </form>
             </div>
         </section>
 
         <section class="main-content-user-section">
+            <p th:if="${users.size() == 0}"
+               style="text-align: left; font-size: 17px;">No users
+                found.</p>
             <div class="user-card" th:each="user : ${users}"
                  th:if="${loggedIn == null or user.id != loggedIn.id}">
                 <div class="user-card-content">
-                    <img src="/images/profile.png" alt="User Icon" class="user-icon">
+                    <img th:src="${user.profilePicture != null ? user.profilePicture : '/images/profile.png'}"
+                         alt="User Icon" class="user-icon">
                     <div class="user-info">
                         <a th:href="@{/users/{id}(id=${user.id})}">
                             <div class="user-name" th:text="${user.firstName} + ' ' + ${user.lastName}">User Name</div>
@@ -46,10 +51,22 @@
         </section>
 
         <section class="pagination">
-            <button class="header-btn">Prev</button>
-            <span>1/10</span>
-            <button class="header-btn">Next</button>
+            <a th:if="${current_page > 0}"
+               th:href="@{/users?(page=${current_page - 1}, size=${size}, search=${search})}"
+               th:text="'Prev'"
+               class="header-btn">
+            </a>
+            <a th:each="page : ${#numbers.sequence(1, total_pages)}"
+               th:class="${page == current_page + 1} ? 'page-number current-page' : 'page-number'"
+               th:text="${page}"
+               th:href="@{/users?(page=${page - 1}, size=${size}, sort=${sort})}"></a>
+            <a th:if="${current_page < total_pages - 1}"
+               th:href="@{/users?(page=${current_page + 1}, size=${size}, search=${search})}"
+               th:text="'Next'"
+               class="header-btn">
+            </a>
         </section>
+
     </section>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"/>

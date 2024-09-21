@@ -15,7 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/{questionId}/{answerId}/comments")
+@RequestMapping("/questions/{questionId}/comments")
 public class CommentController {
 
     private final AnswerService answerService;
@@ -28,25 +28,21 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/add-comment")
-    public String showCommentForm(@PathVariable(required = false) Long questionId,
-                                  @PathVariable(required = false) Long answerId,
-                                  Model model) {
-        if (questionId != null) {
-            QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
-            model.addAttribute("question", questionDetailsDTO);
-        } else if (answerId != null) {
-            AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
-            model.addAttribute("answer", answerDetailsDTO);
-        }
+//    @GetMapping("/{questionId}/addComment")
+//    public String showCommentForm(@PathVariable(required = false) Long questionId,
+//                                  @PathVariable(required = false) Long answerId,
+//                                  Model model) {
+//        if (questionId != null) {
+//            QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+//            model.addAttribute("question", questionDetailsDTO);
+//        }
+//
+//        model.addAttribute("comment", new CommentRequestDTO());
+//        return "comment/create";
+//    }
 
-        model.addAttribute("comment", new CommentRequestDTO());
-        return "comment/create";
-    }
-
-    @PostMapping("/saveComment")
+    @PostMapping()
     public String saveComment(@PathVariable(required = false) Long questionId,
-                              @PathVariable(required = false) Long answerId,
                               @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
                               BindingResult result,
                               Model model) {
@@ -54,69 +50,57 @@ public class CommentController {
             if (questionId != null) {
                 QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
                 model.addAttribute("question", questionDetailsDTO);
-            } else if (answerId != null) {
-                AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
-                model.addAttribute("answer", answerDetailsDTO);
             }
-            return "comment/create";
+            return "redirect:/questions/" + questionId;
         }
 
         String formattedTime = "";
 
         if (questionId != null) {
-             formattedTime = commentService.createComment(commentRequestDTO, questionId, null);
-        } else if (answerId != null) {
-             formattedTime = commentService.createComment(commentRequestDTO, null, answerId);
+             formattedTime = commentService.createComment(commentRequestDTO, questionId);
         }
 
         model.addAttribute("formattedTime", formattedTime);
 
-        return "redirect:/questions/view/" + (questionId != null ? questionId : "answer/" + answerId);
+        return "redirect:/questions/" + questionId;
     }
 
-    @GetMapping("/editComment/{commentId}")
+    @GetMapping("/{commentId}/edit")
     public String editComment(@PathVariable Long commentId,
                               @PathVariable(required = false) Long questionId,
-                              @PathVariable(required = false) Long answerId,
                               Model model) {
         Comment comment = commentService.getCommentById(commentId);
         model.addAttribute("comment", comment);
 
         if (questionId != null) {
             model.addAttribute("question", questionService.getQuestionById(questionId));
-        } else if (answerId != null) {
-            model.addAttribute("answer", answerService.getAnswerById(answerId));
         }
-
         return "comment/edit";
     }
 
-    @PostMapping("/updateComment/{commentId}")
+    @PostMapping("/{commentId}/edit")
     public String updateComment(@PathVariable Long commentId,
                                 @PathVariable(required = false) Long questionId,
-                                @PathVariable(required = false) Long answerId,
                                 @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
                                 BindingResult result,
                                 Model model) {
         if (result.hasErrors()) {
             if (questionId != null) {
                 model.addAttribute("question", questionService.getQuestionById(questionId));
-            } else if (answerId != null) {
-                model.addAttribute("answer", answerService.getAnswerById(answerId));
             }
-            return "comment/edit";
+            return "redirect:/questions/" +  questionId;
         }
 
-        commentService.update(commentId, commentRequestDTO, questionId, answerId);
+        commentService.update(commentId, commentRequestDTO, questionId);
 
-        return "redirect:/questions/view/" + (questionId != null ? questionId : "answer/" + answerId);
+        return "redirect:/questions/" +  questionId;
     }
 
-    @PostMapping("/deleteComment/{commentId}")
+    @PostMapping("/{commentId}/delete")
     public String deleteComment(@PathVariable Long commentId,
                                 @PathVariable(required = false) Long questionId,
                                 @PathVariable(required = false) Long answerId) {
         commentService.delete(commentId);
-        return "redirect:/questions/view/" + (questionId != null ? questionId : "answer/" + answerId);
+        return "redirect:/questions/" + questionId;
     }
 }

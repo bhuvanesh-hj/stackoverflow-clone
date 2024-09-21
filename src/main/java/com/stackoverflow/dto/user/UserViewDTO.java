@@ -1,13 +1,14 @@
 package com.stackoverflow.dto.user;
 
-import com.stackoverflow.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserViewDTO {
     private Long id;
 
@@ -19,5 +20,6 @@ public class UserViewDTO {
 
     private Long answerCount;
 
+    private String profilePicture;
 
 }

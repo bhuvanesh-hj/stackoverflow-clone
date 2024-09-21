@@ -14,11 +14,9 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentDetailsDTO {
 
-    private String commentText;
+    private Long id;
 
-    private Question question;
-
-    private Answer answer;
+    private String comment;
 
     private LocalDateTime createdAt;
 

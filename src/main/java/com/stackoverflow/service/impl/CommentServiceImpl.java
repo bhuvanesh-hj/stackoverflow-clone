@@ -3,7 +3,6 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.CommentDetailsDTO;
 import com.stackoverflow.dto.CommentRequestDTO;
-import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -36,7 +35,8 @@ public class CommentServiceImpl implements CommentService {
         this.userRepository = userRepository;
     }
 
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
+    @Override
+    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -56,12 +56,6 @@ public class CommentServiceImpl implements CommentService {
             comment.setQuestion(question);
         }
 
-        if (answerId != null) {
-            Answer answer = answerRepository.findById(answerId)
-                    .orElseThrow(() -> new RuntimeException("Answer not found"));
-            comment.setAnswer(answer);
-        }
-
         commentRepository.save(comment);
 
         return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
@@ -72,23 +66,18 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
     }
 
-    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId, Long answerId) {
+
+    @Override
+    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
         Comment existingComment = getCommentById(commentId);
 
-        modelMapper.map(commentRequestDTO, existingComment);
-
+        existingComment.setComment(commentRequestDTO.getComment());
         existingComment.setUpdatedAt(LocalDateTime.now());
 
         if (questionId != null) {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new RuntimeException("Question not found"));
             existingComment.setQuestion(question);
-        }
-
-        if (answerId != null) {
-            Answer answer = answerRepository.findById(answerId)
-                    .orElseThrow(() -> new RuntimeException("Answer not found"));
-            existingComment.setAnswer(answer);
         }
 
         Comment updatedComment = commentRepository.save(existingComment);
