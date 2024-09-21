@@ -115,7 +115,7 @@ public class UserController {
         return "users/profile";
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/{id}/update")
     public String updateUser(@PathVariable("id") Long userId,
                              @Valid @ModelAttribute("userRegistrationDTO") UserUpdateDTO userUpdateDTO,
                              BindingResult bindingResult, Model model) {
@@ -123,6 +123,7 @@ public class UserController {
             List<String> errorsList = bindingResult.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
+
             model.addAttribute("errors_update", errorsList);
             UserDetailsDTO userDetails = userService.getUserById(userId);
             model.addAttribute("userDetails", userDetails);
@@ -168,12 +169,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long userId) {
-        userService.deleteUser(userId);
-        return "redirect:/users";
-    }
-
     @GetMapping
     public String getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
                            @RequestParam(value = "size", defaultValue = "15") int size,
@@ -190,7 +185,7 @@ public class UserController {
         model.addAttribute("search", searchQuery);
         model.addAttribute("recentTags", tagService.getRecentTags());
 
-        return "user";
+        return "users/user";
     }
 
 }
