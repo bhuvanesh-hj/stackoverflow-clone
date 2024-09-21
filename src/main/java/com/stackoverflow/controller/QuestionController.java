@@ -48,32 +48,42 @@ public class QuestionController {
     }
 
     @GetMapping
-    public String getAllQuestions(@RequestParam(value = "page", defaultValue = "0") int page,
+    public String getAllQuestions(@RequestParam(value = "keyword", required = false) String keyword,
+                                  @RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size,
                                   @RequestParam(value = "sort", defaultValue = "newest") String sort,
                                   Model model) {
-        Page<QuestionDetailsDTO> questionsPage = questionService.getAllQuestions(page, size, sort);
+        Page<QuestionDetailsDTO> questionsPage;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            questionsPage = questionService.getSearchedQuestions(keyword, page, size, sort);
+            model.addAttribute("keyword", keyword);
+        } else {
+            questionsPage = questionService.getAllQuestions(page, size, sort);
+        }
+
         List<QuestionDetailsDTO> questions = questionsPage.getContent();
         int totalPages = questionsPage.getTotalPages();
 
         model.addAttribute("questions", questions);
         model.addAttribute("HtmlUtils", htmlUtils);
+
         if (userService.isUserLoggedIn()) {
             model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
         } else {
             model.addAttribute("loggedIn", null);
         }
-        System.out.println("tagService.getRecentTags() = " + tagService.getRecentTags());
+
         model.addAttribute("users", null);
-        model.addAttribute("tags", null);
+        model.addAttribute("tags", tagService.getRecentTags());
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", totalPages);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
-        model.addAttribute("recentTags", tagService.getRecentTags());
 
         return "dashboard";
     }
+
 
     @GetMapping("/{id}")
     public String getQuestionById(@PathVariable("id") Long questionId, Model model) {
@@ -215,31 +225,6 @@ public class QuestionController {
 
         return "redirect:/questions/" + questionId;
     }
-
-    @GetMapping("/search")
-    public String searchQuestions(@RequestParam("keyword") String keyword,
-                                  @RequestParam(value = "page", defaultValue = "0") int page,
-                                  @RequestParam(value = "size", defaultValue = "5") int size,
-                                  @RequestParam(value = "sort", defaultValue = "desc") String sort,
-                                  Model model) {
-
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<QuestionDetailsDTO> questionPage = questionService.getSearchedQuestions(keyword, page, size, sort);
-
-        model.addAttribute("questions", questionPage.getContent());
-        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-        model.addAttribute("current_page", page);
-        model.addAttribute("total_pages", questionPage.getTotalPages());
-        model.addAttribute("size", size);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("users", null);
-        model.addAttribute("tags", null);
-        model.addAttribute("sort", sort);
-
-        return "dashboard";
-    }
-
 
 }
 
