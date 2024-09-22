@@ -1,6 +1,6 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.user.*;
+import com.stackoverflow.dto.users.*;
 import com.stackoverflow.entity.User;
 import org.springframework.data.domain.Page;
 

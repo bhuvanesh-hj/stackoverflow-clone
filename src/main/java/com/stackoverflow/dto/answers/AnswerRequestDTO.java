@@ -1,4 +1,4 @@
-package com.stackoverflow.dto;
+package com.stackoverflow.dto.answers;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

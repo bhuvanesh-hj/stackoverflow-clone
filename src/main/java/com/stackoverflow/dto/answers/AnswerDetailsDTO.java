@@ -1,6 +1,7 @@
-package com.stackoverflow.dto;
+package com.stackoverflow.dto.answers;
 
-import com.stackoverflow.dto.user.UserDTO;
+import com.stackoverflow.dto.comments.CommentDetailsDTO;
+import com.stackoverflow.dto.users.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

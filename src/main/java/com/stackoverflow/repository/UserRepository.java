@@ -1,6 +1,6 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.dto.users.UserViewDTO;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrUsername(String email, String username);
 
-    @Query("SELECT DISTINCT new com.stackoverflow.dto.user.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id), u.profilePicture) " +
+    @Query("SELECT DISTINCT new com.stackoverflow.dto.users.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id), u.profilePicture) " +
             "FROM User u " +
             "LEFT JOIN u.questions q " +
             "LEFT JOIN u.answers a " +

@@ -1,10 +1,10 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
-import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.dto.user.UserRegistrationDTO;
-import com.stackoverflow.dto.user.UserUpdateDTO;
-import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.dto.users.UserDetailsDTO;
+import com.stackoverflow.dto.users.UserRegistrationDTO;
+import com.stackoverflow.dto.users.UserUpdateDTO;
+import com.stackoverflow.dto.users.UserViewDTO;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.TagService;

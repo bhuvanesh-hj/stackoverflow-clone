@@ -1,6 +1,6 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.CommentRequestDTO;
+import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.entity.Comment;
 
 public interface CommentService {

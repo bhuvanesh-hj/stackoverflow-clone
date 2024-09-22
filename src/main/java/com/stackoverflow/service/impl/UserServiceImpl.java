@@ -1,9 +1,9 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.dto.user.UserRegistrationDTO;
-import com.stackoverflow.dto.user.UserUpdateDTO;
-import com.stackoverflow.dto.user.UserViewDTO;
+import com.stackoverflow.dto.users.UserDetailsDTO;
+import com.stackoverflow.dto.users.UserRegistrationDTO;
+import com.stackoverflow.dto.users.UserUpdateDTO;
+import com.stackoverflow.dto.users.UserViewDTO;
 import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;

@@ -1,6 +1,6 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.AnswerDetailsDTO;
+import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionRequestDTO;
 import com.stackoverflow.entity.Question;

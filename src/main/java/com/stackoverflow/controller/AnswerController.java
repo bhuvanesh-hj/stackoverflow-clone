@@ -1,16 +1,16 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
-import com.stackoverflow.dto.AnswerDetailsDTO;
-import com.stackoverflow.dto.AnswerRequestDTO;
+import com.stackoverflow.dto.answers.AnswerDetailsDTO;
+import com.stackoverflow.dto.answers.AnswerRequestDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
-import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.dto.users.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
+import com.stackoverflow.service.UserService;
 import com.stackoverflow.service.VoteService;
-import com.stackoverflow.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -31,11 +31,11 @@ public class AnswerController {
     private final AnswerService answerService;
     private final QuestionService questionService;
     private final VoteService voteService;
-    private final UserServiceImpl userService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     public AnswerController(AnswerService answerService, QuestionService questionService,
-                            VoteService voteService, UserServiceImpl userService,
+                            VoteService voteService, UserService userService,
                             ModelMapper modelMapper) {
         this.answerService = answerService;
         this.questionService = questionService;

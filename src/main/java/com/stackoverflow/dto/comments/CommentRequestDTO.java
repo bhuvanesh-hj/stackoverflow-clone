@@ -1,7 +1,5 @@
-package com.stackoverflow.dto;
+package com.stackoverflow.dto.comments;
 
-import com.stackoverflow.entity.Answer;
-import com.stackoverflow.entity.Question;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

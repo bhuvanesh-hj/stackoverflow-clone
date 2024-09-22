@@ -1,8 +1,8 @@
 package com.stackoverflow.service.impl;
 
 import com.stackoverflow.StackoverflowCloneApplication;
-import com.stackoverflow.dto.CommentDetailsDTO;
-import com.stackoverflow.dto.CommentRequestDTO;
+import com.stackoverflow.dto.comments.CommentDetailsDTO;
+import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;

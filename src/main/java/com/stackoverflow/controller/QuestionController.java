@@ -1,11 +1,11 @@
 package com.stackoverflow.controller;
 
 import com.stackoverflow.StackoverflowCloneApplication;
-import com.stackoverflow.dto.AnswerRequestDTO;
-import com.stackoverflow.dto.CommentRequestDTO;
+import com.stackoverflow.dto.answers.AnswerRequestDTO;
+import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionRequestDTO;
-import com.stackoverflow.dto.user.UserDetailsDTO;
+import com.stackoverflow.dto.users.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.CommentService;

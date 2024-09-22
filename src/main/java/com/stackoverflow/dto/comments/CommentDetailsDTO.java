@@ -1,11 +1,6 @@
-package com.stackoverflow.dto;
+package com.stackoverflow.dto.comments;
 
-import com.stackoverflow.dto.user.UserDTO;
-import com.stackoverflow.dto.user.UserDetailsDTO;
-import com.stackoverflow.entity.Answer;
-import com.stackoverflow.entity.Comment;
-import com.stackoverflow.entity.Question;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.dto.users.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 
