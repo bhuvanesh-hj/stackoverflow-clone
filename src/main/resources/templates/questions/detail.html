@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${question.title}"></title>
-    <link rel="stylesheet" href="/css/header.css"/>
-    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/fragments/header.css"/>
+    <link rel="stylesheet" href="/css/fragments/sidebar.css"/>
     <link rel="stylesheet" href="/css/questions/detail.css"/>
-    <link rel="stylesheet" href="/css/footer.css"/>
+    <link rel="stylesheet" href="/css/fragments/footer.css"/>
     <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
@@ -20,11 +20,11 @@
 </head>
 <body>
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
-
 <main>
     <div th:replace="~{fragments/sidebar :: sidebar(questions=${question},tags=${tags},users=${users},recentTags=${recentTags})}"/>
 
     <section class="main-content">
+
         <section class="main-content-header">
             <div class="main-content-header-heading heading-section">
                 <h2 th:text="${question.title}" class="header"></h2>
@@ -38,7 +38,9 @@
                    th:text="'Modified ' + ${#temporals.format(question.updatedAt, 'yyyy-MM-dd HH:mm')}"/>
             </div>
         </section>
+
         <section class="main-content-question-detail-section">
+
             <section class="question-section">
                 <section class="qs-side">
                     <section class="qs-like">

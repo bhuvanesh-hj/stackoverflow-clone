@@ -20,7 +20,6 @@
                     Log in
                 </button>
             </a>
-
             <a th:href="@{/users/register}">
                 <button class="header-btn">
                     Sign up
@@ -36,7 +35,6 @@
                          alt="name--v1"/>
                     <p th:text="${user.username}"/>
                 </a>
-
             </div>
 
             <form th:action="@{/users/logout}" method="post">
