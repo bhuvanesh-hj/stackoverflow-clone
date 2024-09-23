@@ -127,9 +127,12 @@
                             <section class="answer-section-act">
                                 <section class="qs-actions"
                                          th:if="${loggedIn != null && this_comment.author.username.equals(loggedIn.username)}">
-                                    <a style="text-decoration: none;color: #636B74;"
-                                       onclick="toggleCommentForm();"
-                                    >Edit</a>
+                                    <p style="text-decoration: none;color: #636B74;"
+                                       th:data-id="${question.id}"
+                                       th:data-cid="${this_comment.id}"
+                                       th:data-comment="${this_comment.comment}"
+                                       onclick="toggleEditCommentForm(this.dataset.comment, this.dataset.cid,this.dataset.id);"
+                                    >Edit</p>
                                     <form th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"
                                           method="post">
                                         <input type="submit" class="ans-delete-btn" th:value="Delete"/>
@@ -139,18 +142,65 @@
                                     <a th:href="@{/users/{id}(id=${this_comment.author.id})}"
                                        th:text="'by ' + ${this_comment.author.username} + ', '"></a>
                                     <span th:text="${#temporals.format(this_comment.updatedAt, 'MMM d, yyyy ''at'' HH:mm')}"></span>
+                                    <a th:if="${loggedIn != null && !this_comment.author.username.equals(loggedIn.username)}"
+                                       href="#" onclick="toggleReplyForm(this);">Reply</a>
                                 </section>
                             </section>
+
+                            <div class="reply-form comment-form" style="display:none;">
+                                <form th:action="@{/questions/{questionId}/comments/{commentId}(questionId=${question.id}, commentId=${this_comment.id})}"
+                                      method="POST">
+                                    <textarea rows="2" cols="50" name="comment" placeholder="Write your reply here..."
+                                              required></textarea><br>
+                                    <button type="submit">Submit Reply</button>
+                                    <button class="close-edit-btn header-btn" onclick="closeForm();" type="button">Close
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div th:if="${this_comment.comments.size() > 0}" class="nested-comments">
+                                <div th:each="reply : ${this_comment.comments}">
+                                    <div class="nested-comment">
+                                        <span th:text="${reply.comment}"></span>
+                                        <section class="answer-section-act">
+                                            <section class="qs-actions"
+                                                     th:if="${loggedIn != null && reply.author.username.equals(loggedIn.username)}">
+                                                <!--                                                <p style="text-decoration: none;color: #636B74;"-->
+                                                <!--                                                   th:data-id="${question.id}"-->
+                                                <!--                                                   th:data-cid="${this_comment.id}"-->
+                                                <!--                                                   th:data-comment="${this_comment.comment}"-->
+                                                <!--                                                   onclick="toggleEditCommentForm(this.dataset.comment, this.dataset.cid,this.dataset.id);"-->
+                                                <!--                                                >Edit</p>-->
+                                                <!--                                                <form th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"-->
+                                                <!--                                                      method="post">-->
+                                                <!--                                                    <input type="submit" class="ans-delete-btn" th:value="Delete"/>-->
+                                                <!--                                                </form>-->
+                                            </section>
+                                            <section class="qs-actions ans-details comments-details">
+                                                <a th:href="@{/users/{id}(id=${reply.author.id})}"
+                                                   th:text="'by ' + ${reply.author.username} + ', '"></a>
+                                                <span th:text="${#temporals.format(reply.updatedAt, 'MMM d, yyyy ''at'' HH:mm')}"></span>
+                                                <!--                                                <a th:if="${loggedIn != null && !this_comment.author.username.equals(loggedIn.username)}"-->
+                                                <!--                                                   href="#" onclick="toggleReplyForm(this);">Reply</a>-->
+                                            </section>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <p class="qs-comment-add" id="toggleComment" onclick="toggleCommentForm();">Add a comment
+                        <p class="qs-comment-add" id="toggleComment" th:data-id="${question.id}"
+                           onclick="toggleCommentForm(this.dataset.id);">Add a comment
                         </p>
 
                         <div id="commentForm" class="comment-form">
-                            <form th:action="@{/questions/{questionId}/comments(questionId=${question.id})}"
-                                  method="POST">
-                                <textarea rows="4" cols="50" name="comment" placeholder="Write your comment here..."
+                            <form id="comment-form" action="" method="POST">
+                                <textarea rows="4" cols="50" id="comment-body" name="comment"
+                                          placeholder="Write your comment here..."
                                           required></textarea><br>
-                                <button type="submit">Submit Comment</button>
+                                <button id="comment-btn" type="submit">Submit Comment</button>
+                                <button id="close-edit-btn header-btn" onclick="closeForm();" type="button">Close
+                                </button>
                             </form>
                         </div>
                     </section>
@@ -215,15 +265,6 @@
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
-                        <!--                        <section class="qs-comment-section">-->
-                        <!--                            &lt;!&ndash;                            <p th:if="{answer.comments.size() > 0}" class="qs-comment"/>&ndash;&gt;-->
-                        <!--                            &lt;!&ndash;                            </p>&ndash;&gt;-->
-                        <!--                            <p class="qs-comment-add">-->
-                        <!--                                <a>-->
-                        <!--                                    Add a comment-->
-                        <!--                                </a>-->
-                        <!--                            </p>-->
-                        <!--                        </section>-->
                     </section>
                 </section>
             </section>
@@ -282,17 +323,50 @@
           document.getElementById(formId).submit();
      }
 
-     function toggleCommentForm() {
+     function toggleCommentForm(questionId) {
      const commentForm = document.getElementById("commentForm");
+     const submitButton = document.getElementById("comment-btn");
+     const form = document.getElementById("comment-form");
+     const editTextareaInput = document.getElementById("comment-body");
 
-     if (commentForm) {
-         commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
-     } else {
-         console.error("Comment form not found");
-     }
+        if (commentForm) {
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             submitButton.textContent = "Submit Comment";
+             editTextareaInput.value = null;
+             form.action = `/questions/${questionId}/comments`;
+        } else {
+             console.error("Comment form not found");
+        }
+    }
 
- }
+    function toggleEditCommentForm(comment, commentId, questionId){
+        const editCommentForm = document.getElementById("commentForm");
+        const editTextareaInput = document.getElementById("comment-body");
+        const submitButton = document.getElementById("comment-btn");
+        const form = document.getElementById("comment-form");
 
+        if (editCommentForm) {
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             editTextareaInput.value = comment;
+             submitButton.textContent = "Update Comment";
+             form.action = `/questions/${questionId}/comments/${commentId}/update`;
+        } else {
+             console.error("Comment form not found");
+        }
+    }
+
+    function closeForm(){
+        const form = document.getElementById("commentForm");
+        const replyForm = document.querySelector('.reply-form');
+
+        form.style.display= "none";
+        replyForm.style.display= "none";
+    }
+
+    function toggleReplyForm(element) {
+    const replyForm = element.closest('.qs-comment').querySelector('.reply-form');
+    replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+    }
 
 </script>
 </html>

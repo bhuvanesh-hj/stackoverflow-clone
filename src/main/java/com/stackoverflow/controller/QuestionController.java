@@ -94,6 +94,7 @@ public class QuestionController {
                     .collect(Collectors.toList());
             List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
 
+            System.out.println("question = " + question);
             model.addAttribute("question", question);
             model.addAttribute("users", null);
             model.addAttribute("tags", null);
