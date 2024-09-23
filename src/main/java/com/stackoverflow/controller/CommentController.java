@@ -63,56 +63,7 @@ public class CommentController {
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/{commentId}")
-    public String saveComment(@PathVariable(required = false) Long questionId,
-                              @PathVariable(required = false) Long commentId,
-                              @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
-                              BindingResult bindingResult,
-                              Model model){
-        List<String> errorsList = new ArrayList<>();
-        try {
-            if (bindingResult.hasErrors()) {
-                errorsList = bindingResult.getFieldErrors().stream()
-                        .map(FieldError::getDefaultMessage)
-                        .collect(Collectors.toList());
-                model.addAttribute("errors_comment", errorsList);
-                if (questionId != null) {
-                    QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
-                    model.addAttribute("question", questionDetailsDTO);
-                }
-                return "redirect:/questions/" + questionId;
-            }
-            String formattedTime = "";
-
-            if (questionId != null) {
-                formattedTime = commentService.createComment(commentRequestDTO, questionId, commentId);
-            }
-
-            model.addAttribute("formattedTime", formattedTime);
-        } catch (UserNotAuthenticatedException e) {
-            return "redirect:/users/login";
-        } catch (Exception e) {
-            return "redirect:/questions/" + questionId + "?error=Failed to create comment";
-        }
-
-        return "redirect:/questions/" + questionId;
-
-    }
-
-    @GetMapping("/{commentId}/edit")
-    public String editComment(@PathVariable Long commentId,
-                              @PathVariable(required = false) Long questionId,
-                              Model model) {
-        Comment comment = commentService.getCommentById(commentId);
-        model.addAttribute("comment", comment);
-
-        if (questionId != null) {
-            model.addAttribute("question", questionService.getQuestionById(questionId));
-        }
-        return "comment/edit";
-    }
-
-    @PostMapping("/{commentId}/edit")
+    @PostMapping("/{commentId}/update")
     public String updateComment(@PathVariable Long commentId,
                                 @PathVariable(required = false) Long questionId,
                                 @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
