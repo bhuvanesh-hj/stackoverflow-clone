@@ -2,8 +2,6 @@ package com.stackoverflow.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Setter
 @Getter
 @ToString
