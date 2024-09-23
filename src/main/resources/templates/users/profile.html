@@ -36,7 +36,7 @@
 
             <div id="updateForm" class="signup-form" style="display: none;">
                 <h1>Update Your Profile</h1>
-                <form th:action="@{/users/update/{id}(id=${userDetails.id})}" method="post" th:object="${userDetails}">
+                <form th:action="@{/users/{id}/update(id=${userDetails.id})}" method="post" th:object="${userDetails}">
                     <div class="form-group-row">
                         <div class="form-group">
                             <label for="signupEmail">FirstName</label>
@@ -56,7 +56,7 @@
                             <label for="signupUsername">Username</label>
                             <input type="text" id="signupUsername" name="username"
                                    th:value="${userDetails.username}" th:field="*{username}"
-                                   readonly>
+                            >
                         </div>
                     </div>
                     <div class="form-group">

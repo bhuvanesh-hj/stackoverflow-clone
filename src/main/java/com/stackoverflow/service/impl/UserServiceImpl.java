@@ -118,8 +118,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User updatingUser = (User) authentication.getPrincipal();
+
         user.setEmail(userUpdateDTO.getEmail());
         user.setFirstName(userUpdateDTO.getFirstName());
+        user.setUsername(userUpdateDTO.getUsername());
+        updatingUser.setUsername(userUpdateDTO.getUsername());
         user.setLastName(userUpdateDTO.getLastName());
         user.setProfilePicture(userUpdateDTO.getProfilePicture());
 
