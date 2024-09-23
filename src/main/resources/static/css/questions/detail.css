@@ -559,7 +559,7 @@ small {
 }
 
 .nested-comments{
-    padding: 10px 30px;
+    padding-left: 5px
 }
 .nested-comment{
     margin: 10px;
