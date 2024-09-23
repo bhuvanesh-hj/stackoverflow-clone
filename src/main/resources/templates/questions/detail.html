@@ -10,11 +10,15 @@
     <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '.body',
+            selector: '#body, #updatingBody',
             menubar: false,
-            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            height: 350
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
+            height: 400,
+            license_key: 'gpl',
+            images_upload_url: '/upload/image',
+            automatic_uploads: true,
+            images_upload_max_size: 2 * 1024 * 1024,
         });
     </script>
 </head>
@@ -298,11 +302,10 @@
                         th:object="${answerRequestDTO}"
                         method="post">
                     <div class="input-body">
-                    <textarea id="updatingBody"
-                              class="body"
-                              th:text="${updatingAnswer.body}"
-                              name="body"
-                    ></textarea>
+                            <textarea id="updatingBody" class="body"
+                                      th:utext="${@htmlUtils.extractFormattedContent(updatingAnswer.body)}"
+                                      name="body">
+                            </textarea>
                     </div>
                     <button class="header-btn" type="submit"
                     >Update your answer

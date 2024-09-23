@@ -13,10 +13,14 @@
         tinymce.init({
             selector: '#body',
             menubar: false,
-            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            height: 400
-        });
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
+            height: 400,
+            license_key: 'gpl',
+            images_upload_url: '/upload/image',
+            automatic_uploads: true,
+            images_upload_max_size: 2 * 1024 * 1024,
+            });
     </script>
 </head>
 <body>
