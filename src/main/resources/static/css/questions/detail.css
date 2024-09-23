@@ -557,3 +557,10 @@ small {
 .related-question-item {
     margin-bottom: 10px;
 }
+
+.nested-comments{
+    padding: 10px 30px;
+}
+.nested-comment{
+    margin: 10px;
+}
