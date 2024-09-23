@@ -48,4 +48,5 @@ public class Answer extends BaseEntity {
     public Answer(Long answerId) {
         super();
     }
+
 }

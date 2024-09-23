@@ -149,7 +149,7 @@ public class AnswerController {
         }
 
         try {
-            answerService.update(answerId, questionId, answerRequestDTO);
+            answerService.updateAnswer(answerId, questionId, answerRequestDTO);
 
             AnswerDetailsDTO updatedAnswer = answerService.getAnswerById(answerId);
             String formattedTime = StackoverflowCloneApplication.formatTime(updatedAnswer.getUpdatedAt());
@@ -170,7 +170,7 @@ public class AnswerController {
 
     @PostMapping("/{answerId}/deleteAnswer")
     public String deleteAnswer(@PathVariable Long answerId, @PathVariable Long questionId) {
-        answerService.delete(answerId);
+        answerService.deleteAnswer(answerId);
         return "redirect:/questions/" + questionId;
     }
 

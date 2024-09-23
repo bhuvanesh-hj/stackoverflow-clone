@@ -5,15 +5,14 @@ import com.stackoverflow.entity.Comment;
 
 public interface CommentService {
 
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId);
+    String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId);
 
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId);
+    String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId);
 
-    public Comment getCommentById(Long commentId);
+    Comment getCommentById(Long commentId);
 
-    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId);
+    void updateComment(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId);
 
-    public void delete(Long commentId);
-
+    void deleteComment(Long commentId);
 
 }

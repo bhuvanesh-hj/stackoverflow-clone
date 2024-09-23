@@ -8,16 +8,16 @@ import java.util.List;
 
 public interface AnswerService {
 
-    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId);
+    AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId);
 
-    public AnswerDetailsDTO getAnswerById(Long answerId);
+    AnswerDetailsDTO getAnswerById(Long answerId);
 
-    public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO);
+    AnswerDetailsDTO updateAnswer(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO);
 
-    public Boolean delete(Long answerId);
+    Boolean deleteAnswer(Long answerId);
 
-    public List<AnswerDetailsDTO> getAnswersByUser(Long id);
+    List<AnswerDetailsDTO> getAnswersByUserId(Long id);
 
-    public AnswerDetailsDTO getAnswerDetailsDTO(Answer answer);
+    AnswerDetailsDTO getAnswerDetailsDTO(Answer answer);
 
 }

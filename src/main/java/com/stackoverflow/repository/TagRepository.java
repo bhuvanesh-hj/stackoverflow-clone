@@ -1,6 +1,5 @@
 package com.stackoverflow.repository;
 
-import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public interface TagRepository extends JpaRepository<Tag, Long> {
     @Query("SELECT DISTINCT t " +
             "FROM Tag t " +

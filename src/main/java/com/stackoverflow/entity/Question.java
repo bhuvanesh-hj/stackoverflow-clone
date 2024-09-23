@@ -17,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "questions")
 public class Question extends BaseEntity {
+
     @Column(nullable = false)
     private String title;
 
@@ -60,6 +61,10 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuestionVote> questionVotes = new HashSet<>();
 
+    public Question(Long questionId) {
+        super();
+    }
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -71,7 +76,4 @@ public class Question extends BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Question(Long questionId) {
-        super();
-    }
 }

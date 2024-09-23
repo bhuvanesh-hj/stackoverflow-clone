@@ -2,7 +2,6 @@ package com.stackoverflow.controller;
 
 import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
-import com.stackoverflow.entity.Comment;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.CommentService;
@@ -49,7 +48,7 @@ public class CommentController {
             String formattedTime = "";
 
             if (questionId != null) {
-                formattedTime = commentService.createComment(commentRequestDTO, questionId);
+                formattedTime = commentService.createNestedComment(commentRequestDTO, questionId);
             }
 
             model.addAttribute("formattedTime", formattedTime);
@@ -85,7 +84,7 @@ public class CommentController {
             String formattedTime = "";
 
             if (questionId != null) {
-                formattedTime = commentService.createComment(commentRequestDTO, questionId, commentId);
+                formattedTime = commentService.createNestedComment(commentRequestDTO, questionId, commentId);
             }
 
             model.addAttribute("formattedTime", formattedTime);
@@ -112,7 +111,7 @@ public class CommentController {
             return "redirect:/questions/" + questionId;
         }
 
-        commentService.update(commentId, commentRequestDTO, questionId);
+        commentService.updateComment(commentId, commentRequestDTO, questionId);
 
         return "redirect:/questions/" + questionId;
     }
@@ -121,7 +120,7 @@ public class CommentController {
     public String deleteComment(@PathVariable Long commentId,
                                 @PathVariable(required = false) Long questionId,
                                 @PathVariable(required = false) Long answerId) {
-        commentService.delete(commentId);
+        commentService.deleteComment(commentId);
         return "redirect:/questions/" + questionId;
     }
 }

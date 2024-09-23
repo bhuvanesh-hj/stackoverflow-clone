@@ -55,7 +55,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort) {
-
         Pageable pageable;
         switch (sort.toLowerCase()) {
             case "oldest":
@@ -92,7 +91,6 @@ public class QuestionServiceImpl implements QuestionService {
         Set<Tag> tags = questionRequestDTO.getTagsList().stream()
                 .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
                 .collect(Collectors.toSet());
-
         question.setTags(tags);
 
         Question updatedQuestion = questionRepository.save(question);
@@ -101,7 +99,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails) {
         Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
@@ -109,19 +107,12 @@ public class QuestionServiceImpl implements QuestionService {
 
         Set<Tag> updatedTags = new HashSet<>();
         for (String tagName : updatedUserDetails.getTagsList()) {
-            Tag tag = tagRepository.findByName(tagName)
-                    .orElseGet(() -> {
-                        Tag newTag = new Tag();
-                        newTag.setName(tagName);
-                        return tagRepository.save(newTag);
-                    });
+            Tag tag = tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName));
             updatedTags.add(tag);
         }
-
         existingQuestion.setTags(updatedTags);
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
-
         return getQuestionDetailsDTO(updatedQuestion);
     }
 
@@ -129,7 +120,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Boolean deleteQuestion(Long questionId) {
         User user = userService.getLoggedInUser();
         Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
         questionRepository.deleteById(questionId);
         return true;
@@ -156,7 +147,6 @@ public class QuestionServiceImpl implements QuestionService {
 
         user.getQuestionsSaved().add(question);
         question.getSavedByUsers().add(user);
-
         userRepository.save(user);
     }
 
@@ -168,26 +158,25 @@ public class QuestionServiceImpl implements QuestionService {
 
         user.getQuestionsSaved().remove(question);
         question.getSavedByUsers().remove(user);
-
         userRepository.save(user);
     }
 
     @Override
-    public List<QuestionDetailsDTO> getQuestionsByUser(Long userId) {
+    public List<QuestionDetailsDTO> getQuestionsByUserId(Long userId) {
         return questionRepository.findByAuthorId(userId).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long userId) {
+    public List<QuestionDetailsDTO> getSavedQuestionsByUserId(Long userId) {
         return questionRepository.findBySavedByUsers_Id(userId).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id) {
+    public List<QuestionDetailsDTO> getAnsweredQuestionsByUserId(Long id) {
         return questionRepository.findByAnswers_AuthorId(id).stream()
                 .map(question -> getQuestionDetailsDTO(question))
                 .collect(Collectors.toList());
@@ -245,4 +234,5 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(question -> modelMapper.map(question, QuestionDetailsDTO.class))
                 .collect(Collectors.toList());
     }
+
 }

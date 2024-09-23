@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,7 +92,6 @@ public class UserServiceImpl implements UserService {
 
         String defaultRole = "ROLE_USER";
         Optional<Role> role = roleRepository.findByName(defaultRole);
-        System.out.println("role = " + role);
 
         if (role.isEmpty()) {
             throw new ResourceNotFoundException("No such role exists");
@@ -108,7 +108,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
-
         return modelMapper.map(savedUser, UserDetailsDTO.class);
     }
 
@@ -128,8 +127,6 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userUpdateDTO.getLastName());
         user.setProfilePicture(userUpdateDTO.getProfilePicture());
 
-        System.out.println("user = " + user);
-
         User updatedUser = userRepository.save(user);
 
         return modelMapper.map(updatedUser, UserDetailsDTO.class);
@@ -137,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Boolean updatePassword(Long userId, String oldPassword, String newPassword) {
+    public Boolean updateUserPassword(Long userId, String oldPassword, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
@@ -150,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Boolean deleteUser(Long userId) {
+    public Boolean deleteUserById(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("No such user exists");
         }
@@ -164,7 +161,6 @@ public class UserServiceImpl implements UserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotAuthenticatedException("User not logged in ");
         }
-        System.out.println();
 
         return userRepository.findByUsername(authentication.getName())
                 .orElse(null);
@@ -173,10 +169,7 @@ public class UserServiceImpl implements UserService {
     public Boolean isUserLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (userRepository.findByUsername(authentication.getName()).isPresent()) {
-            return true;
-        }
-        return false;
+        return userRepository.findByUsername(authentication.getName()).isPresent();
     }
 
     @Override
@@ -188,8 +181,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UserNotAuthenticatedException("User not logged in ");
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            throw new UserNotAuthenticatedException("User not logged in");
         }
 
         return userRepository.findByUsername(authentication.getName())

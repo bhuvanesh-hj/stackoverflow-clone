@@ -69,7 +69,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public AnswerDetailsDTO update(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
+    public AnswerDetailsDTO updateAnswer(Long answerId, Long questionId, AnswerRequestDTO answerRequestDTO) {
         Answer existingAnswer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
 
@@ -87,7 +87,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public Boolean delete(Long answerId) {
+    public Boolean deleteAnswer(Long answerId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
 
@@ -96,7 +96,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public List<AnswerDetailsDTO> getAnswersByUser(Long userId) {
+    public List<AnswerDetailsDTO> getAnswersByUserId(Long userId) {
         return answerRepository.findByAuthorId(userId).stream()
                 .map(answer -> getAnswerDetailsDTO(answer))
                 .collect(Collectors.toList());

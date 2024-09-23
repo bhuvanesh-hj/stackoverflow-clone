@@ -28,4 +28,5 @@ public class Role extends BaseEntity {
         users.remove(user);
         user.getRoles().remove(this);
     }
+
 }

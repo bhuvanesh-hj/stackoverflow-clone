@@ -8,31 +8,33 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface QuestionService {
-    public Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort);
 
-    public QuestionDetailsDTO getQuestionById(Long questionId);
+    Page<QuestionDetailsDTO> getAllQuestions(int page, int size, String sort);
 
-    public QuestionDetailsDTO createQuestion(QuestionRequestDTO question);
+    QuestionDetailsDTO getQuestionById(Long questionId);
 
-    public QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails);
+    QuestionDetailsDTO createQuestion(QuestionRequestDTO question);
 
-    public Boolean deleteQuestion(Long questionId);
+    QuestionDetailsDTO updateQuestion(Long questionId, QuestionRequestDTO updatedUserDetails);
 
-    public QuestionDetailsDTO vote(Boolean isUpvote, Long questionId, Long userId);
+    Boolean deleteQuestion(Long questionId);
 
-    public void saveQuestionForUser(Long questionId);
+    QuestionDetailsDTO vote(Boolean isUpvote, Long questionId, Long userId);
 
-    public void unsaveQuestionForUser(Long questionId);
+    void saveQuestionForUser(Long questionId);
 
-    public List<QuestionDetailsDTO> getQuestionsByUser(Long id);
+    void unsaveQuestionForUser(Long questionId);
 
-    public List<QuestionDetailsDTO> getSavedQuestionsByUser(Long id);
+    List<QuestionDetailsDTO> getQuestionsByUserId(Long id);
 
-    public List<QuestionDetailsDTO> getAnsweredQuestions(Long id);
+    List<QuestionDetailsDTO> getSavedQuestionsByUserId(Long id);
 
-    public Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page, int size, String sort);
+    List<QuestionDetailsDTO> getAnsweredQuestionsByUserId(Long id);
 
-    public QuestionDetailsDTO getQuestionDetailsDTO(Question question);
+    Page<QuestionDetailsDTO> getSearchedQuestions(String keyword, int page, int size, String sort);
 
-    public List<QuestionDetailsDTO> getRelatedQuestionsByTags(List<String> tags, Long questionId);
+    QuestionDetailsDTO getQuestionDetailsDTO(Question question);
+
+    List<QuestionDetailsDTO> getRelatedQuestionsByTags(List<String> tags, Long questionId);
+
 }

@@ -12,10 +12,10 @@ import lombok.Setter;
 public class UserViewDTO {
 
     private Long id;
-    private Long questionCount;
-    private Long answerCount;
     private String firstName;
     private String lastName;
+    private Long questionCount;
+    private Long answerCount;
     private String profilePicture;
 
 }

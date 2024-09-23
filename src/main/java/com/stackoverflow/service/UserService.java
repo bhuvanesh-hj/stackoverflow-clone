@@ -1,6 +1,9 @@
 package com.stackoverflow.service;
 
-import com.stackoverflow.dto.users.*;
+import com.stackoverflow.dto.users.UserDetailsDTO;
+import com.stackoverflow.dto.users.UserRegistrationDTO;
+import com.stackoverflow.dto.users.UserUpdateDTO;
+import com.stackoverflow.dto.users.UserViewDTO;
 import com.stackoverflow.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -8,27 +11,28 @@ import java.util.List;
 
 public interface UserService {
 
-    public List<UserDetailsDTO> getAllUsers();
+    List<UserDetailsDTO> getAllUsers();
 
-    public UserDetailsDTO getUserById(Long userId);
+    UserDetailsDTO getUserById(Long userId);
 
-    public UserDetailsDTO getUserByEmail(String email);
+    UserDetailsDTO getUserByEmail(String email);
 
-    public UserDetailsDTO getUserByUsername(String username);
+    UserDetailsDTO getUserByUsername(String username);
 
-    public UserDetailsDTO createUser(UserRegistrationDTO user);
+    UserDetailsDTO createUser(UserRegistrationDTO user);
 
-    public UserDetailsDTO updateUser(Long userId, UserUpdateDTO updatedUserDetails);
+    UserDetailsDTO updateUser(Long userId, UserUpdateDTO updatedUserDetails);
 
-    public Boolean updatePassword(Long userId, String oldPassword, String newPassword);
+    Boolean updateUserPassword(Long userId, String oldPassword, String newPassword);
 
-    public Boolean deleteUser(Long userId);
+    Boolean deleteUserById(Long userId);
 
-    public User getLoggedInUser();
+    User getLoggedInUser();
 
-    public Page<UserViewDTO> getAllUsersWithCounts(int page, int size, String searchQuery);
+    Page<UserViewDTO> getAllUsersWithCounts(int page, int size, String searchQuery);
 
-    public Boolean isUserLoggedIn();
+    Boolean isUserLoggedIn();
 
-    public User getLoggedInUserOrNull();
+    User getLoggedInUserOrNull();
+
 }

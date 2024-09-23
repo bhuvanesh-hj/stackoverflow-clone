@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByUsername(String username);
 
     Optional<User> findByEmail(String email);
@@ -31,4 +32,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<UserViewDTO> findAllUsersWithQuestionAndAnswerCount(@Param("searchTerm") String searchTerm, Pageable pageable);
 
     List<Question> findQuestionsSavedById(Long userId);
+
 }

@@ -103,9 +103,9 @@ public class UserController {
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
 
-        List<QuestionDetailsDTO> questions = questionService.getQuestionsByUser(userId);
-        List<QuestionDetailsDTO> answered = questionService.getAnsweredQuestions(userId);
-        List<QuestionDetailsDTO> saved = questionService.getSavedQuestionsByUser(userId);
+        List<QuestionDetailsDTO> questions = questionService.getQuestionsByUserId(userId);
+        List<QuestionDetailsDTO> answered = questionService.getAnsweredQuestionsByUserId(userId);
+        List<QuestionDetailsDTO> saved = questionService.getSavedQuestionsByUserId(userId);
 
         model.addAttribute("questions", questions);
         model.addAttribute("answered", answered);
@@ -161,7 +161,7 @@ public class UserController {
                                  @RequestParam("newPassword") String newPassword,
                                  Model model) {
         try {
-            userService.updatePassword(userId, oldPassword, newPassword);
+            userService.updateUserPassword(userId, oldPassword, newPassword);
             return "redirect:/users/" + userId;
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

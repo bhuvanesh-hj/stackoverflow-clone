@@ -1,8 +1,6 @@
 package com.stackoverflow.repository;
 
 import com.stackoverflow.entity.Question;
-
-import com.stackoverflow.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+
     Page<Question> findAll(Pageable pageable);
 
     List<Question> findByAuthorId(Long userId);

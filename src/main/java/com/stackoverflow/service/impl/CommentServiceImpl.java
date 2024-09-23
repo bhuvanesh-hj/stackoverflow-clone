@@ -10,7 +10,6 @@ import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.CommentRepository;
 import com.stackoverflow.repository.QuestionRepository;
-import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,21 +22,19 @@ public class CommentServiceImpl implements CommentService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
     private final UserServiceImpl userService;
 
     public CommentServiceImpl(CommentRepository commentRepository, QuestionRepository questionRepository, AnswerRepository answerRepository,
-                              ModelMapper modelMapper, UserRepository userRepository, UserServiceImpl userService) {
+                              ModelMapper modelMapper, UserServiceImpl userService) {
         this.commentRepository = commentRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
     @Override
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId) {
+    public String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId) {
         User user = userService.getLoggedInUser();
 
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
@@ -63,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public void update(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
+    public void updateComment(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
         Comment existingComment = getCommentById(commentId);
 
         existingComment.setComment(commentRequestDTO.getComment());
@@ -81,11 +78,11 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-    public void delete(Long commentId) {
+    public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }
 
-    public String createComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
+    public String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
         User user = userService.getLoggedInUser();
 
         Comment parentComment = commentRepository.findById(commentId)

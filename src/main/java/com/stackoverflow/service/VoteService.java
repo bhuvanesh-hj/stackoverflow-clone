@@ -1,6 +1,7 @@
 package com.stackoverflow.service;
 
 public interface VoteService {
+
     void upvoteQuestion(Long questionId);
 
     void downvoteQuestion(Long questionId);
@@ -16,4 +17,5 @@ public interface VoteService {
     int getAnswerUpvotes(Long questionId);
 
     int getAnswerDownvotes(Long questionId);
+
 }
