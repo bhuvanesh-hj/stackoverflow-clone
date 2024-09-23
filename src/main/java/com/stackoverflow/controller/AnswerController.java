@@ -91,6 +91,10 @@ public class AnswerController {
                              Model model) {
         QuestionDetailsDTO question = questionService.getQuestionById(questionId);
         AnswerDetailsDTO answerDetailsDTO = answerService.getAnswerById(answerId);
+        List<String> questionTags = question.getTags().stream().
+                map(tagDTO -> tagDTO.getName())
+                .collect(Collectors.toList());
+        List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
 
         if (!userService.isUserLoggedIn()) {
             return "redirect:/users/login";
@@ -107,6 +111,8 @@ public class AnswerController {
         model.addAttribute("tags", null);
         model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUser(), UserDetailsDTO.class));
         model.addAttribute("updatingAnswer", answerDetailsDTO);
+        model.addAttribute("relatedQuestions", relatedQuestions);
+
 
         return "questions/detail";
     }

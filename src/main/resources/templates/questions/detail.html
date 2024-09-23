@@ -171,10 +171,10 @@
                                                 <!--                                                   th:data-comment="${this_comment.comment}"-->
                                                 <!--                                                   onclick="toggleEditCommentForm(this.dataset.comment, this.dataset.cid,this.dataset.id);"-->
                                                 <!--                                                >Edit</p>-->
-                                                <!--                                                <form th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${this_comment.id})}"-->
-                                                <!--                                                      method="post">-->
-                                                <!--                                                    <input type="submit" class="ans-delete-btn" th:value="Delete"/>-->
-                                                <!--                                                </form>-->
+                                                <form th:action="@{/questions/{questionId}/comments/{commentId}/delete(questionId=${question.id}, commentId=${reply.id})}"
+                                                      method="post">
+                                                    <input type="submit" class="ans-delete-btn" th:value="Delete"/>
+                                                </form>
                                             </section>
                                             <section class="qs-actions ans-details comments-details">
                                                 <a th:href="@{/users/{id}(id=${reply.author.id})}"

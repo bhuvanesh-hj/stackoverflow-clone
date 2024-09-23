@@ -92,7 +92,7 @@
             </div>
 
             <!-- Full-width Saved Questions Section -->
-            <div class="saved-questions">
+            <div th:if="${loggedIn.id == userDetails.id}" class="saved-questions">
                 <h2 class="section-heading">Saved Questions</h2>
                 <div class="saved-list" th:each="savedQuestion : ${saved}">
                     <a th:href="@{/questions/{id}(id=${savedQuestion.id})}">
