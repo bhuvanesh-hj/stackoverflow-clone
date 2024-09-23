@@ -15,6 +15,8 @@ import java.util.Set;
 public class QuestionRequestDTO {
 
     private Long Id;
+    private Set<String> tagsList;
+    private LocalDateTime updatedAt;
 
     @NotBlank(message = "Title is required")
     @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
@@ -23,9 +25,5 @@ public class QuestionRequestDTO {
     @NotBlank(message = "Body is required")
     @Size(min = 20, message = "Body must contain at least 20 characters")
     private String body;
-
-    private Set<String> tagsList;
-
-    private LocalDateTime updatedAt;
 
 }

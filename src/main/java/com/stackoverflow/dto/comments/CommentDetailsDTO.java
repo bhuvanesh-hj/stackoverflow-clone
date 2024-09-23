@@ -14,15 +14,10 @@ import java.util.List;
 public class CommentDetailsDTO {
 
     private Long id;
-
     private String comment;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
-
     private UserDTO author;
-
     private List<CommentDetailsDTO> comments;
 
 }

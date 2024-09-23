@@ -16,6 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 public class QuestionDetailsDTO {
+
     boolean upvoted = false;
     boolean downvoted = false;
     private Boolean isSaved = false;
@@ -32,5 +33,6 @@ public class QuestionDetailsDTO {
     private List<TagDTO> tags;
     private Set<AnswerDetailsDTO> answers;
     private Set<CommentDetailsDTO> comments;
+
 }
 

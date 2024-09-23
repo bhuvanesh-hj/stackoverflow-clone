@@ -8,16 +8,12 @@ import lombok.ToString;
 @Getter
 @ToString
 public class UserDetailsDTO {
+
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private String username;
-
     private String profilePicture;
 
 }
