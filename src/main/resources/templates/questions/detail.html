@@ -88,6 +88,8 @@
 </head>
 <body>
 <header th:replace="~{fragments/header :: header(user=${loggedIn != null ? loggedIn : ''})}"/>
+
+<div th:if="${param.isBountied}" th:replace="~{fragments/toast :: toastFragment}"/>
 <main>
     <div th:replace="~{fragments/sidebar :: sidebar(questions=${question},tags=${tags},users=${users},recentTags=${recentTags})}"/>
 
@@ -157,6 +159,7 @@
                     </section>
                 </section>
                 <section class="qs-detail-content">
+                    <div th:replace="~{fragments/notification :: notificationFragment}"></div>
                     <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
                     <section class="qs-tags-section">
                         <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>
@@ -277,7 +280,8 @@
                                         th:class="${answer.isAccepted ? 'accepted' : 'not-accepted'}"
                                         th:title="${answer.isAccepted ? 'Click to unaccept the answer' : 'Click to accept the answer'}"
                                         style="border: none; background: none; cursor: pointer;">
-                                    <svg class="svg-style" id="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
+                                    <svg class="svg-style" id="checkmark" xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 50 50" width="50" height="50">
                                         <path d="M 10 25 L 20 35 L 40 15 L 35 10 L 20 30 L 15 25 Z"
                                               th:fill="${answer.isAccepted ? 'green' : 'none'}"/>
                                     </svg>
@@ -290,8 +294,9 @@
                                             data-answer-id="${answer.id}"
                                             data-tooltip="Answer accepted by the owner"
                                             style="border: none; background: none;">
-                                        <svg class="svg-style" id="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
-                                            <path d="M 10 25 L 20 35 L 40 15 L 35 10 L 20 30 L 15 25 Z" fill="green"/> <!-- Fill the path green -->
+                                        <svg class="svg-style" id="checkmark" xmlns="http://www.w3.org/2000/svg"
+                                             viewBox="0 0 50 50" width="50" height="50">
+                                            <path d="M 10 25 L 20 35 L 40 15 L 35 10 L 20 30 L 15 25 Z" fill="green"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -439,17 +444,14 @@
   document.querySelectorAll('.accept-answer-btn').forEach(button => {
     const checkmarkPath = button.querySelector('svg path');
 
-    // Set initial state based on the button's class
     if (button.classList.contains('accepted')) {
-        checkmarkPath.style.fill = 'green'; // Always green for accepted
+        checkmarkPath.style.fill = 'green';
     } else {
-        checkmarkPath.style.fill = 'none'; // Empty if not accepted
+        checkmarkPath.style.fill = 'none';
     }
 
-    // Remove the click event listener for non-logged-in or not-author users
     button.addEventListener('click', function () {
-        // This part is removed
-        // Since we don't want the button to change state on click
+
     });
 });
 
@@ -462,7 +464,34 @@
         });
     });
 
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+                removeQueryParam('isBountied');
+            }, 3000);
+    });
+
+    function removeQueryParam(param) {
+        const url = new URL(window.location);
+        url.searchParams.delete(param);
+        window.history.replaceState({}, document.title, url);
+    }
 
 </script>
 </html>

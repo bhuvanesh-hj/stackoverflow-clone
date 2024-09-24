@@ -36,6 +36,8 @@ public class VoteServiceImpl implements VoteService {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
+
         Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
         if (existingVote.isPresent()) {
             User author = question.getAuthor();
@@ -70,6 +72,7 @@ public class VoteServiceImpl implements VoteService {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
         Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
         User author = question.getAuthor();
 
@@ -100,6 +103,8 @@ public class VoteServiceImpl implements VoteService {
     @Transactional
     public void upvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
+
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
         Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
@@ -135,6 +140,8 @@ public class VoteServiceImpl implements VoteService {
     @Transactional
     public void downvoteAnswer(Long answerId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
+
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
         Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());

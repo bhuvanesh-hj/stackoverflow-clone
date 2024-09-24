@@ -1,6 +1,5 @@
 package com.stackoverflow.controller;
 
-import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.answers.AnswerRequestDTO;
 import com.stackoverflow.dto.comments.CommentRequestDTO;
@@ -8,14 +7,13 @@ import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionRequestDTO;
 import com.stackoverflow.dto.users.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserBountieException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.*;
 import com.stackoverflow.service.impl.HtmlUtils;
 import com.stackoverflow.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -92,11 +90,6 @@ public class QuestionController {
                                   @RequestParam(defaultValue = "10") int size,
                                   @RequestParam(value = "sort", defaultValue = "newest") String sort) {
 
-
-        System.out.println("Page: " + page);
-        System.out.println("Size: " + size);
-        System.out.println("Sort: " + sort);
-
         try {
             QuestionDetailsDTO question = questionService.getQuestionById(questionId);
             List<String> questionTags = question.getTags().stream().
@@ -108,8 +101,6 @@ public class QuestionController {
             Page<AnswerDetailsDTO> answersPage = answerService.getSearchedAnswers(page, size, sort, questionId);
             List<AnswerDetailsDTO> answers = answersPage.getContent();
 
-            System.out.println("answers = " + answers);
-
             model.addAttribute("answers", answers);
             model.addAttribute("question", question);
             model.addAttribute("users", null);
@@ -120,6 +111,7 @@ public class QuestionController {
             model.addAttribute("answerRequestDTO", new AnswerRequestDTO());
             model.addAttribute("comment", new CommentRequestDTO());
             model.addAttribute("sort", sort);
+            model.addAttribute("message", "Testing toast");
 
         } catch (ResourceNotFoundException e) {
             return "redirect:/questions?error=NotFound";
@@ -143,7 +135,6 @@ public class QuestionController {
     @PostMapping("/create")
     public String createQuestion(@ModelAttribute("questionRequestDTO") QuestionRequestDTO questionRequestDTO,
                                  @RequestParam("tagsList") String tags) {
-        System.out.println(questionRequestDTO);
         QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
         return "redirect:/questions/" + createdQuestion.getId();
     }
@@ -196,10 +187,13 @@ public class QuestionController {
 
     @PostMapping("/{id}/save")
     public String saveQuestion(@PathVariable("id") Long questionId) {
+
         try {
             questionService.saveQuestionForUser(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
@@ -209,10 +203,13 @@ public class QuestionController {
 
     @PostMapping("/{id}/unsave")
     public String unsaveQuestion(@PathVariable("id") Long questionId) {
+
         try {
             questionService.unsaveQuestionForUser(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
@@ -222,10 +219,13 @@ public class QuestionController {
 
     @PostMapping("/{questionId}/upvote")
     public String upVoteQuestion(@PathVariable("questionId") Long questionId) {
+
         try {
             voteService.upvoteQuestion(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
@@ -235,10 +235,13 @@ public class QuestionController {
 
     @PostMapping("/{questionId}/downvote")
     public String downVoteQuestion(@PathVariable("questionId") Long questionId) {
+
         try {
             voteService.downvoteQuestion(questionId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
@@ -248,9 +251,17 @@ public class QuestionController {
 
     @PostMapping("/{questionId}/answer/{answerId}/accept")
     public String acceptAnswer(@PathVariable("questionId") Long questionId,
-                               @PathVariable("answerId") Long answerId){
+                               @PathVariable("answerId") Long answerId) {
 
-        questionService.acceptAnswer(questionId, answerId);
+        try {
+            questionService.acceptAnswer(questionId, answerId);
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=FailedToAcceptAnswerException";
+        }
 
         return "redirect:/questions/" + questionId;
     }

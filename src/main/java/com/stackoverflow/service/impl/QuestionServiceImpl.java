@@ -142,6 +142,7 @@ public class QuestionServiceImpl implements QuestionService {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
 
         User questionAuthor = question.getAuthor();
         questionAuthor.setReputations(questionAuthor.getReputations() + 10);
@@ -153,10 +154,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void unsaveQuestionForUser(Long questionId) {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
 
         User questionAuthor = question.getAuthor();
         questionAuthor.setReputations(questionAuthor.getReputations() - 10);
@@ -242,18 +245,15 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     public void acceptAnswer(Long questionId, Long answerId) {
-        // Find the question
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found"));
 
-        // Find the answer
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
 
-        // Get the logged-in user
-        User loggedIn = userService.isUserLoggedIn() ? userService.getLoggedInUser() : null;
+        User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
-        // Check if the answer belongs to the specified question
         if (answer.getQuestion() == null || !answer.getQuestion().getId().equals(questionId)) {
             throw new IllegalArgumentException("Answer does not belong to the specified question.");
         }
@@ -263,35 +263,30 @@ public class QuestionServiceImpl implements QuestionService {
             question.setAcceptedAnswer(null);
             answerRepository.save(answer);
 
-            if (loggedIn != null) {
-                loggedIn.setReputations(loggedIn.getReputations() - 15);
-                userRepository.save(loggedIn);
-            }
+            user.setReputations(user.getReputations() - 15);
+            userRepository.save(user);
+
         } else {
             if (question.getAcceptedAnswer() != null) {
                 Answer oldAcceptedAnswer = question.getAcceptedAnswer();
                 oldAcceptedAnswer.setIsAccepted(false);
                 answerRepository.save(oldAcceptedAnswer);
 
-                // Deduct reputation points from the author of the old accepted answer
                 User oldAnswerAuthor = oldAcceptedAnswer.getAuthor();
                 oldAnswerAuthor.setReputations(oldAnswerAuthor.getReputations() - 15);
-                userRepository.save(oldAnswerAuthor); // Save the updated old answer author
+                userRepository.save(oldAnswerAuthor);
             }
 
-            // Accept the new answer
             answer.setIsAccepted(true);
             question.setAcceptedAnswer(answer);
             answerRepository.save(answer);
 
-            // Update the reputation of the logged-in user if they are not null
-            if (loggedIn != null) {
-                loggedIn.setReputations(loggedIn.getReputations() + 15); // Increment reputation
-                userRepository.save(loggedIn); // Save the updated user
+            if (user != null) {
+                user.setReputations(user.getReputations() + 15);
+                userRepository.save(user);
             }
         }
 
-        // Save the updated question
         questionRepository.save(question);
     }
 

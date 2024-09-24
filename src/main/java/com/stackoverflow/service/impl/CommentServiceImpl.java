@@ -1,6 +1,5 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.comments.CommentDetailsDTO;
 import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
@@ -36,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void commentOnQuestion(CommentRequestDTO commentRequestDTO, Long questionId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
 
@@ -59,6 +59,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(Long commentId, CommentRequestDTO commentRequestDTO, Long questionId) {
+        User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
+
         Comment existingComment = getCommentById(commentId);
 
         existingComment.setComment(commentRequestDTO.getComment());
@@ -70,19 +73,19 @@ public class CommentServiceImpl implements CommentService {
             existingComment.setQuestion(question);
         }
 
-        Comment updatedComment = commentRepository.save(existingComment);
-
-        CommentDetailsDTO commentDetailsDTO = modelMapper.map(updatedComment, CommentDetailsDTO.class);
-
+        commentRepository.save(existingComment);
     }
 
     public void deleteComment(Long commentId) {
+        userService.isBountied(userService.getLoggedInUser().getId());
+
         commentRepository.deleteById(commentId);
     }
 
     @Override
     public void commentOnAnswer(CommentRequestDTO commentRequestDTO, Long answerId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
 
@@ -102,6 +105,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void commentOnAnswerComment(CommentRequestDTO commentRequestDTO, Long answerId, Long commentId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found"));
@@ -117,6 +121,7 @@ public class CommentServiceImpl implements CommentService {
 
     public void commentOnQuestionComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found"));

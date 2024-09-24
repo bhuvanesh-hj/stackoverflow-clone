@@ -8,12 +8,14 @@ import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
-import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +43,9 @@ public class AnswerServiceImpl implements AnswerService {
         this.voteService = voteService;
     }
 
-    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
+    public void createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
@@ -55,9 +58,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setAuthor(user);
         answer.setAiGenerated(isAiGenerated);
         answer.setIsAccepted(false);
-        Answer savedAnswer = answerRepository.save(answer);
-
-        return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);
+        answerRepository.save(answer);
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AnswerService {
 
-    AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated);
+    void createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated);
 
     AnswerDetailsDTO getAnswerById(Long answerId);
 

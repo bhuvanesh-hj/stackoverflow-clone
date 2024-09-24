@@ -8,6 +8,7 @@ import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserBountieException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -176,10 +177,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean isBountied(Long userId) {
         User user = getLoggedInUser();
-        if(user.getReputations() >= 30){
+        if (user.getReputations() >= 30) {
             return true;
         }
-        return false;
+        throw new UserBountieException("You don't have enough bounties to complete this action.");
     }
 
     public Boolean isUserLoggedIn() {
