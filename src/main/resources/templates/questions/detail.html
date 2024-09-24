@@ -10,16 +10,25 @@
     <script src="/tinymce_7.3.0/tinymce/js/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '#body, #updatingBody',
-            menubar: false,
-            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
-            height: 400,
-            license_key: 'gpl',
-            images_upload_url: '/upload/image',
-            automatic_uploads: true,
-            images_upload_max_size: 2 * 1024 * 1024,
-        });
+     selector: '#body, #updatingBody',
+     menubar: false,
+     plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount codesample',
+     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | codesample | help',
+     height: 400,
+     license_key: 'gpl',
+     images_upload_url: '/upload/image',
+     automatic_uploads: true,
+     images_upload_max_size: 2 * 1024 * 1024,
+     codesample_languages: {
+         javascript: 'JavaScript',
+         python: 'Python',
+         java: 'Java',
+         csharp: 'C#',
+         php: 'PHP'
+     }
+ });
+
+
     </script>
     <style>
         .qs-comment-section {
