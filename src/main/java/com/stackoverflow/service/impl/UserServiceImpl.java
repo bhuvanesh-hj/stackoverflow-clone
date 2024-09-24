@@ -9,6 +9,8 @@ import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
+import com.stackoverflow.repository.AnswerRepository;
+import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.RoleRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
@@ -35,13 +37,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper, QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @Override
@@ -166,6 +172,17 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
     }
 
+    @Override
+    public Boolean isBountied(Long userId) {
+        int questionCount = questionRepository.getQuestionsCount(userId);
+        int answersCount = answerRepository.getAnswersCount(userId);
+
+        if(questionCount >= 15 && answersCount >= 15){
+            return true;
+        }
+       return false;
+    }
+
     public Boolean isUserLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -191,5 +208,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not found by username"));
     }
+
+
 
 }

@@ -28,17 +28,15 @@ public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
     private final UserServiceImpl userService;
     private final VoteService voteService;
 
 
     @Autowired
-    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserRepository userRepository, UserServiceImpl userService, VoteService voteService) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
         this.userService = userService;
         this.voteService = voteService;
     }

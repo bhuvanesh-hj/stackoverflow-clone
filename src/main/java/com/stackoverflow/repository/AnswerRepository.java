@@ -40,5 +40,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
             "ORDER BY COUNT(CASE WHEN v.isUpvote = true THEN 1 END) DESC")
     Page<Answer> findAllAnswersOrderedByUpVotes(Pageable pageable, @Param("questionId") Long questionId);
 
-
+    @Query("SELECT COUNT(a) FROM Answer a WHERE a.author.id = :userId")
+    Integer getAnswersCount(@Param("userId") Long userId);
 }
