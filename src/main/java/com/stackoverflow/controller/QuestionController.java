@@ -161,10 +161,7 @@ public class QuestionController {
                                  @ModelAttribute("questionRequestDTO") QuestionRequestDTO updatedQuestionDetails,
                                  Model model) {
         questionService.updateQuestion(questionId, updatedQuestionDetails);
-
         updatedQuestionDetails.setUpdatedAt(LocalDateTime.now());
-        String formattedTime = StackoverflowCloneApplication.formatTime(updatedQuestionDetails.getUpdatedAt());
-        model.addAttribute("formattedTime", formattedTime);
 
         return "redirect:/questions/" + questionId;
     }

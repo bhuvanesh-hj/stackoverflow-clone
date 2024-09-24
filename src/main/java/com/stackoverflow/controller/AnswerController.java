@@ -150,10 +150,7 @@ public class AnswerController {
 
         try {
             answerService.updateAnswer(answerId, questionId, answerRequestDTO);
-
             AnswerDetailsDTO updatedAnswer = answerService.getAnswerById(answerId);
-            String formattedTime = StackoverflowCloneApplication.formatTime(updatedAnswer.getUpdatedAt());
-            model.addAttribute("formattedTime", formattedTime);
 
         } catch (ResourceNotFoundException e) {
             errorsList.add(e.getMessage());

@@ -44,20 +44,13 @@ public class CommentController {
                 }
                 return "redirect:/questions/" + questionId;
             }
+            commentService.commentOnQuestion(commentRequestDTO, questionId);
 
-            String formattedTime = "";
-
-            if (questionId != null) {
-                formattedTime = commentService.createNestedComment(commentRequestDTO, questionId);
-            }
-
-            model.addAttribute("formattedTime", formattedTime);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=Failed to create comment";
         }
-
 
         return "redirect:/questions/" + questionId;
     }
@@ -81,13 +74,9 @@ public class CommentController {
                 }
                 return "redirect:/questions/" + questionId;
             }
-            String formattedTime = "";
 
-            if (questionId != null) {
-                formattedTime = commentService.createNestedComment(commentRequestDTO, questionId, commentId);
-            }
+            commentService.commentOnQuestionComment(commentRequestDTO, questionId, commentId);
 
-            model.addAttribute("formattedTime", formattedTime);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
         } catch (Exception e) {
