@@ -13,6 +13,7 @@ import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,6 +128,28 @@ public class AnswerServiceImpl implements AnswerService {
         answerDetailsDTO.setDownvoted(downvoted);
 
         return answerDetailsDTO;
+    }
+
+    @Override
+    public Page<AnswerDetailsDTO> getSearchedAnswers(int page, int size, String sort, Long questionId) {
+        Pageable pageable;
+
+        switch (sort.toLowerCase()) {
+            case "oldest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));  // ASC for oldest
+                break;
+            case "newest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt")); // DESC for newest
+                break;
+            case "mostliked":
+                return answerRepository.findAllAnswersOrderedByUpVotes(PageRequest.of(page, size), questionId)
+                        .map(answer -> modelMapper.map(answer, AnswerDetailsDTO.class));
+            default:
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  // Default to newest
+        }
+
+        Page<Answer> answers = answerRepository.findAllByQuestionId(questionId, pageable);
+        return answers.map(answer -> modelMapper.map(answer, AnswerDetailsDTO.class));
     }
 
     @Override

@@ -3,10 +3,7 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionRequestDTO;
-import com.stackoverflow.entity.Question;
-import com.stackoverflow.entity.QuestionVote;
-import com.stackoverflow.entity.Tag;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.entity.*;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -15,6 +12,7 @@ import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -235,4 +233,35 @@ public class QuestionServiceImpl implements QuestionService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void acceptAnswer(Long questionId, Long answerId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
+
+
+        if (answer.getQuestion() == null || !answer.getQuestion().getId().equals(questionId)) {
+            throw new IllegalArgumentException("Answer does not belong to the specified question.");
+        }
+
+        if (answer.getIsAccepted() != null && answer.getIsAccepted()) {
+            answer.setIsAccepted(false);
+            question.setAcceptedAnswer(null);
+            answerRepository.save(answer);
+        } else {
+            if (question.getAcceptedAnswer() != null) {
+                Answer oldAcceptedAnswer = question.getAcceptedAnswer();
+                oldAcceptedAnswer.setIsAccepted(false);
+                answerRepository.save(oldAcceptedAnswer);
+            }
+
+            answer.setIsAccepted(true);
+            question.setAcceptedAnswer(answer);
+            answerRepository.save(answer);
+        }
+
+        questionRepository.save(question);
+    }
 }

@@ -30,6 +30,9 @@ public class Question extends BaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToOne
+    private Answer acceptedAnswer;
+
     @ManyToOne(cascade = {
             CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
