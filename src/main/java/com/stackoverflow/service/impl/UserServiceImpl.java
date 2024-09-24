@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
         User user = modelMapper.map(userRegistrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setReputations(10);
 
         String defaultRole = "ROLE_USER";
         Optional<Role> role = roleRepository.findByName(defaultRole);
@@ -174,13 +175,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isBountied(Long userId) {
-        int questionCount = questionRepository.getQuestionsCount(userId);
-        int answersCount = answerRepository.getAnswersCount(userId);
-
-        if(questionCount >= 15 && answersCount >= 15){
+        User user = getLoggedInUser();
+        if(user.getReputations() >= 30){
             return true;
         }
-       return false;
+        return false;
     }
 
     public Boolean isUserLoggedIn() {
@@ -208,7 +207,5 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not found by username"));
     }
-
-
 
 }

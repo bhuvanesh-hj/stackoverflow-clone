@@ -37,6 +37,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(length = 1000)
     private String profilePicture;
 
+    @Column(name="reputations")
+    private Integer reputations;
+
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_roles",

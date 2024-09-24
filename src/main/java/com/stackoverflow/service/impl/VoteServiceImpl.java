@@ -2,10 +2,7 @@ package com.stackoverflow.service.impl;
 
 import com.stackoverflow.entity.*;
 import com.stackoverflow.exception.ResourceNotFoundException;
-import com.stackoverflow.repository.AnswerRepository;
-import com.stackoverflow.repository.AnswerVoteRepository;
-import com.stackoverflow.repository.QuestionRepository;
-import com.stackoverflow.repository.QuestionVoteRepository;
+import com.stackoverflow.repository.*;
 import com.stackoverflow.service.UserService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
@@ -20,14 +17,16 @@ public class VoteServiceImpl implements VoteService {
     private final AnswerVoteRepository answerVoteRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final UserRepository userRepository;
 
     private final UserService userService;
 
-    public VoteServiceImpl(QuestionVoteRepository questionVoteRepository, AnswerVoteRepository answerVoteRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, UserService userService) {
+    public VoteServiceImpl(QuestionVoteRepository questionVoteRepository, AnswerVoteRepository answerVoteRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, UserService userService) {
         this.questionVoteRepository = questionVoteRepository;
         this.answerVoteRepository = answerVoteRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
+        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -39,12 +38,17 @@ public class VoteServiceImpl implements VoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
         Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
         if (existingVote.isPresent()) {
+            User author = question.getAuthor();
             QuestionVote vote = existingVote.get();
             if (vote.getIsUpvote()) {
                 questionVoteRepository.delete(vote);
+                author.setReputations(author.getReputations() - 10);
+                userRepository.save(author);
             } else {
                 vote.setIsUpvote(true);
                 questionVoteRepository.save(vote);
+                author.setReputations(author.getReputations() + 10);
+                userRepository.save(author);
             }
         } else {
             QuestionVote vote = new QuestionVote();
@@ -52,7 +56,12 @@ public class VoteServiceImpl implements VoteService {
             vote.setUser(user);
             vote.setIsUpvote(true);
             questionVoteRepository.save(vote);
+
+            User author = question.getAuthor();
+            author.setReputations(author.getReputations() + 10);
+            userRepository.save(author);
         }
+
     }
 
     @Override
@@ -62,13 +71,19 @@ public class VoteServiceImpl implements VoteService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
         Optional<QuestionVote> existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
+        User author = question.getAuthor();
+
         if (existingVote.isPresent()) {
             QuestionVote vote = existingVote.get();
             if (!vote.getIsUpvote()) {
                 questionVoteRepository.delete(vote);
+                author.setReputations(author.getReputations() - 5);
+                userRepository.save(author);
             } else {
                 vote.setIsUpvote(false);
                 questionVoteRepository.save(vote);
+                author.setReputations(author.getReputations() - 5);
+                userRepository.save(author);
             }
         } else {
             QuestionVote vote = new QuestionVote();
@@ -76,6 +91,8 @@ public class VoteServiceImpl implements VoteService {
             vote.setUser(user);
             vote.setIsUpvote(false);
             questionVoteRepository.save(vote);
+            author.setReputations(author.getReputations() - 5);
+            userRepository.save(author);
         }
     }
 
@@ -86,14 +103,21 @@ public class VoteServiceImpl implements VoteService {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
         Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
+        User author = answer.getAuthor();
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
             if (vote.getIsUpvote()) {
                 answerVoteRepository.delete(vote);
+
+                author.setReputations(author.getReputations() - 10);
+                userRepository.save(author);
             } else {
                 vote.setIsUpvote(true);
                 answerVoteRepository.save(vote);
+
+                author.setReputations(author.getReputations() + 10);
+                userRepository.save(author);
             }
         } else {
             AnswerVote vote = new AnswerVote();
@@ -101,6 +125,9 @@ public class VoteServiceImpl implements VoteService {
             vote.setUser(user);
             vote.setIsUpvote(true);
             answerVoteRepository.save(vote);
+
+            author.setReputations(author.getReputations() + 10);
+            userRepository.save(author);
         }
     }
 
@@ -111,14 +138,21 @@ public class VoteServiceImpl implements VoteService {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found"));
         Optional<AnswerVote> existingVote = answerVoteRepository.findByAnswerIdAndUserId(answerId, user.getId());
+        User author = answer.getAuthor();
 
         if (existingVote.isPresent()) {
             AnswerVote vote = existingVote.get();
             if (!vote.getIsUpvote()) {
                 answerVoteRepository.delete(vote);
+
+                author.setReputations(author.getReputations() + 5);
+                userRepository.save(author);
             } else {
                 vote.setIsUpvote(false);
                 answerVoteRepository.save(vote);
+
+                author.setReputations(author.getReputations() - 10);
+                userRepository.save(author);
             }
         } else {
             AnswerVote vote = new AnswerVote();
@@ -126,6 +160,9 @@ public class VoteServiceImpl implements VoteService {
             vote.setUser(user);
             vote.setIsUpvote(false);
             answerVoteRepository.save(vote);
+
+            author.setReputations(author.getReputations() - 10);
+            userRepository.save(author);
         }
     }
 
