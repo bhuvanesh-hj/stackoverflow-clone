@@ -325,6 +325,29 @@
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
+                        <section class="qs-comment-section">
+                            <div th:if="${answer.comments.size() > 0}">
+                                <!--                            <div th:replace="~{fragments/comments :: renderComments(comments=${answer.comments}, question=${question}, loggedIn=${loggedIn})}"></div>-->
+                                <p th:each="${comment : ${answer.comments}" th:text="${comment.body}"></p>
+                            </div>
+                            <p th:data-id="${question.id}"
+                               th:data-AID="${answer.id}"
+                               class="qs-comment-add" id="toggleAnswerComment"
+                               onclick="toggleCommentAnswerForm(this.dataset.id, this.dataset.AID);">Add a comment
+                            </p>
+
+                            <div id="commentAnswerForm" class="comment-form">
+                                <form id="comment-answer-form" action="" method="POST">
+                                <textarea rows="4" cols="50" id="comment-answer-body" name="comment"
+                                          placeholder="Write your comment here..."
+                                          required></textarea><br>
+                                    <button id="comment-answer-btn" type="submit">Submit Comment</button>
+                                    <button id="close-answer-edit-btn header-btn" onclick="closeForm();" type="button">
+                                        Close
+                                    </button>
+                                </form>
+                            </div>
+                        </section>
                     </section>
                 </section>
             </section>
@@ -494,6 +517,22 @@
         const url = new URL(window.location);
         url.searchParams.delete(param);
         window.history.replaceState({}, document.title, url);
+    }
+
+    function toggleCommentAnswerForm(questionId, answerId) {
+     const commentForm = document.getElementById("commentAnswerForm");
+     const submitButton = document.getElementById("comment-answer-btn");
+     const form = document.getElementById("comment-answer-form");
+     const editTextareaInput = document.getElementById("comment-answer-body");
+
+        if (commentForm) {
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             submitButton.textContent = "Submit Comment";
+             editTextareaInput.value = null;
+             form.action = `/questions/${questionId}/comments/${answerId}`;
+        } else {
+             console.error("Comment form not found");
+        }
     }
 
 </script>
