@@ -24,7 +24,6 @@ public interface AnswerService {
 
     Page<AnswerDetailsDTO> getSearchedAnswers(int page, int size, String sort, Long questionId);
 
-    }
     Boolean isAiGeneratedAnswer(String answer);
 
 }

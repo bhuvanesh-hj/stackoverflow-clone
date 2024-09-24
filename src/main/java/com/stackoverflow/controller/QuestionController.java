@@ -104,9 +104,11 @@ public class QuestionController {
                     .collect(Collectors.toList());
 
 
-           List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
-           Page<AnswerDetailsDTO> answersPage = answerService.getSearchedAnswers(page, size, sort, questionId);
-           List<AnswerDetailsDTO> answers = answersPage.getContent();
+            List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
+            Page<AnswerDetailsDTO> answersPage = answerService.getSearchedAnswers(page, size, sort, questionId);
+            List<AnswerDetailsDTO> answers = answersPage.getContent();
+
+            System.out.println("answers = " + answers);
 
             model.addAttribute("answers", answers);
             model.addAttribute("question", question);
@@ -250,7 +252,7 @@ public class QuestionController {
 
         questionService.acceptAnswer(questionId, answerId);
 
-       return "redirect:/questions/" + questionId;
+        return "redirect:/questions/" + questionId;
     }
 
 }

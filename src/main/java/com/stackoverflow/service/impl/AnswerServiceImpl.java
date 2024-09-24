@@ -56,6 +56,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setUpdatedAt(LocalDateTime.now());
         answer.setAuthor(user);
         answer.setAiGenerated(isAiGenerated);
+        answer.setIsAccepted(false);
         Answer savedAnswer = answerRepository.save(answer);
 
         return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);
