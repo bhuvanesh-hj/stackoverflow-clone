@@ -173,7 +173,7 @@ body{
     border-top: 1px solid #E6E6E6;
     padding: 15px 20px;
     background-color: #fff;
-    z-index: 9999;
+    z-index: 1;
 }
 
 .answer-add-section p{

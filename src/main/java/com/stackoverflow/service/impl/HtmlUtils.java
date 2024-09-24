@@ -21,8 +21,8 @@ public class HtmlUtils {
         Document doc = Jsoup.parse(html);
         StringBuilder formattedContent = new StringBuilder();
 
-        for (Element element : doc.select("p, div")) {
-            formattedContent.append(element.outerHtml()).append("<br></br>");
+        for (Element element : doc.select("p, div, li")){
+            formattedContent.append(element.outerHtml()).append("<br/>");
         }
 
         return formattedContent.toString();
