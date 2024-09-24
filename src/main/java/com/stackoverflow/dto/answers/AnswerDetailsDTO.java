@@ -25,5 +25,6 @@ public class AnswerDetailsDTO {
     private UserDTO author;
     private Integer upvotes = 0;
     private Integer downvotes = 0;
+    private boolean isAiGenerated = false;
 
 }

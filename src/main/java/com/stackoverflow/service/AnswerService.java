@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AnswerService {
 
-    AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId);
+    AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated);
 
     AnswerDetailsDTO getAnswerById(Long answerId);
 
@@ -19,5 +19,7 @@ public interface AnswerService {
     List<AnswerDetailsDTO> getAnswersByUserId(Long id);
 
     AnswerDetailsDTO getAnswerDetailsDTO(Answer answer);
+
+    Boolean isAiGeneratedAnswer(String answer);
 
 }

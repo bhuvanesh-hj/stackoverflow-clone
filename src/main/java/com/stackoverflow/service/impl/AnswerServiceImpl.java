@@ -42,7 +42,7 @@ public class AnswerServiceImpl implements AnswerService {
         this.voteService = voteService;
     }
 
-    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId) {
+    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
         User user = userService.getLoggedInUser();
 
         Question question = questionRepository.findById(questionId)
@@ -54,6 +54,7 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setCreatedAt(LocalDateTime.now());
         answer.setUpdatedAt(LocalDateTime.now());
         answer.setAuthor(user);
+        answer.setAiGenerated(isAiGenerated);
         Answer savedAnswer = answerRepository.save(answer);
 
         return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);
@@ -126,6 +127,11 @@ public class AnswerServiceImpl implements AnswerService {
         answerDetailsDTO.setDownvoted(downvoted);
 
         return answerDetailsDTO;
+    }
+
+    @Override
+    public Boolean isAiGeneratedAnswer(String answer) {
+        return answer.contains("this is ai");
     }
 
 }

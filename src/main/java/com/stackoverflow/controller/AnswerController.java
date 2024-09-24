@@ -70,7 +70,7 @@ public class AnswerController {
         }
 
         try {
-            AnswerDetailsDTO answerDetailsDTO = answerService.createAnswer(answerRequestDTO, questionId);
+            AnswerDetailsDTO answerDetailsDTO = answerService.createAnswer(answerRequestDTO, questionId, answerService.isAiGeneratedAnswer(answerRequestDTO.getBody()));
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
         } catch (Exception e) {
