@@ -1,8 +1,8 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.comments.CommentDetailsDTO;
 import com.stackoverflow.dto.comments.CommentRequestDTO;
+import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
 import com.stackoverflow.entity.Question;
 import com.stackoverflow.entity.User;
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId) {
+    public void commentOnQuestion(CommentRequestDTO commentRequestDTO, Long questionId) {
         User user = userService.getLoggedInUser();
 
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
@@ -49,8 +49,6 @@ public class CommentServiceImpl implements CommentService {
             comment.setQuestion(question);
         }
         commentRepository.save(comment);
-
-        return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
     }
 
     public Comment getCommentById(Long commentId) {
@@ -82,7 +80,42 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(commentId);
     }
 
-    public String createNestedComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
+    @Override
+    public void commentOnAnswer(CommentRequestDTO commentRequestDTO, Long answerId) {
+        User user = userService.getLoggedInUser();
+
+        Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
+
+        comment.setAuthor(user);
+        comment.setCreatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
+
+        if (answerId != null) {
+            Answer answer = answerRepository.findById(answerId)
+                    .orElseThrow(() -> new RuntimeException("Answer not found"));
+            comment.setAnswer(answer);
+        }
+        commentRepository.save(comment);
+
+    }
+
+    @Override
+    public void commentOnAnswerComment(CommentRequestDTO commentRequestDTO, Long answerId, Long commentId) {
+        User user = userService.getLoggedInUser();
+
+        Comment parentComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found"));
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new RuntimeException("Answer not found"));
+
+        Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
+        comment.setUpdatedAt(LocalDateTime.now());
+
+        comment.setAnswer(answer);
+        commentRepository.save(comment);
+    }
+
+    public void commentOnQuestionComment(CommentRequestDTO commentRequestDTO, Long questionId, Long commentId) {
         User user = userService.getLoggedInUser();
 
         Comment parentComment = commentRepository.findById(commentId)
@@ -98,9 +131,6 @@ public class CommentServiceImpl implements CommentService {
         comment.setUpdatedAt(LocalDateTime.now());
 
         commentRepository.save(comment);
-
-        return StackoverflowCloneApplication.formatTime(comment.getCreatedAt());
-
     }
 
 

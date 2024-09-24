@@ -87,6 +87,63 @@ public class CommentController {
 
     }
 
+    @PostMapping("/{answerId}")
+    public String commentOnAnswer(@PathVariable(required = false) Long questionId,
+                                  @PathVariable(required = false) Long answerId,
+                              @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
+                              BindingResult result,
+                              Model model) {
+        try {
+            if (result.hasErrors()) {
+                if (questionId != null) {
+                    QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+                    model.addAttribute("question", questionDetailsDTO);
+                }
+                return "redirect:/questions/" + questionId;
+            }
+            commentService.commentOnAnswer(commentRequestDTO, answerId);
+
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=Failed to create comment";
+        }
+
+        return "redirect:/questions/" + questionId;
+    }
+
+    @PostMapping("/{answerId}/{commentId}")
+    public String commentOnAnswerionComment(@PathVariable(required = false) Long questionId,
+                                            @PathVariable(required = false) Long answerId,
+                              @PathVariable(required = false) Long commentId,
+                              @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
+                              BindingResult bindingResult,
+                              Model model){
+        List<String> errorsList = new ArrayList<>();
+        try {
+            if (bindingResult.hasErrors()) {
+                errorsList = bindingResult.getFieldErrors().stream()
+                        .map(FieldError::getDefaultMessage)
+                        .collect(Collectors.toList());
+                model.addAttribute("errors_comment", errorsList);
+                if (questionId != null) {
+                    QuestionDetailsDTO questionDetailsDTO = questionService.getQuestionById(questionId);
+                    model.addAttribute("question", questionDetailsDTO);
+                }
+                return "redirect:/questions/" + questionId;
+            }
+
+            commentService.commentOnAnswerComment(commentRequestDTO, answerId, commentId);
+
+        } catch (UserNotAuthenticatedException e) {
+            return "redirect:/users/login";
+        } catch (Exception e) {
+            return "redirect:/questions/" + questionId + "?error=Failed to create comment";
+        }
+
+        return "redirect:/questions/" + questionId;
+
+    }
     @PostMapping("/{commentId}/update")
     public String updateComment(@PathVariable Long commentId,
                                 @PathVariable(required = false) Long questionId,
