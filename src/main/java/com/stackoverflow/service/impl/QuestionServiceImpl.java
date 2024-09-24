@@ -85,6 +85,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);
+        user.setReputations(user.getReputations() + 5);
+        userRepository.save(user);
 
         Set<Tag> tags = questionRequestDTO.getTagsList().stream()
                 .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
@@ -119,6 +121,8 @@ public class QuestionServiceImpl implements QuestionService {
         User user = userService.getLoggedInUser();
         Question existingQuestion = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        user.setReputations(user.getReputations() - 5);
+        userRepository.save(user);
 
         questionRepository.deleteById(questionId);
         return true;

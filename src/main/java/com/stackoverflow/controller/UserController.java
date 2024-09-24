@@ -6,14 +6,13 @@ import com.stackoverflow.dto.users.UserRegistrationDTO;
 import com.stackoverflow.dto.users.UserUpdateDTO;
 import com.stackoverflow.dto.users.UserViewDTO;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
+import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.TagService;
 import com.stackoverflow.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -91,14 +90,48 @@ public class UserController {
         return "redirect:/users/login";
     }
 
+    @GetMapping
+    public String getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+                           @RequestParam(value = "size", defaultValue = "15") int size,
+                           @RequestParam(value = "search", defaultValue = "") String searchQuery,
+                           Model model) {
+        Page<UserViewDTO> paginatdUsers = userService.getAllUsersWithCounts(page, size, searchQuery);
+        model.addAttribute("users", paginatdUsers.getContent());
+        model.addAttribute("questions", null);
+        model.addAttribute("tags", null);
+        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
+        model.addAttribute("current_page", page);
+        model.addAttribute("total_pages", paginatdUsers.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("search", searchQuery);
+        model.addAttribute("recentTags", tagService.getRecentTags());
+
+        return "users/user";
+    }
+
     @GetMapping("/{id}")
     public String getUserById(@PathVariable("id") Long userId, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+        try {
+            model.addAttribute("loggedIn", userService.getLoggedInUser());
+            UserDetailsDTO userDetails = userService.getUserById(userId);
+            model.addAttribute("userDetails", userDetails);
+
+            List<QuestionDetailsDTO> questions = questionService.getQuestionsByUserId(userId);
+            List<QuestionDetailsDTO> answered = questionService.getAnsweredQuestionsByUserId(userId);
+            List<QuestionDetailsDTO> saved = questionService.getSavedQuestionsByUserId(userId);
+
+            model.addAttribute("questions", questions);
+            model.addAttribute("answered", answered);
+            model.addAttribute("saved", saved);
+            model.addAttribute("recentTags", tagService.getRecentTags());
+        } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (Exception e) {
+            model.addAttribute("error_message", "User not found.");
+            return "redirect:/users?error=" +
+                    "user not found";
         }
-
         UserDetailsDTO userDetails = userService.getUserById(userId);
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
@@ -167,25 +200,6 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "users/change_password_page";
         }
-    }
-
-    @GetMapping
-    public String getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
-                           @RequestParam(value = "size", defaultValue = "15") int size,
-                           @RequestParam(value = "search", defaultValue = "") String searchQuery,
-                           Model model) {
-        Page<UserViewDTO> paginatdUsers = userService.getAllUsersWithCounts(page, size, searchQuery);
-        model.addAttribute("users", paginatdUsers.getContent());
-        model.addAttribute("questions", null);
-        model.addAttribute("tags", null);
-        model.addAttribute("loggedIn", userService.getLoggedInUserOrNull());
-        model.addAttribute("current_page", page);
-        model.addAttribute("total_pages", paginatdUsers.getTotalPages());
-        model.addAttribute("size", size);
-        model.addAttribute("search", searchQuery);
-        model.addAttribute("recentTags", tagService.getRecentTags());
-
-        return "users/user";
     }
 
 }

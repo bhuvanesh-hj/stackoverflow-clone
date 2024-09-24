@@ -1,12 +1,12 @@
 package com.stackoverflow.dto.users;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Setter
 @Getter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDetailsDTO {
 
     private Long id;
@@ -15,5 +15,6 @@ public class UserDetailsDTO {
     private String email;
     private String username;
     private String profilePicture;
+    private Integer reputations;
 
 }

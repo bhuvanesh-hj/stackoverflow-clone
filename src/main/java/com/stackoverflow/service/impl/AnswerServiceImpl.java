@@ -8,6 +8,7 @@ import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
+import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,20 +29,55 @@ import java.util.stream.Collectors;
 @Transactional
 public class AnswerServiceImpl implements AnswerService {
 
+    private static final List<String> AI_DETECTION_KEYWORDS = Arrays.asList(
+            "this is ai",
+            "generated",
+            "automated",
+            "algorithm",
+            "model",
+            "machine learning",
+            "deep learning",
+            "artificial intelligence",
+            "response generated",
+            "predictive text",
+            "artificial",
+            "intelligence",
+            "neural network",
+            "robot",
+            "bot",
+            "chatbot",
+            "language model",
+            "text generation",
+            "data-driven",
+            "content creation",
+            "optimization",
+            "automation",
+            "synthetic",
+            "computational",
+            "analysis",
+            "digital assistant",
+            "AI model",
+            "natural language processing",
+            "NLP",
+            "virtual assistant"
+    );
+
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
     private final UserServiceImpl userService;
     private final VoteService voteService;
+    private final UserRepository userRepository;
 
 
     @Autowired
-    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.voteService = voteService;
+        this.userRepository = userRepository;
     }
 
     public void createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
@@ -51,6 +88,13 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
         Answer answer = modelMapper.map(answerRequestDTO, Answer.class);
+
+        if (isAiGenerated) {
+            user.setReputations(user.getReputations() - 15);
+        } else {
+            user.setReputations(user.getReputations() + 5);
+        }
+        userRepository.save(user);
 
         answer.setQuestion(question);
         answer.setCreatedAt(LocalDateTime.now());
@@ -90,8 +134,11 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Boolean deleteAnswer(Long answerId) {
+        User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
+        user.setReputations(user.getReputations() - 5);
+        userRepository.save(user);
 
         answerRepository.deleteById(answerId);
         return true;
@@ -154,7 +201,11 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Boolean isAiGeneratedAnswer(String answer) {
-        return answer.contains("this is ai");
+        long count = AI_DETECTION_KEYWORDS.stream()
+                .filter(answer.toLowerCase()::contains)
+                .count();
+
+        return count > 7;
     }
 
 }
