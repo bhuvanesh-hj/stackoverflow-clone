@@ -76,12 +76,6 @@ public class CommentServiceImpl implements CommentService {
         existingComment.setComment(commentRequestDTO.getComment());
         existingComment.setUpdatedAt(LocalDateTime.now());
 
-        if (questionId != null) {
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Question not found"));
-            existingComment.setQuestion(question);
-        }
-
         commentRepository.save(existingComment);
     }
 
@@ -137,7 +131,9 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
         comment.setUpdatedAt(LocalDateTime.now());
 
-        comment.setAnswer(answer);
+        comment.setAuthor(user);
+        comment.setParentComment(parentComment);
+        comment.setCreatedAt(LocalDateTime.now());
         commentRepository.save(comment);
     }
 

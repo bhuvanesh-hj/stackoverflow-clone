@@ -228,7 +228,7 @@
                 </section>
             </section>
 
-            <section th:if="${answers.size() > 0}" class="sorting-section" style="width: 100%;">
+            <section th:if="${question.answers.size() > 0}" class="sorting-section" style="width: 100%;">
                 <ul class="main-content-header-actions-sort">
                     <li th:class="${sort != null && sort.equals('newest') ? 'sort-tab selec' : 'sort-tab'}">
                         <a href="?sort=newest&page=0">Newest</a>
@@ -325,29 +325,39 @@
                                 <p th:text="'by ' + ${answer.author.username}"></p>
                             </section>
                         </section>
+
+                        <!--                            //starts here-->
                         <section class="qs-comment-section">
+
                             <div th:if="${answer.comments.size() > 0}">
-                                <!--                            <div th:replace="~{fragments/comments :: renderComments(comments=${answer.comments}, question=${question}, loggedIn=${loggedIn})}"></div>-->
-                                <p th:each="${comment : ${answer.comments}" th:text="${comment.body}"></p>
+                                <div th:replace="~{fragments/comments :: renderAnswerComments(comments=${answer.comments}, question=${question}, answer=${answer}, loggedIn=${loggedIn})}"></div>
                             </div>
-                            <p th:data-id="${question.id}"
-                               th:data-AID="${answer.id}"
-                               class="qs-comment-add" id="toggleAnswerComment"
-                               onclick="toggleCommentAnswerForm(this.dataset.id, this.dataset.AID);">Add a comment
+
+                            <p id="toggleAnswerComment"
+                               th:data-questionId="${question.id}"
+                               th:data-answerId="${answer.id}"
+                               class="qs-comment-add"
+                               onclick="toggleCommentAnswerForm(this)">
+                                Add a comment
                             </p>
 
-                            <div id="commentAnswerForm" class="comment-form">
-                                <form id="comment-answer-form" action="" method="POST">
-                                <textarea rows="4" cols="50" id="comment-answer-body" name="comment"
-                                          placeholder="Write your comment here..."
-                                          required></textarea><br>
-                                    <button id="comment-answer-btn" type="submit">Submit Comment</button>
-                                    <button id="close-answer-edit-btn header-btn" onclick="closeForm();" type="button">
+
+                            <div th:id="'commentAnswerForm-' + ${answer.id}" class="comment-form">
+                                <form th:id="'comment-answer-form-' + ${answer.id}" action="" method="POST">
+                                        <textarea rows="4" cols="50" th:id="'comment-answer-body-' + ${answer.id}" name="comment"
+                                                  placeholder="Write your comment here..." required></textarea><br>
+                                    <button th:id="'comment-answer-btn-' + ${answer.id}" type="submit">Submit Comment</button>
+                                    <button id="close-answer-edit-btn header-btn" onclick="closeAnswerForm();"
+                                            type="button">
                                         Close
                                     </button>
                                 </form>
                             </div>
+
                         </section>
+
+                        <!--                            //ends here-->
+
                     </section>
                 </section>
             </section>
@@ -519,19 +529,62 @@
         window.history.replaceState({}, document.title, url);
     }
 
-    function toggleCommentAnswerForm(questionId, answerId) {
-     const commentForm = document.getElementById("commentAnswerForm");
-     const submitButton = document.getElementById("comment-answer-btn");
-     const form = document.getElementById("comment-answer-form");
-     const editTextareaInput = document.getElementById("comment-answer-body");
+     function closeAnswerForm() {
+        const form = document.querySelector(".comment-form");
+        //  const replyForm = document.querySelector('.reply-form');
+        form.style.display = "none";
+        //      replyForm.style.display = "none";
+    }
+
+    function toggleCommentAnswerForm(element) {
+        const questionId = element.dataset.questionid;
+        const answerId = element.dataset.answerid;
+        closeAnswerForm();
+        const commentForm = document.getElementById(`commentAnswerForm-${answerId}`);
+        const submitButton = document.getElementById(`comment-answer-btn-${answerId}`);
+        const form = document.getElementById(`comment-answer-form-${answerId}`);
+        const editTextareaInput = document.getElementById(`comment-answer-body-${answerId}`);
+
+        console.log(questionId);
+        console.log(answerId);
 
         if (commentForm) {
-             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
-             submitButton.textContent = "Submit Comment";
-             editTextareaInput.value = null;
-             form.action = `/questions/${questionId}/comments/${answerId}`;
+            commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+            submitButton.textContent = "Submit Comment";
+            editTextareaInput.value = null;
+            form.action = `/questions/${questionId}/comments/${answerId}/answers`;
         } else {
-             console.error("Comment form not found");
+            console.error("Comment form not found");
+        }
+    }
+
+    function toggleEditAnswerCommentForm(element) {
+        const comment = element.dataset.commentdata;
+        const commentId = element.dataset.cid;
+        const answerId = element.dataset.aid;
+        const questionId = element.dataset.qid;
+
+        const editCommentForm = document.getElementById(`commentAnswerForm-${answerId}`);
+        const editTextareaInput = document.getElementById(`comment-answer-body-${answerId}`);
+        const submitButton = document.getElementById(`comment-answer-btn-${answerId}`);
+        const form = document.getElementById(`comment-answer-form-${answerId}`);
+
+        if (editCommentForm) {
+            editCommentForm.style.display = (editCommentForm.style.display === "none" || editCommentForm.style.display === "") ? "block" : "none";
+
+            if (editCommentForm.style.display === "block") {
+                editTextareaInput.value = comment;
+                submitButton.textContent = "Update Comment";
+                form.action = `/questions/${questionId}/comments/${commentId}/update`;
+
+                editCommentForm.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'end'
+                });
+            }
+
+        } else {
+            console.error("Comment form not found");
         }
     }
 
