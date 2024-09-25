@@ -328,7 +328,8 @@
                     </section>
                 </section>
             </section>
-            <section class="answer-add-section">
+            <section th:if="${loggedIn != null && !question.author.username.equals(loggedIn.username)}"
+                     class="answer-add-section">
                 <p>Your Answer</p>
                 <form
                         th:if="${updatingAnswer == null}"
