@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -117,7 +118,10 @@ public class QuestionController {
             return "redirect:/users/login";
         }
 
-        model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
+        if (!model.containsAttribute("questionRequestDTO")) {
+            model.addAttribute("questionRequestDTO", new QuestionRequestDTO());
+        }
+
         model.addAttribute("loggedIn", modelMapper.map(userService.getLoggedInUserOrNull(), UserDetailsDTO.class));
 
         return "questions/create";
@@ -125,10 +129,20 @@ public class QuestionController {
 
     @PostMapping("/create")
     public String createQuestion(@ModelAttribute("questionRequestDTO") QuestionRequestDTO questionRequestDTO,
-                                 @RequestParam("tagsList") String tags) {
-        System.out.println(questionRequestDTO);
-        QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
-        return "redirect:/questions/" + createdQuestion.getId();
+                                 @RequestParam("tagsList") String tags,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
+
+
+        try {
+            QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
+            return "redirect:/questions/" + createdQuestion.getId();
+        }catch (IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("questionRequestDTO", questionRequestDTO);
+
+            return "redirect:/questions/ask";
+        }
     }
 
     @GetMapping("/{id}/update")

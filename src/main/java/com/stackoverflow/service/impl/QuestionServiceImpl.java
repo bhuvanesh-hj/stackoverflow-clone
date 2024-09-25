@@ -13,6 +13,7 @@ import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.TagRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.AnswerService;
+import com.stackoverflow.service.DuplicateQuestionService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
 import jakarta.transaction.Transactional;
@@ -40,9 +41,9 @@ public class QuestionServiceImpl implements QuestionService {
     private final VoteService voteService;
     private final UserRepository userRepository;
     private final AnswerService answerService;
+    private final DuplicateQuestionService duplicateQuestionService;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository, AnswerRepository answerRepository,
-                               ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository, AnswerService answerService) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, TagRepository tagRepository, AnswerRepository answerRepository, ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository, AnswerService answerService, DuplicateQuestionService duplicateQuestionService) {
         this.questionRepository = questionRepository;
         this.tagRepository = tagRepository;
         this.answerRepository = answerRepository;
@@ -51,6 +52,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.voteService = voteService;
         this.userRepository = userRepository;
         this.answerService = answerService;
+        this.duplicateQuestionService = duplicateQuestionService;
     }
 
     @Override
@@ -83,6 +85,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public QuestionDetailsDTO createQuestion(QuestionRequestDTO questionRequestDTO) {
+        if (duplicateQuestionService.isDuplicate(questionRequestDTO.getTitle())) {
+            throw new IllegalArgumentException("Duplicate question detected.");
+        }
+
         User user = userService.getLoggedInUser();
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);

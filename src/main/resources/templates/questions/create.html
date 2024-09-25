@@ -39,6 +39,13 @@
             Ask a public question
         </h4>
     </section>
+
+
+    <div th:if="${errorMessage}" class="error-message">
+        <p th:text="${errorMessage}" style="color: red;"></p>
+    </div>
+
+
     <section class="question-form-section">
         <form th:action="${#strings.isEmpty(questionRequestDTO.id) ? '/questions/create' : '/questions/update/' + questionRequestDTO.id}"
               method="post" th:object="${questionRequestDTO}">
