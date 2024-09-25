@@ -110,6 +110,7 @@ public class QuestionServiceImpl implements QuestionService {
         existingQuestion.setTitle(updatedUserDetails.getTitle());
         existingQuestion.setBody(updatedUserDetails.getBody());
         existingQuestion.setUpdatedAt(LocalDateTime.now());
+        existingQuestion.setOfferedBounties(updatedUserDetails.getOfferedBounties());
 
         Set<Tag> updatedTags = new HashSet<>();
         for (String tagName : updatedUserDetails.getTagsList()) {
