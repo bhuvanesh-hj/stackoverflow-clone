@@ -75,13 +75,10 @@ public class CommentServiceImpl implements CommentService {
         existingComment.setComment(commentRequestDTO.getComment());
         existingComment.setUpdatedAt(LocalDateTime.now());
 
-        if (questionId != null) {
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new RuntimeException("Question not found"));
-            existingComment.setQuestion(question);
-        }
+        Comment updatedComment = commentRepository.save(existingComment);
 
-        commentRepository.save(existingComment);
+        CommentDetailsDTO commentDetailsDTO = modelMapper.map(updatedComment, CommentDetailsDTO.class);
+
     }
 
     public void deleteComment(Long commentId) {
@@ -134,9 +131,12 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new RuntimeException("Answer not found"));
 
         Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
+
+        comment.setAuthor(user);
+        comment.setParentComment(parentComment);
+        comment.setCreatedAt(LocalDateTime.now());
         comment.setUpdatedAt(LocalDateTime.now());
 
-        comment.setAnswer(answer);
         commentRepository.save(comment);
     }
 
