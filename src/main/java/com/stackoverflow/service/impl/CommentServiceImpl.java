@@ -1,6 +1,5 @@
 package com.stackoverflow.service.impl;
 
-import com.stackoverflow.dto.comments.CommentDetailsDTO;
 import com.stackoverflow.dto.comments.CommentRequestDTO;
 import com.stackoverflow.entity.Answer;
 import com.stackoverflow.entity.Comment;
