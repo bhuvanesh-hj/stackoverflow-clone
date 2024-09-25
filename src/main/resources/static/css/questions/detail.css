@@ -278,6 +278,8 @@ body{
     padding: 10px;
     margin-bottom: 10px;
     font-size: 15px;
+    border-left: 1px solid black;
+    margin-top: 5px;
 }
 
 .comment-details {
