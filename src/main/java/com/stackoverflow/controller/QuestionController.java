@@ -141,8 +141,6 @@ public class QuestionController {
                                  @RequestParam("tagsList") String tags,
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
-
-
         try {
             QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
             return "redirect:/questions/" + createdQuestion.getId();
@@ -152,9 +150,6 @@ public class QuestionController {
 
             return "redirect:/questions/ask";
         }
-                                 @RequestParam("tagsList") String tags) {
-        QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
-        return "redirect:/questions/" + createdQuestion.getId();
     }
 
     @GetMapping("/{id}/update")
