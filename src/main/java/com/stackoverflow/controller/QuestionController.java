@@ -172,6 +172,7 @@ public class QuestionController {
                         .map(tagDTO -> tagDTO.getName())
                         .collect(Collectors.toSet())
         );
+        questionRequestDTO.setOfferedBounties(existingQuestion.getOfferedBounties());
 
         model.addAttribute("questionRequestDTO", questionRequestDTO);
         model.addAttribute("formAction", "/questions/update/" + questionId);  // Set the form action URL for updating
