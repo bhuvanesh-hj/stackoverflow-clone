@@ -195,34 +195,24 @@
                             </section>
                         </section>
                     </section>
-
                     <section class="qs-comment-section">
-
-                        <div th:if="${answer.comments.size() > 0}">
-                            <div th:replace="~{fragments/comments :: renderAnswerComments(comments=${answer.comments}, question=${question}, answer=${answer}, loggedIn=${loggedIn})}"></div>
+                        <div th:if="${question.comments.size() > 0}">
+                            <div th:replace="~{fragments/comments :: renderComments(comments=${question.comments}, question=${question}, loggedIn=${loggedIn})}"></div>
                         </div>
-
-                        <p id="toggleAnswerComment"
-                           th:data-questionId="${question.id}"
-                           th:data-answerId="${answer.id}"
-                           class="qs-comment-add"
-                           onclick="toggleCommentAnswerForm(this)">
-                            Add a comment
+                        <p class="qs-comment-add" id="toggleComment" th:data-id="${question.id}"
+                           onclick="toggleCommentForm(this.dataset.id);">Add a comment
                         </p>
 
-
-                        <div th:id="'commentAnswerForm-' + ${answer.id}" class="comment-form">
-                            <form th:id="'comment-answer-form-' + ${answer.id}" action="" method="POST">
-                                        <textarea rows="4" cols="50" th:id="'comment-answer-body-' + ${answer.id}" name="comment"
-                                                  placeholder="Write your comment here..." required></textarea><br>
-                                <button th:id="'comment-answer-btn-' + ${answer.id}" type="submit">Submit Comment</button>
-                                <button id="close-answer-edit-btn header-btn" onclick="closeAnswerForm();"
-                                        type="button">
-                                    Close
+                        <div id="commentForm" class="comment-form">
+                            <form id="comment-form" action="" method="POST">
+                                <textarea rows="4" cols="50" id="comment-body" name="comment"
+                                          placeholder="Write your comment here..."
+                                          required></textarea><br>
+                                <button id="comment-btn" type="submit">Submit Comment</button>
+                                <button id="close-edit-btn header-btn" onclick="closeForm();" type="button">Close
                                 </button>
                             </form>
                         </div>
-
                     </section>
 
                     <section th:if="${relatedQuestions.size() > 0}" class="related-questions-body">
@@ -367,89 +357,93 @@
                 <form
                         th:if="${updatingAnswer == null}"
                         th:action="@{/questions/{questionId}/answers/saveAnswer(questionId=${question.id})}"
-                        th:object="${answerRequestDTO}" method="post">
-                        <div class="input-body">
-                            <textarea id="body" class="body" name="body"></textarea>
-                        </div>
-                        <button th:if="${loggedIn == null}" disabled class="header-btn" type="submit">Post Your Answer
-                            (to post answer, please log in)
-                        </button>
-                        <button th:if="${loggedIn != null}" class="header-btn" type="submit">Post Your Answer
-                        </button>
-                        <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
-                            style="color: red;"></p>
-                    </form>
-                    <form th:if="${updatingAnswer != null}"
+                        th:object="${answerRequestDTO}"
+                        method="post">
+                    <div class="input-body">
+                    <textarea id="body"
+                              class="body"
+                              name="body"
+                    ></textarea>
+                    </div>
+                    <button th:if="${loggedIn == null}" disabled class="header-btn" type="submit"
+                    >Post Your Answer (to post answer, please log in)
+                    </button>
+                    <button th:if="${loggedIn != null}" class="header-btn" type="submit"
+                    >Post Your Answer
+                    </button>
+                    <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
+                       style="color: red;"></p>
+                </form>
+                <form
+                        th:if="${updatingAnswer != null}"
                         th:action="@{/questions/{questionId}/answers/{answerId}/updateAnswer(questionId=${question.id},answerId=${updatingAnswer.id})}"
-                        th:object="${answerRequestDTO}" method="post">
-                        <div class="input-body">
+                        th:object="${answerRequestDTO}"
+                        method="post">
+                    <div class="input-body">
                             <textarea id="updatingBody" class="body"
-                                th:utext="${@htmlUtils.extractFormattedContent(updatingAnswer.body)}" name="body">
+                                      th:utext="${@htmlUtils.extractFormattedContent(updatingAnswer.body)}"
+                                      name="body">
                             </textarea>
-                        </div>
-                        <button class="header-btn" type="submit">Update your answer
-                        </button>
-                        <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
-                            style="color: red;"></p>
-                    </form>
-                </section>
-
+                    </div>
+                    <button class="header-btn" type="submit"
+                    >Update your answer
+                    </button>
+                    <p th:if="${errors_answers != null}" th:each="error : ${errors_answers}" th:text="${error}"
+                       style="color: red;"></p>
+                </form>
             </section>
-
         </section>
-
-    </main>
-
-    <footer th:replace="~{fragments/footer :: footer}" />
+    </section>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"/>
 </body>
-
 <script>
     function submitForm(formId) {
-        document.getElementById(formId).submit();
-    }
+         document.getElementById(formId).submit();
+     }
 
-    function submitUpdateForm(formId) {
-        document.getElementById(formId).submit();
-    }
+     function submitUpdateForm(formId) {
+          document.getElementById(formId).submit();
+     }
 
-    function toggleCommentForm(questionId) {
-        const commentForm = document.getElementById("commentForm");
-        const submitButton = document.getElementById("comment-btn");
-        const form = document.getElementById("comment-form");
-        const editTextareaInput = document.getElementById("comment-body");
+     function toggleCommentForm(questionId) {
+     const commentForm = document.getElementById("commentForm");
+     const submitButton = document.getElementById("comment-btn");
+     const form = document.getElementById("comment-form");
+     const editTextareaInput = document.getElementById("comment-body");
 
         if (commentForm) {
-            commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
-            submitButton.textContent = "Submit Comment";
-            editTextareaInput.value = null;
-            form.action = `/questions/${questionId}/comments`;
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             submitButton.textContent = "Submit Comment";
+             editTextareaInput.value = null;
+             form.action = `/questions/${questionId}/comments`;
         } else {
-            console.error("Comment form not found");
+             console.error("Comment form not found");
         }
     }
 
-    function toggleEditCommentForm(comment, commentId, questionId) {
+    function toggleEditCommentForm(comment, commentId, questionId){
         const editCommentForm = document.getElementById("commentForm");
         const editTextareaInput = document.getElementById("comment-body");
         const submitButton = document.getElementById("comment-btn");
         const form = document.getElementById("comment-form");
 
         if (editCommentForm) {
-            commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
 
             if (editCommentForm.style.display === "block") {
                 editTextareaInput.value = comment;
                 submitButton.textContent = "Update Comment";
                 form.action = `/questions/${questionId}/comments/${commentId}/update`;
 
-                editCommentForm.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'end'
-                });
+                 editCommentForm.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end'
+            });
             }
 
         } else {
-            console.error("Comment form not found");
+             console.error("Comment form not found");
         }
     }
 
@@ -460,25 +454,17 @@
         }
     }
 
-    function closeForm() {
+    function closeForm(){
         const form = document.getElementById("commentForm");
         const replyForm = document.querySelector('.reply-form');
 
-        form.style.display = "none";
-        replyForm.style.display = "none";
-    }
-
-    function closeAnswerForm() {
-    const form = document.querySelector(".comment-form");
-// <!--        const replyForm = document.querySelector('.reply-form');-->
-
-        form.style.display = "none";
-// <!--        replyForm.style.display = "none";-->
+        form.style.display= "none";
+        replyForm.style.display= "none";
     }
 
     function toggleReplyForm(element) {
-        const replyForm = element.closest('.qs-comment').querySelector('.reply-form');
-        replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+    const replyForm = element.closest('.qs-comment').querySelector('.reply-form');
+    replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
     }
 
   document.querySelectorAll('.accept-answer-btn').forEach(button => {
@@ -538,58 +524,16 @@
      const submitButton = document.getElementById("comment-answer-btn");
      const form = document.getElementById("comment-answer-form");
      const editTextareaInput = document.getElementById("comment-answer-body");
-    function toggleCommentAnswerForm(element) {
-        const questionId = element.dataset.questionid;
-        const answerId = element.dataset.answerid;
-        closeAnswerForm();
-        const commentForm = document.getElementById(`commentAnswerForm-${answerId}`);
-        const submitButton = document.getElementById(`comment-answer-btn-${answerId}`);
-        const form = document.getElementById(`comment-answer-form-${answerId}`);
-        const editTextareaInput = document.getElementById(`comment-answer-body-${answerId}`);
-
-        console.log(questionId);
-        console.log(answerId);
 
         if (commentForm) {
-            commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
-            submitButton.textContent = "Submit Comment";
-            editTextareaInput.value = null;
-            form.action = `/questions/${questionId}/comments/${answerId}/answers`;
+             commentForm.style.display = (commentForm.style.display === "none" || commentForm.style.display === "") ? "block" : "none";
+             submitButton.textContent = "Submit Comment";
+             editTextareaInput.value = null;
+             form.action = `/questions/${questionId}/comments/${answerId}`;
         } else {
-            console.error("Comment form not found");
-        }
-    }
-
-        function toggleEditAnswerCommentForm(element) {
-        const comment = element.dataset.commentdata;
-        const commentId  = element.dataset.cid;
-        const answerId = element.dataset.aid;
-        const questionId = element.dataset.qid;
-
-        const editCommentForm = document.getElementById(`commentAnswerForm-${answerId}`);
-        const editTextareaInput = document.getElementById( `comment-answer-body-${answerId}`);
-        const submitButton = document.getElementById(`comment-answer-btn-${answerId}`);
-        const form = document.getElementById(`comment-answer-form-${answerId}`);
-
-        if (editCommentForm) {
-            editCommentForm.style.display = (editCommentForm.style.display === "none" || editCommentForm.style.display === "") ? "block" : "none";
-
-            if (editCommentForm.style.display === "block") {
-                editTextareaInput.value = comment;
-                submitButton.textContent = "Update Comment";
-                form.action = `/questions/${questionId}/comments/${commentId}/update`;
-
-                editCommentForm.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'end'
-                });
-            }
-
-        } else {
-            console.error("Comment form not found");
+             console.error("Comment form not found");
         }
     }
 
 </script>
-
 </html>
