@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(length = 1000)
     private String profilePicture;
 
-    @Column(name="reputations")
+    @Column(name = "reputations")
     private Integer reputations;
 
     @ManyToMany(fetch = FetchType.EAGER,
@@ -76,6 +76,11 @@ public class User extends BaseEntity implements UserDetails {
 
     public void addRole(Role role) {
         roles.add(role);
+    }
+
+    @PrePersist
+    public void onCreate() {
+        this.reputations = 10;
     }
 
 }

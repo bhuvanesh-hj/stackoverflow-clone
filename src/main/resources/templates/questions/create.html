@@ -66,6 +66,11 @@
                 <input type="text" id="tags" name="tagsList" th:field="*{tagsList}"
                        placeholder="e.g., java, spring, thymeleaf">
             </div>
+            <div class="input-tags">
+                <label for="bounties" th:text="'Offer Bounties, currently you have ' + ${loggedIn.reputations}"></label>
+                <input type="number" th:min="5" th:max="${loggedIn.reputations}" th:maxlength="${loggedIn.reputations}" id="bounties" name="offeredBounties" th:field="*{offeredBounties}"
+                       placeholder="Offer some bounties">
+            </div>
 
             <button type="submit"
                     th:text="${#strings.isEmpty(questionRequestDTO.id) ? 'Post Question' : 'Update Question'}">

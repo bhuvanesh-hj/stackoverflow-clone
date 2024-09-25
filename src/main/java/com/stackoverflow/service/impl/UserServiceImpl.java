@@ -96,7 +96,6 @@ public class UserServiceImpl implements UserService {
 
         User user = modelMapper.map(userRegistrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
-        user.setReputations(10);
 
         String defaultRole = "ROLE_USER";
         Optional<Role> role = roleRepository.findByName(defaultRole);
@@ -177,7 +176,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean isBountied(Long userId) {
         User user = getLoggedInUser();
-        if (user.getReputations() >= 30) {
+        if (user.getReputations() >= 15) {
             return true;
         }
         throw new UserBountieException("You don't have enough bounties to complete this action.");

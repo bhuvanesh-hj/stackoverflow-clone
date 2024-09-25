@@ -1,10 +1,9 @@
 package com.stackoverflow.dto.questions;
 
+import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.comments.CommentDetailsDTO;
-import com.stackoverflow.dto.TagDTO;
 import com.stackoverflow.dto.users.UserDTO;
-import com.stackoverflow.entity.Answer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,6 +34,7 @@ public class QuestionDetailsDTO {
     private List<TagDTO> tags;
     private Set<AnswerDetailsDTO> answers;
     private Set<CommentDetailsDTO> comments;
+    private Integer offeredBounties;
 
 }
 

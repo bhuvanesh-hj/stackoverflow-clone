@@ -45,6 +45,7 @@
                     <p th:text="${question.upvotes} + ' votes'"/>
                     <p th:text="${question.downvotes} + ' downvotes'"/>
                     <p th:text="${question.answersCount} + ' answers'"/>
+                    <div th:replace="~{fragments/bountie :: bounties(points=${question.offeredBounties})}"></div>
                 </div>
                 <div class="qs-content">
                     <a th:href="@{/questions/{id}(id=${question.id})}"><h4 th:text="${question.title}"/></a>

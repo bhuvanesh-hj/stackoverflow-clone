@@ -159,7 +159,9 @@
                     </section>
                 </section>
                 <section class="qs-detail-content">
-                    <div th:replace="~{fragments/notification :: notificationFragment}"></div>
+                    <span th:if="${loggedIn != null}">
+                        <div th:replace="~{fragments/notification :: notificationFragment(reputation=${question.offeredBounties})}"></div>
+                    </span>
                     <p th:utext="${@htmlUtils.extractFormattedContent(question.body)}"></p>
                     <section class="qs-tags-section">
                         <p th:each="tag : ${question.tags}" th:text="${tag.name}" class="qs-tag"></p>

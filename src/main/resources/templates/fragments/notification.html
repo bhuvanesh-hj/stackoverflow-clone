@@ -1,24 +1,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-.note-section {
-background-color: #EDF5FD;
-border: 1px solid #92C2F2;
-margin: 10px;
-padding: 10px;
-}
+<style>
+    .note-section {
+    background-color: #EDF5FD;
+    border: 1px solid #92C2F2;
+    margin: 10px;
+    padding: 10px;
+    }
 
-.close {
-position: absolute;
-right: 10px;
-top: 10px;
-background: none;
-border: none;
-font-size: 18px;
-cursor: pointer;
-color: #f1f1f1;
-}
-
-<div th:fragment="notificationFragment" style="background-color: #EDF5FD;
+    .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #f1f1f1;
+    }
+</style>
+<div th:fragment="notificationFragment(reputation)" style="background-color: #EDF5FD;
     border: 1px solid #92C2F2;
     margin: 10px;
     padding: 5px 25px 25px 25px; border-radius: 5px; display: flex; flex-direction: column; width: 100%;">
@@ -28,7 +29,7 @@ color: #f1f1f1;
         >&times;
         </button>
     </div>
-    <p style="width: 100%;">The bounty expires in 24 minutes. Answers to this question are eligible for a +50 reputation
-        bounty. TheGwa is looking for an answer from a reputable source.</p>
+    <p style="width: 100%;"
+       th:text="'Answers to this question are eligible for a +' + ${reputation} + ' reputation bounty. If you post an answer and it gets upvoted, you will receive the bounty points. However, if your answer receives downvotes, you may lose reputation points. '"></p>
 </div>
 </body>

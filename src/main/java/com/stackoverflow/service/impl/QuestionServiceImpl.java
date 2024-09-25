@@ -255,14 +255,20 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     public void acceptAnswer(Long questionId, Long answerId) {
+        User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
+
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found"));
 
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
 
-        User user = userService.getLoggedInUser();
-        userService.isBountied(user.getId());
+//        User userAuthor = answer.getAuthor();
+//        userAuthor.setReputations(userAuthor.getReputations() + question.getOfferedBounties());
+//        user.setReputations(user.getReputations() - question.getOfferedBounties());
+//        userRepository.save(user);
+//        userRepository.save(userAuthor);
 
         if (answer.getQuestion() == null || !answer.getQuestion().getId().equals(questionId)) {
             throw new IllegalArgumentException("Answer does not belong to the specified question.");
@@ -273,8 +279,11 @@ public class QuestionServiceImpl implements QuestionService {
             question.setAcceptedAnswer(null);
             answerRepository.save(answer);
 
-            user.setReputations(user.getReputations() - 15);
+            User answerAuthor = answer.getAuthor();
+            answerAuthor.setReputations(answerAuthor.getReputations() - question.getOfferedBounties());
+            user.setReputations(user.getReputations() + question.getOfferedBounties());
             userRepository.save(user);
+            userRepository.save(answerAuthor);
 
         } else {
             if (question.getAcceptedAnswer() != null) {
@@ -282,9 +291,11 @@ public class QuestionServiceImpl implements QuestionService {
                 oldAcceptedAnswer.setIsAccepted(false);
                 answerRepository.save(oldAcceptedAnswer);
 
-                User oldAnswerAuthor = oldAcceptedAnswer.getAuthor();
-                oldAnswerAuthor.setReputations(oldAnswerAuthor.getReputations() - 15);
-                userRepository.save(oldAnswerAuthor);
+                User answerAuthor = oldAcceptedAnswer.getAuthor();
+                answerAuthor.setReputations(answerAuthor.getReputations() - question.getOfferedBounties());
+                user.setReputations(user.getReputations() + question.getOfferedBounties());
+                userRepository.save(user);
+                userRepository.save(answerAuthor);
             }
 
             answer.setIsAccepted(true);
@@ -292,8 +303,11 @@ public class QuestionServiceImpl implements QuestionService {
             answerRepository.save(answer);
 
             if (user != null) {
-                user.setReputations(user.getReputations() + 15);
+                User answerAuthor = answer.getAuthor();
+                answerAuthor.setReputations(answerAuthor.getReputations() + question.getOfferedBounties());
+                user.setReputations(user.getReputations() - question.getOfferedBounties());
                 userRepository.save(user);
+                userRepository.save(answerAuthor);
             }
         }
 

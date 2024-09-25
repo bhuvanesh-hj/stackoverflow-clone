@@ -33,6 +33,9 @@ public class Question extends BaseEntity {
     @OneToOne
     private Answer acceptedAnswer;
 
+    @Column(name = "offeredBounties")
+    private Integer offeredBounties;
+
     @ManyToOne(cascade = {
             CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
