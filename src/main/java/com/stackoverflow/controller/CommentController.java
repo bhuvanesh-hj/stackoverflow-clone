@@ -95,7 +95,7 @@ public class CommentController {
 
     }
 
-    @PostMapping("/{answerId}/answers")
+    @PostMapping("/{answerId}/answer")
     public String commentOnAnswer(@PathVariable(required = false) Long questionId,
                                   @PathVariable(required = false) Long answerId,
                                   @Valid @ModelAttribute("commentRequestDTO") CommentRequestDTO commentRequestDTO,
@@ -122,7 +122,7 @@ public class CommentController {
         return "redirect:/questions/" + questionId;
     }
 
-    @PostMapping("/{answerId}/{commentId}/answers")
+    @PostMapping("/{answerId}/{commentId}")
     public String commentOnAnswerionComment(@PathVariable(required = false) Long questionId,
                                             @PathVariable(required = false) Long answerId,
                                             @PathVariable(required = false) Long commentId,
