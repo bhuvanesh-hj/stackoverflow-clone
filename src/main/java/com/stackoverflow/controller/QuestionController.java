@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,7 +102,9 @@ public class QuestionController {
 
             List<QuestionDetailsDTO> relatedQuestions = questionService.getRelatedQuestionsByTags(questionTags, questionId);
             Page<AnswerDetailsDTO> answersPage = answerService.getSearchedAnswers(page, size, sort, questionId);
-            List<AnswerDetailsDTO> answers = answersPage.getContent();
+            List<AnswerDetailsDTO> answers = new ArrayList<>(answersPage.getContent());
+            // Sort answers to have the accepted answer first
+            answers.sort(Comparator.comparing(AnswerDetailsDTO::getIsAccepted).reversed());
 
             model.addAttribute("answers", answers);
             model.addAttribute("question", question);
@@ -144,7 +148,7 @@ public class QuestionController {
         try {
             QuestionDetailsDTO createdQuestion = questionService.createQuestion(questionRequestDTO);
             return "redirect:/questions/" + createdQuestion.getId();
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             redirectAttributes.addFlashAttribute("questionRequestDTO", questionRequestDTO);
 
