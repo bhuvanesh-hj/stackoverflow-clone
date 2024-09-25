@@ -35,4 +35,6 @@ public interface UserService {
 
     User getLoggedInUserOrNull();
 
+    Boolean isBountied(Long userId);
+
 }

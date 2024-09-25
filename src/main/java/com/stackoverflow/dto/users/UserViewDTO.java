@@ -17,5 +17,6 @@ public class UserViewDTO {
     private Long questionCount;
     private Long answerCount;
     private String profilePicture;
+    private Integer reputations;
 
 }

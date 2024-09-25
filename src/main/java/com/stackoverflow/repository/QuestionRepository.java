@@ -47,4 +47,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q JOIN q.tags t WHERE t IS NULL OR t.name IN :tags AND q.id != :questionId GROUP BY q.id ORDER BY COUNT(t) DESC")
     List<Question> findRelatedQuestionsByTags(@Param("tags") List<String> tags, @Param("questionId") Long questionId, Pageable pageable);
 
+    @Query("SELECT COUNT(q) FROM Question q WHERE q.author.id = :userId")
+    Integer getQuestionsCount(@Param("userId") Long userId);
+
 }

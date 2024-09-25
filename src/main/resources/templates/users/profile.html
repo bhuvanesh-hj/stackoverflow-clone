@@ -3,7 +3,7 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Profile | Stackoverflow</title>
+    <title th:text="'User ' + ${userDetails.username} + ' - Stack Overflow'"></title>
     <link rel="stylesheet" href="/css/fragments/header.css"/>
     <link rel="stylesheet" href="/css/fragments/sidebar.css"/>
     <link rel="stylesheet" href="/css/fragments/footer.css"/>
@@ -68,36 +68,48 @@
                 </form>
             </div>
 
-            <!-- Profile Content: Questions & Answers -->
-            <div class="profile-content">
-                <!-- Questions Section -->
-                <div class="questions-section">
-                    <h2 class="section-heading">Questions</h2>
-                    <div class="questions-list" th:each="question : ${questions}">
-                        <a th:href="@{/questions/{id}(id=${question.id})}">
-                            <span th:text="${question.title}"></span>
-                        </a>
-                    </div>
+            <div class="user-detail">
+                <div style="width: 18%;">
+                    <p style="font-size: 20px; margin: 5px 0;">Stats</p>
+                    <section class="user-stats">
+                        <p style="color: green;" th:text="${userDetails.reputations} + ' reputations'"></p>
+                        <p th:text="${questions.size()} + ' questions'"></p>
+                        <p th:text="${answered.size()} + ' answers'"></p>
+                    </section>
                 </div>
+                <div class="user-qa">
+                    <!-- Profile Content: Questions & Answers -->
+                    <div class="profile-content">
+                        <!-- Questions Section -->
+                        <div class="questions-section">
+                            <h2 class="section-heading">Questions</h2>
+                            <div class="questions-list" th:each="question : ${questions}">
+                                <a th:href="@{/questions/{id}(id=${question.id})}">
+                                    <span th:text="${question.title}"></span>
+                                </a>
+                            </div>
+                        </div>
 
-                <!-- Answers Section -->
-                <div class="answers-section">
-                    <h2 class="section-heading">Answered Questions</h2>
-                    <div class="answers-list" th:each="question : ${answered}">
-                        <a th:href="@{/questions/{id}(id=${question.id})}">
-                            <span th:text="${question.title}"></span>
-                        </a>
+                        <!-- Answers Section -->
+                        <div class="answers-section">
+                            <h2 class="section-heading">Answered Questions</h2>
+                            <div class="answers-list" th:each="question : ${answered}">
+                                <a th:href="@{/questions/{id}(id=${question.id})}">
+                                    <span th:text="${question.title}"></span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Full-width Saved Questions Section -->
-            <div th:if="${loggedIn.id == userDetails.id}" class="saved-questions">
-                <h2 class="section-heading">Saved Questions</h2>
-                <div class="saved-list" th:each="savedQuestion : ${saved}">
-                    <a th:href="@{/questions/{id}(id=${savedQuestion.id})}">
-                        <span th:text="${savedQuestion.title}"></span>
-                    </a>
+                    <!-- Full-width Saved Questions Section -->
+                    <div th:if="${loggedIn.id == userDetails.id}" class="saved-questions">
+                        <h2 class="section-heading">Saved Questions</h2>
+                        <div class="saved-list" th:each="savedQuestion : ${saved}">
+                            <a th:href="@{/questions/{id}(id=${savedQuestion.id})}">
+                                <span th:text="${savedQuestion.title}"></span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

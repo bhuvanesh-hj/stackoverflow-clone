@@ -1,0 +1,40 @@
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="toastFragment">
+<body>
+<style>
+    .toast {
+        position: fixed;
+        top: 60px;
+        left: 30.5%;
+        padding: 15px;
+        background-color: #EDF5FD;
+        border: 1px solid #92C2F2;
+        color: black;
+        width: 650px;
+        white-space: wrap;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        opacity: 0.9;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        transform: translateY(-20px);
+        font-size: 16px;
+        z-index: 1000;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .toast.hide {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+     transform: translateY(0);
+    }
+
+</style>
+<div id="toast" th:if="${param.isBountied}" class="toast show"
+     th:onclick="'this.classList.remove(&#39;show&#39;); setTimeout(() => { this.remove(); }, 500);'">
+    Thanks for the feedback! You need at least 15 reputation to cast a vote, but your feedback has been recorded.
+</div>
+</body>

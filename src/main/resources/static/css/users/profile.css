@@ -73,6 +73,7 @@ body{
 }
 
 .profile-content {
+    width: 75%;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -161,4 +162,25 @@ a:hover {
         width: 100%;
         margin-bottom: 20px;
     }
+}
+.user-qa{
+    width: 100%;
+}
+.user-detail{
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.user-stats{
+    width: 100%;
+    border: 1px solid #D6D9DC;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: space-between;
+    gap: 5px;
 }

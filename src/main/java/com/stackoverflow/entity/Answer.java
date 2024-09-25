@@ -29,6 +29,9 @@ public class Answer extends BaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name= "is_accepted", nullable = false)
+    private Boolean isAccepted;
+
     @ManyToOne(cascade = {
             CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "author_id")

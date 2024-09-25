@@ -13,10 +13,15 @@ import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.VoteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,40 +29,80 @@ import java.util.stream.Collectors;
 @Transactional
 public class AnswerServiceImpl implements AnswerService {
 
+    private static final List<String> AI_DETECTION_KEYWORDS = Arrays.asList(
+            "this is ai",
+            "generated",
+            "automated",
+            "algorithm",
+            "model",
+            "machine learning",
+            "deep learning",
+            "artificial intelligence",
+            "response generated",
+            "predictive text",
+            "artificial",
+            "intelligence",
+            "neural network",
+            "robot",
+            "bot",
+            "chatbot",
+            "language model",
+            "text generation",
+            "data-driven",
+            "content creation",
+            "optimization",
+            "automation",
+            "synthetic",
+            "computational",
+            "analysis",
+            "digital assistant",
+            "AI model",
+            "natural language processing",
+            "NLP",
+            "virtual assistant"
+    );
+
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
     private final UserServiceImpl userService;
     private final VoteService voteService;
+    private final UserRepository userRepository;
 
 
     @Autowired
-    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserRepository userRepository, UserServiceImpl userService, VoteService voteService) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, QuestionRepository questionRepository, ModelMapper modelMapper, UserServiceImpl userService, VoteService voteService, UserRepository userRepository) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
         this.userService = userService;
         this.voteService = voteService;
+        this.userRepository = userRepository;
     }
 
-    public AnswerDetailsDTO createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
+    public void createAnswer(AnswerRequestDTO answerRequestDTO, Long questionId, boolean isAiGenerated) {
         User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
         Answer answer = modelMapper.map(answerRequestDTO, Answer.class);
 
+        if (isAiGenerated) {
+            user.setReputations(user.getReputations() - 15);
+        } else {
+            user.setReputations(user.getReputations() + 5);
+        }
+        userRepository.save(user);
+
         answer.setQuestion(question);
         answer.setCreatedAt(LocalDateTime.now());
         answer.setUpdatedAt(LocalDateTime.now());
         answer.setAuthor(user);
         answer.setAiGenerated(isAiGenerated);
-        Answer savedAnswer = answerRepository.save(answer);
-
-        return modelMapper.map(savedAnswer, AnswerDetailsDTO.class);
+        answer.setIsAccepted(false);
+        answerRepository.save(answer);
     }
 
     @Override
@@ -89,8 +134,11 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Boolean deleteAnswer(Long answerId) {
+        User user = userService.getLoggedInUser();
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer not found with id: " + answerId));
+        user.setReputations(user.getReputations() - 5);
+        userRepository.save(user);
 
         answerRepository.deleteById(answerId);
         return true;
@@ -130,8 +178,34 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
+    public Page<AnswerDetailsDTO> getSearchedAnswers(int page, int size, String sort, Long questionId) {
+        Pageable pageable;
+
+        switch (sort.toLowerCase()) {
+            case "oldest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));  // ASC for oldest
+                break;
+            case "newest":
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt")); // DESC for newest
+                break;
+            case "mostliked":
+                return answerRepository.findAllAnswersOrderedByUpVotes(PageRequest.of(page, size), questionId)
+                        .map(answer -> modelMapper.map(answer, AnswerDetailsDTO.class));
+            default:
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  // Default to newest
+        }
+
+        Page<Answer> answers = answerRepository.findAllByQuestionId(questionId, pageable);
+        return answers.map(answer -> modelMapper.map(answer, AnswerDetailsDTO.class));
+    }
+
+    @Override
     public Boolean isAiGeneratedAnswer(String answer) {
-        return answer.contains("this is ai");
+        long count = AI_DETECTION_KEYWORDS.stream()
+                .filter(answer.toLowerCase()::contains)
+                .count();
+
+        return count > 7;
     }
 
 }

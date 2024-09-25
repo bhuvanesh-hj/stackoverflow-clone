@@ -1,11 +1,11 @@
 package com.stackoverflow.controller;
 
-import com.stackoverflow.StackoverflowCloneApplication;
 import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.answers.AnswerRequestDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.users.UserDetailsDTO;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserBountieException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
 import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.QuestionService;
@@ -70,9 +70,11 @@ public class AnswerController {
         }
 
         try {
-            AnswerDetailsDTO answerDetailsDTO = answerService.createAnswer(answerRequestDTO, questionId, answerService.isAiGeneratedAnswer(answerRequestDTO.getBody()));
+            answerService.createAnswer(answerRequestDTO, questionId, answerService.isAiGeneratedAnswer(answerRequestDTO.getBody()));
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             errorsList.add(e.getMessage());
             model.addAttribute("errors_answers", errorsList);
@@ -178,9 +180,12 @@ public class AnswerController {
             voteService.upvoteAnswer(answerId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }
+
         return "redirect:/questions/" + questionId;
     }
 
@@ -191,6 +196,8 @@ public class AnswerController {
             voteService.downvoteAnswer(answerId);
         } catch (UserNotAuthenticatedException e) {
             return "redirect:/users/login";
+        } catch (UserBountieException e) {
+            return "redirect:/questions/" + questionId + "?isBountied";
         } catch (Exception e) {
             return "redirect:/questions/" + questionId + "?error=FailedToVote";
         }

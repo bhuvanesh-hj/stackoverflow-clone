@@ -3,10 +3,7 @@ package com.stackoverflow.service.impl;
 import com.stackoverflow.dto.answers.AnswerDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionDetailsDTO;
 import com.stackoverflow.dto.questions.QuestionRequestDTO;
-import com.stackoverflow.entity.Question;
-import com.stackoverflow.entity.QuestionVote;
-import com.stackoverflow.entity.Tag;
-import com.stackoverflow.entity.User;
+import com.stackoverflow.entity.*;
 import com.stackoverflow.exception.ResourceNotFoundException;
 import com.stackoverflow.repository.AnswerRepository;
 import com.stackoverflow.repository.QuestionRepository;
@@ -16,6 +13,7 @@ import com.stackoverflow.service.AnswerService;
 import com.stackoverflow.service.DuplicateQuestionService;
 import com.stackoverflow.service.QuestionService;
 import com.stackoverflow.service.VoteService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -93,6 +91,8 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = modelMapper.map(questionRequestDTO, Question.class);
         question.setAuthor(user);
+        user.setReputations(user.getReputations() + 5);
+        userRepository.save(user);
 
         Set<Tag> tags = questionRequestDTO.getTagsList().stream()
                 .map(tagName -> tagRepository.findByName(tagName).orElseGet(() -> new Tag(tagName)))
@@ -127,6 +127,8 @@ public class QuestionServiceImpl implements QuestionService {
         User user = userService.getLoggedInUser();
         Question existingQuestion = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        user.setReputations(user.getReputations() - 5);
+        userRepository.save(user);
 
         questionRepository.deleteById(questionId);
         return true;
@@ -150,6 +152,11 @@ public class QuestionServiceImpl implements QuestionService {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
+
+        User questionAuthor = question.getAuthor();
+        questionAuthor.setReputations(questionAuthor.getReputations() + 10);
+        userRepository.save(questionAuthor);
 
         user.getQuestionsSaved().add(question);
         question.getSavedByUsers().add(user);
@@ -157,10 +164,16 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void unsaveQuestionForUser(Long questionId) {
         User user = userService.getLoggedInUser();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        userService.isBountied(user.getId());
+
+        User questionAuthor = question.getAuthor();
+        questionAuthor.setReputations(questionAuthor.getReputations() - 10);
+        userRepository.save(questionAuthor);
 
         user.getQuestionsSaved().remove(question);
         question.getSavedByUsers().remove(user);
@@ -239,6 +252,52 @@ public class QuestionServiceImpl implements QuestionService {
         return relatedQuestions.stream()
                 .map(question -> modelMapper.map(question, QuestionDetailsDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public void acceptAnswer(Long questionId, Long answerId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
+
+        User user = userService.getLoggedInUser();
+        userService.isBountied(user.getId());
+
+        if (answer.getQuestion() == null || !answer.getQuestion().getId().equals(questionId)) {
+            throw new IllegalArgumentException("Answer does not belong to the specified question.");
+        }
+
+        if (answer.getIsAccepted() != null && answer.getIsAccepted()) {
+            answer.setIsAccepted(false);
+            question.setAcceptedAnswer(null);
+            answerRepository.save(answer);
+
+            user.setReputations(user.getReputations() - 15);
+            userRepository.save(user);
+
+        } else {
+            if (question.getAcceptedAnswer() != null) {
+                Answer oldAcceptedAnswer = question.getAcceptedAnswer();
+                oldAcceptedAnswer.setIsAccepted(false);
+                answerRepository.save(oldAcceptedAnswer);
+
+                User oldAnswerAuthor = oldAcceptedAnswer.getAuthor();
+                oldAnswerAuthor.setReputations(oldAnswerAuthor.getReputations() - 15);
+                userRepository.save(oldAnswerAuthor);
+            }
+
+            answer.setIsAccepted(true);
+            question.setAcceptedAnswer(answer);
+            answerRepository.save(answer);
+
+            if (user != null) {
+                user.setReputations(user.getReputations() + 15);
+                userRepository.save(user);
+            }
+        }
+
+        questionRepository.save(question);
     }
 
 }

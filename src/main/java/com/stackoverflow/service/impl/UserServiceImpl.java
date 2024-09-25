@@ -8,7 +8,10 @@ import com.stackoverflow.entity.Role;
 import com.stackoverflow.entity.User;
 import com.stackoverflow.exception.ResourceAlreadyExistsException;
 import com.stackoverflow.exception.ResourceNotFoundException;
+import com.stackoverflow.exception.UserBountieException;
 import com.stackoverflow.exception.UserNotAuthenticatedException;
+import com.stackoverflow.repository.AnswerRepository;
+import com.stackoverflow.repository.QuestionRepository;
 import com.stackoverflow.repository.RoleRepository;
 import com.stackoverflow.repository.UserRepository;
 import com.stackoverflow.service.UserService;
@@ -35,13 +38,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper, QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @Override
@@ -89,6 +96,7 @@ public class UserServiceImpl implements UserService {
 
         User user = modelMapper.map(userRegistrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setReputations(10);
 
         String defaultRole = "ROLE_USER";
         Optional<Role> role = roleRepository.findByName(defaultRole);
@@ -164,6 +172,15 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findByUsername(authentication.getName())
                 .orElse(null);
+    }
+
+    @Override
+    public Boolean isBountied(Long userId) {
+        User user = getLoggedInUser();
+        if (user.getReputations() >= 30) {
+            return true;
+        }
+        throw new UserBountieException("You don't have enough bounties to complete this action.");
     }
 
     public Boolean isUserLoggedIn() {

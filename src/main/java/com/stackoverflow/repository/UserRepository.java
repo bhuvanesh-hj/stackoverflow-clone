@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrUsername(String email, String username);
 
-    @Query("SELECT DISTINCT new com.stackoverflow.dto.users.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id), u.profilePicture) " +
+    @Query("SELECT DISTINCT new com.stackoverflow.dto.users.UserViewDTO(u.id, u.firstName, u.lastName, COUNT(DISTINCT q.id), COUNT(DISTINCT a.id), u.profilePicture,u.reputations) " +
             "FROM User u " +
             "LEFT JOIN u.questions q " +
             "LEFT JOIN u.answers a " +
@@ -32,5 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<UserViewDTO> findAllUsersWithQuestionAndAnswerCount(@Param("searchTerm") String searchTerm, Pageable pageable);
 
     List<Question> findQuestionsSavedById(Long userId);
+
+
 
 }

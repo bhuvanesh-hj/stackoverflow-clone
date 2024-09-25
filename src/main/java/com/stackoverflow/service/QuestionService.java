@@ -37,4 +37,6 @@ public interface QuestionService {
 
     List<QuestionDetailsDTO> getRelatedQuestionsByTags(List<String> tags, Long questionId);
 
+    void acceptAnswer(Long questionId, Long answerId);
+
 }
