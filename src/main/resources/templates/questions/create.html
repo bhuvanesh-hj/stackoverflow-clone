@@ -69,7 +69,7 @@
             <div class="input-tags">
                 <label for="bounties" th:text="'Offer Bounties, currently you have ' + ${loggedIn.reputations}"></label>
                 <input type="number" th:min="5" th:max="${loggedIn.reputations}" th:maxlength="${loggedIn.reputations}" id="bounties" name="offeredBounties" th:field="*{offeredBounties}"
-                       placeholder="Offer some bounties">
+                       placeholder="Offer some bounties" required>
             </div>
 
             <button type="submit"
