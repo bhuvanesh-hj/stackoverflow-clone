@@ -257,19 +257,26 @@ public class QuestionServiceImpl implements QuestionService {
 
     public void acceptAnswer(Long questionId, Long answerId) {
         User user = userService.getLoggedInUser();
-        userService.isBountied(user.getId());
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found"));
 
+        User questionAuthor = question.getAuthor();
+
+        if (!user.getId().equals(questionAuthor.getId())) {
+            throw new IllegalArgumentException("Only the author of the question can accept an answer.");
+        }
+
+        userService.isBountied(user.getId());
+
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
 
-//        User userAuthor = answer.getAuthor();
-//        userAuthor.setReputations(userAuthor.getReputations() + question.getOfferedBounties());
-//        user.setReputations(user.getReputations() - question.getOfferedBounties());
-//        userRepository.save(user);
-//        userRepository.save(userAuthor);
+        User userAuthor = answer.getAuthor();
+        userAuthor.setReputations(userAuthor.getReputations() + question.getOfferedBounties());
+        user.setReputations(user.getReputations() - question.getOfferedBounties());
+        userRepository.save(user);
+        userRepository.save(userAuthor);
 
         if (answer.getQuestion() == null || !answer.getQuestion().getId().equals(questionId)) {
             throw new IllegalArgumentException("Answer does not belong to the specified question.");

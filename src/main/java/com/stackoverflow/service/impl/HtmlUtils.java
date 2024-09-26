@@ -23,12 +23,15 @@ public class HtmlUtils {
 
         for (Element element : doc.select("p, div, pre,li")) {
             if (element.tagName().equals("pre")) {
-                // Add inline style for <pre> tag
                 formattedContent.append("<pre style='background-color: #f1f1f1; padding: 10px; border-radius: 5px;'>" + element.text() + "</pre><br></br>");
-            } else {
+            } else if (element.tagName().equals("a")) {
+                String href = element.attr("href");
+                String anchorText = element.text();
+                formattedContent.append("<a href='" + href + "' style='color: blue; text-decoration: underline;'>"
+                        + anchorText + "</a><br></br>");
+            }else {
                 formattedContent.append(element.outerHtml()).append("<br></br>");
             }
-            //formattedContent.append(element.outerHtml()).append("<br></br>");
         }
 
         return formattedContent.toString();
